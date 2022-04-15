@@ -1,0 +1,99 @@
+@startuml
+
+hide circle
+skinparam Linetype ortho
+
+entity Person{
+    *  id: <<generated>>
+    ---
+    *  name: text NOT NULL
+    *  degree: enum
+    *  birth_year: date NOT NULL
+    *  email: text NOT NULL
+    *  phone: int
+    *  insurance_number: int
+    *  insurance_id: int
+    *  address_id: int
+    *  password: text
+}
+
+
+entity InsuranceCompany{
+    *insurance_id: <<generated>>
+    ---
+    *insurance_company_number: int
+    *insurance_name: text(100)
+}
+
+entity Address{
+    *address_id:<<generated>>
+    ---
+    *country: text(50)
+    *city: text(50)
+    *postal_code: long
+    *street: text(100)
+}
+
+entity Reservation{
+    *reservation_id: <<generated>>
+    ---
+    *personal_id: int NOT NULL
+    *doctor_id: int NOT NULL
+    *from_time: datetime NOT NULL
+    *patient_comment: text(200)
+    *doctor_comment: text(200)
+    *creation_at: datetime NOT NULL
+}
+
+entity Doctor{
+    *doctor_id: int NOT NULL
+    ---
+    *specialization: enum NOT NULL
+    *actuality: text(500)
+    *email: text(100) NOT NULL
+    *phone: text(20) NOT NULL
+    *description: text(500)
+    *link: <<url>>
+    *profile_picture: <<url>>
+    *address_id: int NOT NULL
+    *personal_id: int NOT NULL
+}
+
+entity Reference{
+    *reference_id: <<generated>>
+    ---
+    *doctor_id: int NOT NULL
+    *comment: text(250)
+    *rate: enum NOT NULL
+    *author: text(50)
+    *doctor_comment: text (250)
+    *created_at: datetime NOT NULL
+}
+
+entity DoctorLanguage{
+    *doctor_id: int NOT NULL
+    *language: enum NOT NULL
+    ---
+}
+
+
+entity OpenningHours{
+    *doctor_id: int NOT NULL
+    *day: enum NOT NULL
+    ---
+    *from_time: time NOT NULL
+    *to_time: time NOT NULL
+    *from_date: time NOT NULL
+}
+
+
+Person ||..o| Doctor
+Person ||..|| Address
+Address ||..|| Doctor
+Person ||..o{ Reservation
+Person }|..|| InsuranceCompany
+Reservation }o..|| Doctor
+Reference }o..|| Doctor
+Doctor }o..o| OpenningHours
+Doctor }o..o| DoctorLanguage
+@enduml
