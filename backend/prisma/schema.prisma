@@ -17,7 +17,7 @@ model Person {
   insuraceNumber Int
   insuranceId    String
   insurance      InsuranceCompany @relation(fields: [insuranceId], references: [id])
-  addressId      String
+  addressId      String           @unique
   address        Address          @relation(fields: [addressId], references: [id])
   password       String
 }
@@ -30,10 +30,21 @@ model InsuranceCompany {
 }
 
 model Address {
-  id         String   @id @default(uuid())
+  id         String  @id @default(uuid())
   country    String
   City       String
   PostalCode Int
   street     String
   Person     Person?
+}
+
+model Reservation {
+  id             String   @id @default(uuid())
+  personId      String
+  person         Person
+  doctorId      String
+  from           DateTime
+  personComment String
+  doctorComment String
+  created        DateTime
 }
