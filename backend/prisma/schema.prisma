@@ -18,6 +18,7 @@ model Person {
     insurance_id    String
     insurance       InsuranceCopmany @relation(fields: [insurance_id], references: [id])
     address_id      String
+    address         Address[]
     password        String
 }
 
@@ -34,4 +35,5 @@ model Address {
     City            String
     PostalCode      Number
     street          String
+    persons         Person[]
 }
