@@ -68,3 +68,13 @@ model Doctor {
   person         Person        @relation(fields: [personId], references: [id])
   reservations   Reservation[]
 }
+
+model Reference {
+  id             String   @id @default(uuid())
+  doctorId       String
+  comment        String
+  rate           Int        // TODO: enum? What about stars number
+  author         String     // TODO: connection to user?
+  doctor_comment String     // TODO: What about response?
+  created        DateTime
+}
