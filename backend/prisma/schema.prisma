@@ -33,10 +33,11 @@ model InsuranceCompany {
 model Address {
   id         String  @id @default(uuid())
   country    String
-  City       String
-  PostalCode Int
+  city       String
+  postalCode Int
   street     String
-  Person     Person?
+  person     Person?
+  doctor     Doctor?
 }
 
 model Reservation {
@@ -51,7 +52,7 @@ model Reservation {
 }
 
 model Doctor {
-  id             String @id @default(uuid())
+  id             String  @id @default(uuid())
   specialization String // TODO: enum
   actuality      String
   email          String
@@ -59,6 +60,7 @@ model Doctor {
   description    String
   link           String
   profilePicture String
-  addressId      String
+  addressId      String  @unique
+  address        Address @relation(fields: [addressId], references: [id])
   personId       String
 }
