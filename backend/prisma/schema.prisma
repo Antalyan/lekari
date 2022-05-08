@@ -8,31 +8,32 @@ datasource db {
 }
 
 model Person {
-    id              String @id @default(uuid())
-    name            String
-    degree          String
-    birthYear       Int
-    email           String
-    phone           Int
-    insuraceNumber  Int
-    insuranceId     String
-    insurance       InsuranceCompany @relation(fields: [insurance_id], references: [id])
-    addressId       String
-    address         Address @relation(fields: [address_id], references: [id])
-    password        String
+  id             String           @id @default(uuid())
+  name           String
+  degree         String
+  birthYear      Int
+  email          String
+  phone          Int
+  insuraceNumber Int
+  insuranceId    String
+  insurance      InsuranceCompany @relation(fields: [insuranceId], references: [id])
+  addressId      String
+  address        Address          @relation(fields: [addressId], references: [id])
+  password       String
 }
 
 model InsuranceCompany {
-    id      String @id @default(uuid())
-    number  Int
-    name    String
-    person Person
+  id      String   @id @default(uuid())
+  number  Int
+  name    String
+  persons Person[]
 }
 
 model Address {
-    id              String @id @default(uuid())
-    country         String
-    City            String
-    PostalCode      Int
-    street          String
+  id         String   @id @default(uuid())
+  country    String
+  City       String
+  PostalCode Int
+  street     String
+  Person     Person?
 }
