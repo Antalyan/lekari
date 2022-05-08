@@ -11,13 +11,13 @@ model Person {
     id              String @id @default(uuid())
     name            String
     degree          String
-    birth_year      number
+    birthYear      number
     email           String
     phone           number
-    insurace_number number
-    insurance_id    String
+    insuraceNumber number
+    insuranceId    String
     insurance       InsuranceCopmany @relation(fields: [insurance_id], references: [id])
-    address_id      String
+    addressId      String
     address         Address[]
     password        String
 }
