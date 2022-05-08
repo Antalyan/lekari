@@ -7,3 +7,15 @@ datasource db {
   url      = "file:./database.db"
 }
 
+model Person {
+    id              String @id @default(uuid())
+    name            String
+    degree          String
+    birth_year      number
+    email           String
+    phone           number
+    insurace_       number
+    insurance_id    String
+    address_id      String
+    password        String
+}
