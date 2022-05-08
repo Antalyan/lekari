@@ -11,29 +11,28 @@ model Person {
     id              String @id @default(uuid())
     name            String
     degree          String
-    birthYear      number
+    birthYear       Int
     email           String
-    phone           number
-    insuraceNumber number
-    insuranceId    String
-    insurance       InsuranceCopmany @relation(fields: [insurance_id], references: [id])
-    addressId      String
-    address         Address[]
+    phone           Int
+    insuraceNumber  Int
+    insuranceId     String
+    insurance       InsuranceCompany @relation(fields: [insurance_id], references: [id])
+    addressId       String
+    address         Address @relation(fields: [address_id], references: [id])
     password        String
 }
 
 model InsuranceCompany {
     id      String @id @default(uuid())
-    number  number
+    number  Int
     name    String
-    persons Person[]
+    person Person
 }
 
 model Address {
     id              String @id @default(uuid())
     country         String
     City            String
-    PostalCode      Number
+    PostalCode      Int
     street          String
-    persons         Person[]
 }
