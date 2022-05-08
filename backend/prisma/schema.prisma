@@ -14,8 +14,14 @@ model Person {
     birth_year      number
     email           String
     phone           number
-    insurace_       number
+    insurace_number number
     insurance_id    String
     address_id      String
     password        String
+}
+
+model InsuranceCompany {
+    id      String @id @default(uuid())
+    number  number
+    name    String
 }
