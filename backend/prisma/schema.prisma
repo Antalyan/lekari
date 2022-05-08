@@ -49,3 +49,16 @@ model Reservation {
   doctorComment String
   created       DateTime
 }
+
+model Doctor {
+  id             String @id @default(uuid())
+  specialization String // TODO: enum
+  actuality      String
+  email          String
+  phone          String
+  description    String
+  link           String
+  profilePicture String
+  addressId      String
+  personId       String
+}
