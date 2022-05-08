@@ -16,6 +16,7 @@ model Person {
     phone           number
     insurace_number number
     insurance_id    String
+    insurance       InsuranceCopmany @relation(fields: [insurance_id], references: [id])
     address_id      String
     password        String
 }
@@ -24,4 +25,5 @@ model InsuranceCompany {
     id      String @id @default(uuid())
     number  number
     name    String
+    persons Person[]
 }
