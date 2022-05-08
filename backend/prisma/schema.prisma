@@ -20,6 +20,7 @@ model Person {
   addressId      String           @unique
   address        Address          @relation(fields: [addressId], references: [id])
   password       String
+  reservations   Reservation[]
 }
 
 model InsuranceCompany {
@@ -39,12 +40,12 @@ model Address {
 }
 
 model Reservation {
-  id             String   @id @default(uuid())
+  id            String   @id @default(uuid())
   personId      String
-  person         Person
+  person        Person   @relation(fields: [personId], references: [id])
   doctorId      String
-  from           DateTime
+  from          DateTime
   personComment String
   doctorComment String
-  created        DateTime
+  created       DateTime
 }
