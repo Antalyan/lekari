@@ -67,11 +67,13 @@ model Doctor {
   personId       String        @unique
   person         Person        @relation(fields: [personId], references: [id])
   reservations   Reservation[]
+  Reference      Reference[]
 }
 
 model Reference {
   id             String   @id @default(uuid())
   doctorId       String
+  doctor         Doctor   @relation(fields: [doctorId], references: [id])
   comment        String
   rate           Int        // TODO: enum? What about stars number
   author         String     // TODO: connection to user?
