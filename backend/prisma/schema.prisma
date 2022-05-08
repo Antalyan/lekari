@@ -27,3 +27,11 @@ model InsuranceCompany {
     name    String
     persons Person[]
 }
+
+model Address {
+    id              String @id @default(uuid())
+    country         String
+    City            String
+    PostalCode      Number
+    street          String
+}
