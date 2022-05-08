@@ -21,6 +21,7 @@ model Person {
   address        Address          @relation(fields: [addressId], references: [id])
   password       String
   reservations   Reservation[]
+  doctor         Doctor?
 }
 
 model InsuranceCompany {
@@ -62,5 +63,6 @@ model Doctor {
   profilePicture String
   addressId      String  @unique
   address        Address @relation(fields: [addressId], references: [id])
-  personId       String
+  personId       String  @unique
+  person         Person  @relation(fields: [personId], references: [id])
 }
