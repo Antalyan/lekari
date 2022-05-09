@@ -15,7 +15,7 @@ export function RegisterPatientForm() {
     const {handleSubmit} = formContext
 
     const [tmpState, setTmpState] = useState<ILogin>();
-    const onSubmit = handleSubmit((formData: any) => {
+    const onSubmit = handleSubmit((formData: IPatient) => {
         {/*TODO Handle data*/
         }
         setTmpState(formData)
