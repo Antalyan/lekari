@@ -50,7 +50,7 @@ model Reservation {
   from          DateTime
   personComment String
   doctorComment String
-  created       DateTime
+  created       DateTime @default(now())
 }
 
 model Doctor {
@@ -80,7 +80,7 @@ model Reference {
   rate           Int        // TODO: enum? What about stars number
   author         String     // TODO: connection to user?
   doctor_comment String     // TODO: What about response?
-  created        DateTime
+  created        DateTime @default(now())
 }
 
 model DoctorLanguage {
@@ -97,7 +97,7 @@ model OpeningHours {
   day      String           // TODO: enum
   fromTime DateTime
   toTime   DateTime
-  fromDate DateTime         // TODO: in diagram it is time
+  fromDate DateTime @default(now()) // TODO: in diagram it is time
 
   @@unique([doctorId, day])
 }
