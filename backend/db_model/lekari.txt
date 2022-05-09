@@ -8,7 +8,7 @@ entity Person{
     ---
     *  name: text NOT NULL
     *  degree: enum
-    *  birth_year: date NOT NULL
+    *  birth_date: date NOT NULL
     *  email: text NOT NULL
     *  phone: int
     *  insurance_number: int
