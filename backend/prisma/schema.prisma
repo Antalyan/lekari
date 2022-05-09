@@ -80,3 +80,10 @@ model Reference {
   doctor_comment String     // TODO: What about response?
   created        DateTime
 }
+
+model DoctorLanguage {
+  doctorId String
+  language String           // TODO: enum
+
+  @@unique([doctorId, language])
+}
