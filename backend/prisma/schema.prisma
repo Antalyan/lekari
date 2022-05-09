@@ -89,3 +89,13 @@ model DoctorLanguage {
 
   @@unique([doctorId, language])
 }
+
+model OpeningHours {
+  doctorId String
+  day      String           // TODO: enum
+  fromTime DateTime
+  toTime   DateTime
+  fromDate DateTime         // TODO: in diagram it is time
+
+  @@unique([doctorId, day])
+}
