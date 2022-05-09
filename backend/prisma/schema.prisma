@@ -54,7 +54,7 @@ model Reservation {
 }
 
 model Doctor {
-  id             String        @id @default(uuid())
+  id             String           @id @default(uuid())
   specialization String // TODO: enum
   actuality      String
   email          String
@@ -62,12 +62,13 @@ model Doctor {
   description    String
   link           String
   profilePicture String
-  addressId      String        @unique
-  address        Address       @relation(fields: [addressId], references: [id])
-  personId       String        @unique
-  person         Person        @relation(fields: [personId], references: [id])
+  addressId      String           @unique
+  address        Address          @relation(fields: [addressId], references: [id])
+  personId       String           @unique
+  person         Person           @relation(fields: [personId], references: [id])
   reservations   Reservation[]
-  Reference      Reference[]
+  references     Reference[]
+  languages      DoctorLanguage[]
 }
 
 model Reference {
@@ -83,6 +84,7 @@ model Reference {
 
 model DoctorLanguage {
   doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
   language String           // TODO: enum
 
   @@unique([doctorId, language])
