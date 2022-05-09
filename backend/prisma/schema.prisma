@@ -69,6 +69,7 @@ model Doctor {
   reservations   Reservation[]
   references     Reference[]
   languages      DoctorLanguage[]
+  openingHours   OpeningHours[]
 }
 
 model Reference {
@@ -92,6 +93,7 @@ model DoctorLanguage {
 
 model OpeningHours {
   doctorId String
+  dostor   Doctor   @relation(fields: [doctorId], references: [id])
   day      String           // TODO: enum
   fromTime DateTime
   toTime   DateTime
