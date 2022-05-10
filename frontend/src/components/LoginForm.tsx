@@ -13,10 +13,9 @@ export function LoginForm () {
     })
     const { handleSubmit } = formContext
 
-    const [tmpState, setTmpState] = useState<ILogin>();
-    const onSubmit = handleSubmit((formData: any) => {
+    const onSubmit = handleSubmit((formData: ILogin) => {
         {/*TODO Handle data*/}
-        setTmpState(formData)
+        console.log(formData)
     })
     return (
         // @ts-ignore
@@ -26,7 +25,7 @@ export function LoginForm () {
             <TextFieldElement name={'email'} label={'Email'} required type={'email'} sx={{m: 1}}/><br />
             <TextFieldElement name={'password'} label={'Heslo'} required type={'password'} sx={{m: 1}}/><br />
             <Grid container justifyContent="center">
-                <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>{"Přihlásit se" + tmpState?.password + tmpState?.email}</Button>
+                <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>{"Přihlásit se"}</Button>
             </Grid>
         </FormContainer>
     )

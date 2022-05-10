@@ -9,23 +9,23 @@ function FilterForm() {
 
     const defaultValues: IBasicDoctor = {
         name: "",
-        specialization: "DEFAULT",
+        specialization: "",
         location: "",
         actuality: ""
     }
-    const { handleSubmit, control } = useForm({ defaultValues });
-    const [data, setData] = useState(defaultValues);
+    const {handleSubmit, control} = useForm({defaultValues});
     const onSubmit = (data: IBasicDoctor) => {
-        setData(data)
+        console.log(data)
     }
 
-    return  <form onSubmit={handleSubmit(onSubmit)}>
+    return <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2} margin={2}>
-            <AutoSelect control={control} id="combo-box-spec" name="specialization" label="Specializace" options={specializations}/>
+            <AutoSelect control={control} id="combo-box-spec" name="specialization" label="Specializace"
+                        options={specializations}/>
             <AutoSelect control={control} id="combo-box-location" name="location" label="Lokace" options={cities}/>
             <Grid container justifyContent="center">
                 <Button variant='contained' type={'submit'} color={'primary'} onSubmit={handleSubmit(onSubmit)}>
-                    {data.specialization + " " + data.location}
+                    Nastavit
                 </Button>
             </Grid>
         </Stack>

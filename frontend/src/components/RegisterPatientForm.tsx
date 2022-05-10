@@ -14,11 +14,8 @@ export function RegisterPatientForm() {
     const formContext = useForm<IPatient>()
     const {handleSubmit} = formContext
 
-    const [tmpState, setTmpState] = useState<ILogin>();
     const onSubmit = handleSubmit((formData: IPatient) => {
-        {/*TODO Handle data*/
-        }
-        setTmpState(formData)
+        console.log(formData)
     })
 
     let copiedCountries = countries.map((country) => country.label)
