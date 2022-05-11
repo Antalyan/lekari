@@ -2,8 +2,9 @@ export interface IBasicDoctor {
     name: string,
     specialization: string,
     location: string,
-    actuality: string
-    id: number
+    actuality: string,
+    id: number,
+    rating?: number
 }
 
 export interface ILogin {

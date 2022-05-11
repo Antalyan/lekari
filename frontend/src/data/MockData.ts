@@ -6,7 +6,8 @@ export const doctors: IBasicDoctor[] = [
         "specialization": "Neurolog",
         "location": "Brno",
         "actuality": "Jsem na dovolené",
-        "id": 1
+        "id": 1,
+        "rating": 5
     },
     {
         "name": "Beata Boubelatá",
@@ -20,6 +21,7 @@ export const doctors: IBasicDoctor[] = [
         "specialization": "Vlčí zvěrolékař",
         "location": "Nové Město na Moravě",
         "actuality": "Přijímám nové vlky! Dokud mě nesní...",
-        "id": 3
+        "id": 3,
+        "rating": 2.5
     }
 ]
