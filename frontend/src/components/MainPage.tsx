@@ -70,7 +70,7 @@ export function MainPage() {
             {/*TODO: check whether this is the correct index*/}
             {doctors.map((doctor: IBasicDoctor) => (
                 <Grid item key={doctor.name} xs={12}>
-                    <DoctorCard {...doctor}/>
+                    <DoctorCard detailed={false} doctor={doctor}/>
                 </Grid>
             ))}
         </Grid>

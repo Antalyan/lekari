@@ -11,29 +11,6 @@ import {Footer} from "./Footer";
 import {doctors} from "../data/MockData";
 import {useParams} from 'react-router-dom';
 
-function DoctorCardDetailed(doctorData: IBasicDoctor) {
-    return <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
-        <Grid item xs={12}>
-            <Typography sx={{m: 2}}
-                        variant="h3"
-                        align="center"
-                        color="text.primary"
-                        gutterBottom
-                        fontWeight="bold"
-            > {doctorData.name}
-            </Typography>
-        </Grid>
-       <Grid item xs={4}>
-           <Box display="flex" height="10rem"
-               // bgcolor="lightgreen"
-                alignItems="left"
-                margin={1}
-                justifyContent="left">
-               <img src={Profile} alt='Doctor Profile' height="100%"/>
-           </Box>
-       </Grid>
-    </Grid>
-}
 
 export function DoctorDetailPage() {
     // TODO: change doctors to API request
@@ -41,10 +18,10 @@ export function DoctorDetailPage() {
     if (id === undefined) {
         return <>ERROR</>
     }
-    const doctorData = doctors.filter((doctor) => doctor.id == parseInt(id))[0];
+    const doctor = doctors.filter((doctor) => doctor.id == parseInt(id))[0];
     return <>
         <Header/>
-        <DoctorCardDetailed {...doctorData}/>
+        <DoctorCard detailed={true} doctor={doctor}/>
         {/*<Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>*/}
         {/*    <Grid item xs={4}>*/}
         {/*        <Typography sx={{m: 2}}*/}
