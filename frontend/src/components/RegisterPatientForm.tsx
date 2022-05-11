@@ -1,5 +1,5 @@
 import {DatePickerElement, FormContainer, PasswordElement, SelectElement, TextFieldElement} from "react-hook-form-mui";
-import {Box, Button, Grid, Typography} from "@mui/material";
+import {Box, Button, Grid, IconButton, styled, Typography} from "@mui/material";
 import {useForm, useFormContext} from "react-hook-form";
 import {ChangeEvent, FunctionComponent, useState} from "react";
 import {ILogin, IPatient} from "./Interfaces";
@@ -7,6 +7,7 @@ import * as React from "react";
 import {countries} from "../data/Countries";
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import {PhotoCamera} from "@mui/icons-material";
 
 const validateNumbers = {pattern: {value: /^[0-9]+$/, message: "Input must be only numeric"}}
 
@@ -50,12 +51,9 @@ export function RegisterPatientForm() {
         )
     }
 
-    const [picture, setPicture] = useState(null);
-    const onChangePicture = ((e: ChangeEvent<HTMLInputElement>) => {
-        // @ts-ignore
-        setPicture(URL.createObjectURL(e.target.files[0]));
-        //TODO replace image chooser
-    })
+    const Input = styled('input')({
+        display: 'none',
+    });
 
     return (
         <>
@@ -130,8 +128,14 @@ export function RegisterPatientForm() {
                             <Grid item xs={12}>
                                 <PasswordRepeat/>
                             </Grid>
-                            <Grid item xs={12}>
-                                <input id="profilePicture" type="file" onChange={onChangePicture}/>
+                            <Grid item xs={11}>
+                                <label htmlFor="icon-button-file">
+                                    <Typography display={"inline"} color="text.secondary">Profilové foto</Typography>
+                                    <Input accept="image/*" id="icon-button-file" type="file" />
+                                    <IconButton color="primary" aria-label="upload picture" component="span">
+                                        <PhotoCamera />
+                                    </IconButton>
+                                </label>
                             </Grid>
 
                             <Grid item xs={12}>
