@@ -3,12 +3,12 @@ import * as React from "react";
 import Header from "./Header";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import Pills from "../images/pills.jpg";
+import Pills from "../../images/pills.jpg";
 import {SearchBox} from "./SearchBox";
-import {IBasicDoctor} from "./Interfaces";
-import {DoctorCard} from "./DoctorCard";
+import {IBasicDoctor} from "../Interfaces";
+import {DoctorCard} from "../DoctorDetail/DoctorCard";
 import {Footer} from "./Footer";
-import {doctors} from "../data/MockData";
+import {doctors} from "../../data/MockData";
 
 export function MainPage() {
     return <>

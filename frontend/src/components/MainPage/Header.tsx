@@ -12,7 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import {Icon, Link} from "@mui/material";
 
-import Logo from "../images/logoREPLACE.png"
+import Logo from "../../images/logoREPLACE.png"
 import {AccountCircle} from "@mui/icons-material";
 import {LoginForm} from "./LoginForm";
 

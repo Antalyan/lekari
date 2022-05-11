@@ -14,15 +14,15 @@ import Link from '@mui/material/Link';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 import {Icon, Stack, ThemeProvider} from "@mui/material";
-import Header from "./components/Header";
+import Header from "./components/MainPage/Header";
 
 import {createTheme, responsiveFontSizes} from '@mui/material/styles';
 import Pills from "./images/pills.jpg"
-import {MainPage} from './components/MainPage';
+import {MainPage} from './components/MainPage/MainPage';
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {RegisterPatientForm} from "./components/RegisterPatientForm";
-import {DoctorDetailPage} from "./components/DoctorDetailPage";
+import {DoctorDetailPage} from "./components/DoctorDetail/DoctorDetailPage";
 
 let theme = createTheme();
 theme = responsiveFontSizes(theme);

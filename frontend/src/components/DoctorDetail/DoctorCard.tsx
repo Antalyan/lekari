@@ -2,11 +2,11 @@ import * as React from "react";
 import Grid from "@mui/material/Grid";
 import {Stack} from "@mui/material";
 import Button from "@mui/material/Button";
-import {IBasicDoctor} from "./Interfaces";
+import {IBasicDoctor} from "../Interfaces";
 import Typography from "@mui/material/Typography";
 import {LocationOn, Person, Warning} from "@mui/icons-material";
 import Box from "@mui/material/Box";
-import Profile from "../images/mock_profile.jpg";
+import Profile from "../../images/mock_profile.jpg";
 
 export function DoctorCardLabels(props: { detailed: boolean, doctor: IBasicDoctor }) {
     return <Stack direction="column" spacing={2} padding={2}>

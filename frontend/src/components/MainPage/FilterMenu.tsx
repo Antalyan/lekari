@@ -2,7 +2,7 @@ import {Button, Grid, Stack, Typography} from "@mui/material";
 import {useForm} from "react-hook-form";
 import * as React from "react";
 import {useState} from "react";
-import {IBasicDoctor} from "./Interfaces";
+import {IBasicDoctor} from "../Interfaces";
 import {AutoSelect} from "./AutoSelect";
 
 function FilterForm() {
