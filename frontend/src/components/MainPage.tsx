@@ -7,16 +7,7 @@ import Pills from "../images/pills.jpg";
 import {SearchBox} from "./SearchBox";
 import {IBasicDoctor} from "./Interfaces";
 import {DoctorCard} from "./DoctorCard";
-
-function Copyright(props: any) {
-    return (
-        <Typography variant="body2" align="center" color={"common.white"} {...props}>
-            {'©'}
-            {new Date().getFullYear()}
-            {" Luďkovi lékaři, PB138"}
-        </Typography>
-    );
-}
+import {Footer} from "./Footer";
 
 const doctors = [
     {
@@ -102,17 +93,6 @@ export function MainPage() {
                 </Grid>
             ))}
         </Grid>
-        <Box
-            bgcolor={"primary.main"}
-            maxWidth="md"
-            component="footer"
-            sx={{
-                borderTop: (theme) => `1px solid ${theme.palette.divider}`,
-                mt: 2,
-                py: [2, 2],
-            }}
-        >
-            <Copyright/>
-        </Box>
+        <Footer/>
     </>
 }
