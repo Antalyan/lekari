@@ -8,27 +8,7 @@ import {SearchBox} from "./SearchBox";
 import {IBasicDoctor} from "./Interfaces";
 import {DoctorCard} from "./DoctorCard";
 import {Footer} from "./Footer";
-
-const doctors = [
-    {
-        "name": "MUDr. Adam Ananas",
-        "specialization": "Neurolog",
-        "location": "Brno",
-        "actuality": "Jsem na dovolené"
-    },
-    {
-        "name": "Beata Boubelatá",
-        "specialization": "Kardiolog",
-        "location": "Praha",
-        "actuality": ""
-    },
-    {
-        "name": "MVDr. Cecil Cukrový",
-        "specialization": "Vlčí zvěrolékař",
-        "location": "Nové Město na Moravě",
-        "actuality": "Přijímám nové vlky! Dokud mě nesní..."
-    }
-]
+import {doctors} from "../data/MockData";
 
 export function MainPage() {
     return <>
@@ -87,6 +67,7 @@ export function MainPage() {
         </Grid>
 
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}} margin={1}>
+            {/*TODO: check whether this is the correct index*/}
             {doctors.map((doctor: IBasicDoctor) => (
                 <Grid item key={doctor.name} xs={12}>
                     <DoctorCard {...doctor}/>

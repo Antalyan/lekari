@@ -11,7 +11,8 @@ function FilterForm() {
         name: "",
         specialization: "",
         location: "",
-        actuality: ""
+        actuality: "",
+        id: -1
     }
     const {handleSubmit, control} = useForm({defaultValues});
     const onSubmit = (data: IBasicDoctor) => {

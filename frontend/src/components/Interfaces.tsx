@@ -3,6 +3,7 @@ export interface IBasicDoctor {
     specialization: string,
     location: string,
     actuality: string
+    id: number
 }
 
 export interface ILogin {

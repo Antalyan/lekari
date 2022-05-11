@@ -22,6 +22,7 @@ import {MainPage} from './components/MainPage';
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {RegisterPatientForm} from "./components/RegisterPatientForm";
+import {DoctorDetailPage} from "./components/DoctorDetailPage";
 
 let theme = createTheme();
 theme = responsiveFontSizes(theme);
@@ -34,6 +35,7 @@ export default function App() {
             <Routes>
                 <Route path="/" element={<MainPage />}/>
                 <Route path="/register/patient" element={<RegisterPatientForm />} />
+                <Route path="/doctor/:id" element={<DoctorDetailPage />} />
             </Routes>
         </BrowserRouter>
     </ThemeProvider>
