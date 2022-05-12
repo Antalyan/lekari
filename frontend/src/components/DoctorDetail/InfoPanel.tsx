@@ -1,6 +1,6 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
-import {IconButton, Stack, TextField} from "@mui/material";
+import {IconButton, Stack, TextareaAutosize, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import EditIcon from '@mui/icons-material/Edit';
 import {IBasicDoctor, IContact, IPatient} from "../Interfaces";
@@ -126,12 +126,43 @@ function Languages(editable: boolean) {
         </FormContainer>)
 }
 
-/*TODO: property *editable* depends on status (logged in/out) */
+function Description(editable: boolean) {
+    const [editingState, setEditingState] = useState(false);
+    // TODO: change to languages type
+    const formContext = useForm<string[]>();
+    const {handleSubmit} = formContext;
+    const onSubmit = handleSubmit((formData: string[]) => {
+        console.log(formData)
+    });
+    return (
+        // @ts-ignore
+        <FormContainer
+            formContext={formContext}
+            handleSubmit={onSubmit}>
+            <Box>
+                <Typography
+                    variant="subtitle1"
+                    color={"primary.main"}
+                    display="inline"
+                > Popis
+                </Typography>
+                {editable && <IconButton onClick={() => setEditingState(!editingState)}
+                                         type={!editingState ? "submit" : undefined}>
+                    <EditIcon/>
+                </IconButton>}
+            </Box>
+            {editingState ? <TextFieldElement name={"web"} size="small" value={"TEXT FIELD"} multiline/> :
+                <Typography display="inline">LABEL</Typography>}
+        </FormContainer>)
+}
 
+
+/*TODO: property *editable* depends on status (logged in/out) */
 export function InfoPanel(editable: boolean) {
     return <Stack spacing={4}>
         <Opening {...editable}/>
         <Contact {...editable}/>
         <Languages {...editable}/>
+        <Description {...editable}/>
     </Stack>
 }
