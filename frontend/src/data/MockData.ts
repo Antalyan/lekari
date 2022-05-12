@@ -25,3 +25,6 @@ export const doctors: IBasicDoctor[] = [
         "rating": 2.5
     }
 ]
+
+export const languages: string[] = ["čeština", "angličtina", "němčina", "ruština", "španělština"]
+

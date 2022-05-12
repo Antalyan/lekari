@@ -11,6 +11,7 @@ import {Footer} from "../MainPage/Footer";
 import {doctors} from "../../data/MockData";
 import {useParams} from 'react-router-dom';
 import {Rating, Tab, Tabs} from "@mui/material";
+import {InfoPanel} from "./InfoPanel";
 
 
 interface TabPanelProps {
@@ -73,7 +74,8 @@ export function DoctorDetailPage() {
                 <Tab label="RECENZE" {...a11yProps(2)} />
             </Tabs>
             <TabPanel value={value} index={0}>
-                INFO
+                {/*TODO: evaluate editable*/}
+                <InfoPanel {...false}/>
             </TabPanel>
             <TabPanel value={value} index={1}>
                 OBJEDNÁNÍ

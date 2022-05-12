@@ -30,3 +30,9 @@ export interface IPatient {
     passwordCheck: string,
     profilePicture: string
 }
+
+export interface IContact {
+    email: string,
+    phone: string,
+    web: string
+}
