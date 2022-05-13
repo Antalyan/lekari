@@ -1,21 +1,17 @@
 import * as React from "react";
+import {useState} from "react";
 import Grid from "@mui/material/Grid";
-import {IconButton, Stack, TextareaAutosize, TextField} from "@mui/material";
+import {IconButton, Stack} from "@mui/material";
 import Button from "@mui/material/Button";
 import EditIcon from '@mui/icons-material/Edit';
-import {IBasicDoctor, IContact, IPatient} from "../Interfaces";
+import {IEditable} from "../Interfaces";
 import Typography from "@mui/material/Typography";
-import {LocationOn, Person, Warning} from "@mui/icons-material";
 import Box from "@mui/material/Box";
-import Profile from "../../images/mock_profile.jpg";
-import {useState} from "react";
-import {FormContainer, MultiSelectElement, SelectElement, TextFieldElement} from "react-hook-form-mui";
+import {FormContainer, MultiSelectElement, TextFieldElement} from "react-hook-form-mui";
 import {useForm} from "react-hook-form";
-import {languages} from "../../data/MockData";
+import {DAYS, LANGUAGES} from "../../data/Constants";
 
-const days = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"]
-
-function Opening(editable: boolean) {
+function Opening({editable}: IEditable) {
     const [editingState, setEditingState] = useState(false);
     return (<>
             <Box>
@@ -31,9 +27,9 @@ function Opening(editable: boolean) {
                 </IconButton>}
             </Box>
             <Stack spacing={editingState ? 2 : 0}>
-                {days.map((day, index) => {
+                {DAYS.map((day, index) => {
                     return <Stack direction={"row"} spacing={2} key={index}>
-                        <Typography width={20} display="inline">{day + ":"}</Typography>
+                        <Typography width={60} display="inline">{day + ":"}</Typography>
                         {editingState ? <TextFieldElement name={"opening" + index} size="small" value={"TEXT FIELD"}/> :
                             <Typography display="inline">LABEL</Typography>}
                     </Stack>
@@ -43,7 +39,7 @@ function Opening(editable: boolean) {
     )
 }
 
-function Contact(editable: boolean) {
+function Contact({editable}: IEditable) {
     const [editingState, setEditingState] = useState(false);
     return (
         <>
@@ -80,7 +76,7 @@ function Contact(editable: boolean) {
         </>)
 }
 
-function Languages(editable: boolean) {
+function Languages({editable}: IEditable) {
     const [editingState, setEditingState] = useState(false);
     // TODO: change to languages type
     return (
@@ -99,14 +95,14 @@ function Languages(editable: boolean) {
             </Box>
             {
                 editingState ?
-                    <MultiSelectElement label="Jazyky" showCheckbox name="languages" menuItems={languages}/> :
+                    <MultiSelectElement label="Jazyky" showCheckbox name="languages" menuItems={LANGUAGES}/> :
                     <Typography display="inline">LABEL</Typography>
             }
         </>
     )
 }
 
-function Description(editable: boolean) {
+function Description({editable}: IEditable) {
     const [editingState, setEditingState] = useState(false);
     // TODO: change to languages type
     return (
@@ -131,7 +127,7 @@ function Description(editable: boolean) {
 }
 
 /*TODO: property *editable* depends on status (logged in/out) */
-export function InfoPanel(editable: boolean) {
+export function InfoPanel({editable}: IEditable) {
     const formContext = useForm<string[]>();
     const {handleSubmit} = formContext;
     const onSubmit = handleSubmit((formData: string[]) => {
@@ -143,10 +139,10 @@ export function InfoPanel(editable: boolean) {
         formContext={formContext}
         handleSubmit={onSubmit}>
         <Stack spacing={2}>
-            <Opening {...editable}/>
-            <Contact {...editable}/>
-            <Languages {...editable}/>
-            <Description {...editable}/>
+            <Opening editable={editable}/>
+            <Contact editable={editable}/>
+            <Languages editable={editable}/>
+            <Description editable={editable}/>
             <Grid container>
                 <Grid item xs={6}>
                     <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>Uložit změny</Button>

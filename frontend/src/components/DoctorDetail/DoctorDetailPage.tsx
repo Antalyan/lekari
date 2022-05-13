@@ -8,7 +8,7 @@ import {SearchBox} from "../MainPage/SearchBox";
 import {IBasicDoctor} from "../Interfaces";
 import {DoctorCard} from "./DoctorCard";
 import {Footer} from "../MainPage/Footer";
-import {doctors} from "../../data/MockData";
+import {DOCTORS} from "../../data/MockData";
 import {useParams} from 'react-router-dom';
 import {Rating, Tab, Tabs} from "@mui/material";
 import {InfoPanel} from "./InfoPanel";
@@ -59,7 +59,7 @@ export function DoctorDetailPage() {
     if (id === undefined) {
         return <>ERROR</>
     }
-    const doctor = doctors.filter((doctor) => doctor.id == parseInt(id))[0];
+    const doctor = DOCTORS.filter((doctor) => doctor.id == parseInt(id))[0];
 
 
     return <>
@@ -76,10 +76,10 @@ export function DoctorDetailPage() {
             </Tabs>
             <TabPanel value={value} index={0}>
                 {/*TODO: evaluate editable based on login, perhaps through global context? */}
-                <InfoPanel {...false}/>
+                <InfoPanel editable={false}/>
             </TabPanel>
             <TabPanel value={value} index={1}>
-                <ReservationPanel {...false}/>
+                <ReservationPanel editable={false}/>
             </TabPanel>
             <TabPanel value={value} index={2}>
                 RECENZE

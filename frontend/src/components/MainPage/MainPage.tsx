@@ -8,7 +8,7 @@ import {SearchBox} from "./SearchBox";
 import {IBasicDoctor} from "../Interfaces";
 import {DoctorCard} from "../DoctorDetail/DoctorCard";
 import {Footer} from "./Footer";
-import {doctors} from "../../data/MockData";
+import {DOCTORS} from "../../data/MockData";
 
 export function MainPage() {
     return <>
@@ -68,7 +68,7 @@ export function MainPage() {
 
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}} margin={1}>
             {/*TODO: check whether this is the correct index*/}
-            {doctors.map((doctor: IBasicDoctor) => (
+            {DOCTORS.map((doctor: IBasicDoctor) => (
                 <Grid item key={doctor.name} xs={12}>
                     <DoctorCard detailed={false} doctor={doctor}/>
                 </Grid>

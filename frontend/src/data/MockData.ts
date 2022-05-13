@@ -1,6 +1,6 @@
 import {IBasicDoctor} from "../components/Interfaces";
 
-export const doctors: IBasicDoctor[] = [
+export const DOCTORS: IBasicDoctor[] = [
     {
         "name": "MUDr. Adam Ananas",
         "specialization": "Neurolog",
@@ -26,5 +26,8 @@ export const doctors: IBasicDoctor[] = [
     }
 ]
 
-export const languages: string[] = ["čeština", "angličtina", "němčina", "ruština", "španělština"]
+export const RESERVATION_TIMES = [{id: 1, title: "12:00"}, {id: 2, title: "12:30"}, {id: 3, title: "13:00"}, {id: 4, title: "13:45"},
+    {id: 5, title: "14:00"}, {id: 6, title: "15:30"}, {id: 7, title: "16:00"}, {id: 8, title: "16:45"}]
+
+export const INTERVALS = [10, 15, 20, 30, 60].map((val, index) => {return {id: index, title: val}})
 

@@ -36,3 +36,7 @@ export interface IContact {
     phone: string,
     web: string
 }
+
+export interface IEditable {
+    editable: boolean
+}
