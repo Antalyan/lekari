@@ -156,7 +156,6 @@ function Description(editable: boolean) {
         </FormContainer>)
 }
 
-
 /*TODO: property *editable* depends on status (logged in/out) */
 export function InfoPanel(editable: boolean) {
     return <Stack spacing={4}>

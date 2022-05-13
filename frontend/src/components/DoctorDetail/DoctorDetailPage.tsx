@@ -12,6 +12,7 @@ import {doctors} from "../../data/MockData";
 import {useParams} from 'react-router-dom';
 import {Rating, Tab, Tabs} from "@mui/material";
 import {InfoPanel} from "./InfoPanel";
+import {ReservationPanel} from "./ReservationPanel";
 
 
 interface TabPanelProps {
@@ -74,11 +75,11 @@ export function DoctorDetailPage() {
                 <Tab label="RECENZE" {...a11yProps(2)} />
             </Tabs>
             <TabPanel value={value} index={0}>
-                {/*TODO: evaluate editable*/}
+                {/*TODO: evaluate editable based on login, perhaps through global context? */}
                 <InfoPanel {...false}/>
             </TabPanel>
             <TabPanel value={value} index={1}>
-                OBJEDNÁNÍ
+                <ReservationPanel {...false}/>
             </TabPanel>
             <TabPanel value={value} index={2}>
                 RECENZE
