@@ -17,16 +17,7 @@ const days = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"]
 
 function Opening(editable: boolean) {
     const [editingState, setEditingState] = useState(false);
-    const formContext = useForm<string[]>();
-    const {handleSubmit} = formContext;
-    const onSubmit = handleSubmit((formData: string[]) => {
-        console.log(formData)
-    });
-    return (
-        // @ts-ignore
-        <FormContainer
-            formContext={formContext}
-            handleSubmit={onSubmit}>
+    return (<>
             <Box>
                 <Typography
                     variant="subtitle1"
@@ -48,21 +39,14 @@ function Opening(editable: boolean) {
                     </Stack>
                 })}
             </Stack>
-        </FormContainer>)
+        </>
+    )
 }
 
 function Contact(editable: boolean) {
     const [editingState, setEditingState] = useState(false);
-    const formContext = useForm<IContact>();
-    const {handleSubmit} = formContext;
-    const onSubmit = handleSubmit((formData: IContact) => {
-        console.log(formData)
-    });
     return (
-        // @ts-ignore
-        <FormContainer
-            formContext={formContext}
-            handleSubmit={onSubmit}>
+        <>
             <Box>
                 <Typography
                     variant="subtitle1"
@@ -93,22 +77,14 @@ function Contact(editable: boolean) {
                         <Typography display="inline">LABEL</Typography>}
                 </Stack>
             </Stack>
-        </FormContainer>)
+        </>)
 }
 
 function Languages(editable: boolean) {
     const [editingState, setEditingState] = useState(false);
     // TODO: change to languages type
-    const formContext = useForm<string[]>();
-    const {handleSubmit} = formContext;
-    const onSubmit = handleSubmit((formData: string[]) => {
-        console.log(formData)
-    });
     return (
-        // @ts-ignore
-        <FormContainer
-            formContext={formContext}
-            handleSubmit={onSubmit}>
+        <>
             <Box>
                 <Typography
                     variant="subtitle1"
@@ -121,24 +97,20 @@ function Languages(editable: boolean) {
                     <EditIcon/>
                 </IconButton>}
             </Box>
-            {editingState ? <MultiSelectElement label="Jazyky" showCheckbox name="languages" menuItems={languages}/> :
-                <Typography display="inline">LABEL</Typography>}
-        </FormContainer>)
+            {
+                editingState ?
+                    <MultiSelectElement label="Jazyky" showCheckbox name="languages" menuItems={languages}/> :
+                    <Typography display="inline">LABEL</Typography>
+            }
+        </>
+    )
 }
 
 function Description(editable: boolean) {
     const [editingState, setEditingState] = useState(false);
     // TODO: change to languages type
-    const formContext = useForm<string[]>();
-    const {handleSubmit} = formContext;
-    const onSubmit = handleSubmit((formData: string[]) => {
-        console.log(formData)
-    });
     return (
-        // @ts-ignore
-        <FormContainer
-            formContext={formContext}
-            handleSubmit={onSubmit}>
+        <>
             <Box>
                 <Typography
                     variant="subtitle1"
@@ -151,17 +123,39 @@ function Description(editable: boolean) {
                     <EditIcon/>
                 </IconButton>}
             </Box>
-            {editingState ? <TextFieldElement name={"web"} size="small" value={"TEXT FIELD"} multiline/> :
-                <Typography display="inline">LABEL</Typography>}
-        </FormContainer>)
+            {
+                editingState ? <TextFieldElement name={"web"} size="small" value={"TEXT FIELD"} multiline/> :
+                    <Typography display="inline">LABEL</Typography>
+            }
+        </>)
 }
 
 /*TODO: property *editable* depends on status (logged in/out) */
 export function InfoPanel(editable: boolean) {
-    return <Stack spacing={4}>
-        <Opening {...editable}/>
-        <Contact {...editable}/>
-        <Languages {...editable}/>
-        <Description {...editable}/>
-    </Stack>
+    const formContext = useForm<string[]>();
+    const {handleSubmit} = formContext;
+    const onSubmit = handleSubmit((formData: string[]) => {
+        // TODO: send data to database on this click
+        console.log(formData)
+    });
+    // @ts-ignore
+    return (<FormContainer
+        formContext={formContext}
+        handleSubmit={onSubmit}>
+        <Stack spacing={2}>
+            <Opening {...editable}/>
+            <Contact {...editable}/>
+            <Languages {...editable}/>
+            <Description {...editable}/>
+            <Grid container>
+                <Grid item xs={6}>
+                    <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>Uložit změny</Button>
+                </Grid>
+                <Grid item xs={6}>
+                    {/*TODO: change onSubmit to function resetting form (refresh page basically)*/}
+                    <Button variant='contained' type={'submit'} color={'primary'} onClick={onSubmit}>Zrušit změny</Button>
+                </Grid>
+            </Grid>
+        </Stack>
+    </FormContainer>)
 }
