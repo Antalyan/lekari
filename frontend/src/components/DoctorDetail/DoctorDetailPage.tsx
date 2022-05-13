@@ -13,6 +13,7 @@ import {useParams} from 'react-router-dom';
 import {Rating, Tab, Tabs} from "@mui/material";
 import {InfoPanel} from "./InfoPanel";
 import {ReservationPanel} from "./ReservationPanel";
+import {ReviewPanel} from "./ReviewPanel";
 
 
 interface TabPanelProps {
@@ -82,7 +83,7 @@ export function DoctorDetailPage() {
                 <ReservationPanel editable={false}/>
             </TabPanel>
             <TabPanel value={value} index={2}>
-                RECENZE
+                <ReviewPanel editable={true}/>
             </TabPanel>
         </Box>
 

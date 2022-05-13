@@ -40,3 +40,11 @@ export interface IContact {
 export interface IEditable {
     editable: boolean
 }
+
+export interface IReview {
+    name?: string,
+    date: Date,
+    rating: number,
+    text: string,
+    id?: number
+}
