@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./database.db"
+}
+
+model Person {
+  id             String           @id @default(uuid())
+  name           String
+  degree         String
+  birthYear      Int
+  email          String
+  phone          Int
+  insuraceNumber Int
+  insuranceId    String
+  insurance      InsuranceCompany @relation(fields: [insuranceId], references: [id])
+  addressId      String           @unique
+  address        Address          @relation(fields: [addressId], references: [id])
+  password       String
+  reservations   Reservation[]
+  doctor         Doctor?
+}
+
+model InsuranceCompany {
+  id      String   @id @default(uuid())
+  number  Int
+  name    String
+  persons Person[]
+}
+
+model Address {
+  id         String  @id @default(uuid())
+  country    String
+  city       String
+  postalCode Int
+  street     String
+  person     Person?
+  doctor     Doctor?
+}
+
+model Reservation {
+  id            String   @id @default(uuid())
+  personId      String
+  person        Person   @relation(fields: [personId], references: [id])
+  doctorId      String
+  doctor        Doctor   @relation(fields: [doctorId], references: [id])
+  from          DateTime
+  personComment String
+  doctorComment String
+  created       DateTime @default(now())
+}
+
+model Doctor {
+  id             String           @id @default(uuid())
+  specialization String // TODO: enum
+  actuality      String
+  email          String
+  phone          String
+  description    String
+  link           String
+  profilePicture String
+  addressId      String           @unique
+  address        Address          @relation(fields: [addressId], references: [id])
+  personId       String           @unique
+  person         Person           @relation(fields: [personId], references: [id])
+  reservations   Reservation[]
+  references     Reference[]
+  languages      DoctorLanguage[]
+  openingHours   OpeningHours[]
+}
+
+model Reference {
+  id             String   @id @default(uuid())
+  doctorId       String
+  doctor         Doctor   @relation(fields: [doctorId], references: [id])
+  comment        String
+  rate           Int        // TODO: enum? What about stars number
+  author         String     // TODO: connection to user?
+  doctor_comment String     // TODO: What about response?
+  created        DateTime @default(now())
+}
+
+model DoctorLanguage {
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+  language String           // TODO: enum
+
+  @@unique([doctorId, language])
+}
+
+model OpeningHours {
+  doctorId String
+  dostor   Doctor   @relation(fields: [doctorId], references: [id])
+  day      String           // TODO: enum
+  fromTime DateTime
+  toTime   DateTime
+  fromDate DateTime @default(now()) // TODO: in diagram it is time
+
+  @@unique([doctorId, day])
+}
