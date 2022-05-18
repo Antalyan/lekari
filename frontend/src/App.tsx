@@ -34,7 +34,7 @@ export default function App() {
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<MainPage />}/>
-                <Route path="/register/patient" element={<RegisterPatientForm />} />
+                <Route path="/register-patient" element={<RegisterPatientForm />} />
                 <Route path="/doctor/:id" element={<DoctorDetailPage />} />
             </Routes>
         </BrowserRouter>

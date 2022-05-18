@@ -43,14 +43,14 @@ function ReviewCard({name, date, rating, text, id}: IReview) {
         <Divider/>
         <Grid container justifyContent={"space-between"} spacing={1}>
             <Grid item xs={12}>
-                <Stack direction={"row"} justifyContent={"space-between"}>
+                <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
                     <Typography variant="h6"
                                 color={"primary.main"}
                                 display={"inline"}>
                         {name}
                     </Typography>
-                    <Typography variant="h6"
-                                color={"primary.main"}
+                    <Typography variant="subtitle2"
+                                color={"text.secondary"}
                                 display={"inline"}>
                         {date.toDateString()}
                     </Typography>
@@ -62,7 +62,7 @@ function ReviewCard({name, date, rating, text, id}: IReview) {
             </Grid>
             <Grid item xs={12}>
                 <Typography variant="subtitle1"
-                            color={"primary.main"}
+                            color={"body1"}
                             display={"inline"}>
                     {text}
                 </Typography>

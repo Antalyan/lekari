@@ -77,7 +77,7 @@ export function DoctorDetailPage() {
             </Tabs>
             <TabPanel value={value} index={0}>
                 {/*TODO: evaluate editable based on login, perhaps through global context? */}
-                <InfoPanel editable={false}/>
+                <InfoPanel editable={true}/>
             </TabPanel>
             <TabPanel value={value} index={1}>
                 <ReservationPanel editable={false}/>
