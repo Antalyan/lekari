@@ -10,6 +10,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import {DataFormType} from "../data/Constants";
 import {PhotoCamera} from "@mui/icons-material";
 import {specializations} from "../data/MockData";
+import EditIcon from "@mui/icons-material/Edit";
 
 const validateNumbers = {pattern: {value: /^[0-9]*$/, message: "Input must be only numeric"}}
 
@@ -106,7 +107,13 @@ export function RegisterForm({type}: IForm) {
                                 </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextFieldElement name={'title'} label={'Titul'}/>
+                                <TextFieldElement name={'title'} label={'Titul'}
+                                                  InputProps={{
+                                                      endAdornment: <
+                                                          IconButton>
+                                                          <EditIcon/>
+                                                      </IconButton>
+                                                  }}/>
                             </Grid>
                             <Grid item xs={12}>
                                 <TextFieldElement name={'name'} label={'Jméno'} required fullWidth/>
