@@ -75,12 +75,12 @@ export default function Header() {
                     {/* //TODO add: onClick={handleClose} */}
                     <LoginForm/>
                     <MenuItem>
-                        <Link href="#" underline="hover">
+                        <Link href={"/register-patient"} underline="hover">
                             {'Registrovat se - pacient'}
                         </Link>
                     </MenuItem>
                     <MenuItem>
-                        <Link href="#" underline="hover">
+                        <Link href={"/register-doctor"} underline="hover">
                             {'Registrovat se - lékař'}
                         </Link>
                     </MenuItem>

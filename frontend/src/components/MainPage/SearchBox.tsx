@@ -6,7 +6,6 @@ import * as React from "react";
 import {AccountCircle, FilterList} from "@mui/icons-material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import {LoginForm} from "./LoginForm";
 import {useState} from "react";
 import {FilterMenu} from "./FilterMenu";
 import Header from "./Header";

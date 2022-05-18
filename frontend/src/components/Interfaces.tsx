@@ -1,3 +1,5 @@
+import {DataFormType} from "../data/Constants";
+
 export interface IBasicDoctor {
     name: string,
     specialization: string,
@@ -47,4 +49,8 @@ export interface IReview {
     rating: number,
     text: string,
     id?: number
+}
+
+export interface IForm {
+    type: DataFormType
 }

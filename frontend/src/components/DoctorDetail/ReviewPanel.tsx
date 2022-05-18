@@ -31,7 +31,7 @@ function ReviewCreate() {
                 <TextFieldElement name={"name"} label={"Autor"} size="medium"/>
                 <TextFieldElement name={"text"} label={"Text"} size="medium" multiline/>
                 <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>
-                    "Odeslat recenzi"
+                    Odeslat recenzi
                 </Button>
             </Stack>
         </FormContainer>

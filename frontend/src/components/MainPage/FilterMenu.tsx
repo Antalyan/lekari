@@ -1,9 +1,9 @@
 import {Button, Grid, Stack, Typography} from "@mui/material";
 import {useForm} from "react-hook-form";
 import * as React from "react";
-import {useState} from "react";
 import {IBasicDoctor} from "../Interfaces";
 import {AutoSelect} from "./AutoSelect";
+import {cities, specializations} from "../../data/MockData";
 
 function FilterForm() {
 
@@ -45,8 +45,5 @@ export function FilterMenu() {
         </>
     )
 }
-
-const specializations = ["Chirurg", "Praktik"];
-const cities = ["Praha", "Brno", "Ostrava", "Žďár nad Sázavou"]
 
 

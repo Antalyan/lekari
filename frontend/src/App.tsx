@@ -21,8 +21,9 @@ import Pills from "./images/pills.jpg"
 import {MainPage} from './components/MainPage/MainPage';
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import {RegisterPatientForm} from "./components/RegisterPatientForm";
+import {RegisterForm} from "./components/RegisterForm";
 import {DoctorDetailPage} from "./components/DoctorDetail/DoctorDetailPage";
+import {DataFormType} from "./data/Constants";
 
 let theme = createTheme();
 theme = responsiveFontSizes(theme);
@@ -34,7 +35,9 @@ export default function App() {
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<MainPage />}/>
-                <Route path="/register-patient" element={<RegisterPatientForm />} />
+                <Route path="/register-patient" element={<RegisterForm {...{type: DataFormType.Patient}} />} />
+                <Route path="/register-doctor" element={<RegisterForm {...{type: DataFormType.Doctor}} />} />
+                <Route path="/doctor/:id/make-reservation" element={<RegisterForm {...{type: DataFormType.Reservation}} />} />
                 <Route path="/doctor/:id" element={<DoctorDetailPage />} />
             </Routes>
         </BrowserRouter>

@@ -23,7 +23,7 @@ export const DOCTORS: IBasicDoctor[] = [
         "actuality": "Přijímám nové vlky! Dokud mě nesní...",
         "id": 3,
         "rating": 2.5
-    }
+    },
 ]
 
 export const REVIEWS: IReview[] = [
@@ -53,3 +53,5 @@ export const INTERVALS = [10, 15, 20, 30, 60].map((val, index) => {
     return {id: index, title: val}
 })
 
+export const specializations = ["Chirurg", "Praktik", "Zvěrolékař specializovaný na vlky"];
+export const cities = ["Praha", "Brno", "Ostrava", "Žďár nad Sázavou"]

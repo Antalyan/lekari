@@ -30,6 +30,7 @@ import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import {DAYS, LANGUAGES} from "../../data/Constants";
 import {INTERVALS, RESERVATION_TIMES} from "../../data/MockData";
+import {useParams} from "react-router-dom";
 
 interface IReservationCreate {
     create: boolean
@@ -41,6 +42,8 @@ function getReservationTimes(date?: Date) {
 }
 
 function ReservationDatePanel({create}: IReservationCreate) {
+    const {id} = useParams();
+
     const formContext = useForm();
     const {handleSubmit} = formContext;
 
@@ -74,6 +77,7 @@ function ReservationDatePanel({create}: IReservationCreate) {
                     {create && dateState != null &&
                         <TextFieldElement name={"reservationNote"} label={"Poznámka pro lékaře"} size="small"
                                           multiline/>}
+                    {/*TODO: change href for reservation cancel*/}
                     {dateState != null &&
                         <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>
                             {create ? "Vytvořit rezervaci" : "Zrušit rezervační slot"}
