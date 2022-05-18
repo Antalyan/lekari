@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import {IconButton, Stack} from "@mui/material";
 import Button from "@mui/material/Button";
 import EditIcon from '@mui/icons-material/Edit';
-import {IEditable} from "../Interfaces";
+import {IEditable, IOpeningHour} from "../Interfaces";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {FormContainer, MultiSelectElement, TextFieldElement} from "react-hook-form-mui";
@@ -12,7 +12,29 @@ import {useForm} from "react-hook-form";
 import {DAYS, LANGUAGES} from "../../data/Constants";
 
 function Opening({editable}: IEditable) {
-    const [editingState, setEditingState] = useState(false);
+    const [editingState, setEditingState] = useState<IOpeningHour>({
+        editable: false,
+        texts: Array(7).fill(null),
+    });
+
+    const invertEditability = () => {
+        return setEditingState({
+            editable: !editingState.editable,
+            texts: editingState.texts
+        })
+    };
+
+    const updateValue = (index: number, new_value: any) => {
+        console.log("AAAAA")
+        console.log(new_value);
+        return setEditingState({
+            editable: editingState.editable,
+            texts: editingState.texts.map((val, ind) => {
+                return index == ind ? new_value : val
+            })
+        })
+    };
+
     return (<>
             <Box>
                 <Typography
@@ -21,17 +43,22 @@ function Opening({editable}: IEditable) {
                     display="inline"
                 > Otevírací doba
                 </Typography>
-                {editable && <IconButton onClick={() => setEditingState(!editingState)}
-                                         type={!editingState ? "submit" : undefined}>
+                {/*TODO: type: do we really want it to submit?*/}
+                {/*type={!editingState.editable ? "submit" : undefined}*/}
+                {editable && <IconButton onClick={() => invertEditability()}>
                     <EditIcon/>
                 </IconButton>}
             </Box>
-            <Stack spacing={editingState ? 2 : 0}>
+            <Stack spacing={editingState.editable ? 2 : 0}>
                 {DAYS.map((day, index) => {
                     return <Stack direction={"row"} spacing={2} key={index}>
                         <Typography width={60} display="inline">{day + ":"}</Typography>
-                        {editingState ? <TextFieldElement name={"opening" + index} size="small" value={"TEXT FIELD"}/> :
-                            <Typography display="inline">LABEL</Typography>}
+                        {editingState.editable ?
+                            <TextFieldElement name={"opening" + index} size="small" value={editingState.texts[index]}
+                                              // onChange={(e) => updateValue(index, e.target.value)}
+                                onChange={(e) => console.log("íííííííííí")}
+                            /> :
+                            <Typography display="inline">{editingState.texts[index]}</Typography>}
                     </Stack>
                 })}
             </Stack>
@@ -132,7 +159,8 @@ export function InfoPanel({editable}: IEditable) {
     const {handleSubmit} = formContext;
     const onSubmit = handleSubmit((formData: string[]) => {
         // TODO: send data to database on this click
-        console.log(formData)
+        console.log(formData);
+        console.log("XXX")
     });
     // @ts-ignore
     return (<FormContainer
@@ -145,11 +173,13 @@ export function InfoPanel({editable}: IEditable) {
             <Description editable={editable}/>
             <Grid container>
                 <Grid item xs={6}>
-                    <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>Uložit změny</Button>
+                    <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>Uložit
+                        změny</Button>
                 </Grid>
                 <Grid item xs={6}>
                     {/*TODO: change onSubmit to function resetting form (refresh page basically)*/}
-                    <Button variant='contained' type={'submit'} color={'primary'} onClick={onSubmit}>Zrušit změny</Button>
+                    <Button variant='contained' type={'submit'} color={'primary'} onClick={onSubmit}>Zrušit
+                        změny</Button>
                 </Grid>
             </Grid>
         </Stack>

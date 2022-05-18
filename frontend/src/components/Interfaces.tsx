@@ -54,3 +54,8 @@ export interface IReview {
 export interface IForm {
     type: DataFormType
 }
+
+export interface IOpeningHour {
+    editable: boolean,
+    texts: Array<string>
+}
