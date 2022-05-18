@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import {IconButton, Stack} from "@mui/material";
 import Button from "@mui/material/Button";
 import EditIcon from '@mui/icons-material/Edit';
-import {IEditable, IOpeningHour} from "../Interfaces";
+import {IEditable} from "../Interfaces";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {FormContainer, MultiSelectElement, TextFieldElement} from "react-hook-form-mui";
@@ -12,30 +12,10 @@ import {useForm} from "react-hook-form";
 import {DAYS, LANGUAGES} from "../../data/Constants";
 
 function Opening({editable}: IEditable) {
-    const [editingState, setEditingState] = useState<IOpeningHour>({
-        editable: false,
-        texts: Array(7).fill(null),
-    });
-
-    const invertEditability = () => {
-        return setEditingState({
-            editable: !editingState.editable,
-            texts: editingState.texts
-        })
-    };
-
-    const updateValue = (index: number, new_value: any) => {
-        console.log("AAAAA")
-        console.log(new_value);
-        return setEditingState({
-            editable: editingState.editable,
-            texts: editingState.texts.map((val, ind) => {
-                return index == ind ? new_value : val
-            })
-        })
-    };
-
-    return (<>
+    // TODO: editability should be checked at backend on submit as well
+    const [editingState, setEditingState] = useState(false);
+    return (
+        <>
             <Box>
                 <Typography
                     variant="subtitle1"
@@ -43,22 +23,21 @@ function Opening({editable}: IEditable) {
                     display="inline"
                 > Otevírací doba
                 </Typography>
-                {/*TODO: type: do we really want it to submit?*/}
-                {/*type={!editingState.editable ? "submit" : undefined}*/}
-                {editable && <IconButton onClick={() => invertEditability()}>
+                {editable && <IconButton onClick={() => setEditingState(!editingState)}>
                     <EditIcon/>
                 </IconButton>}
             </Box>
-            <Stack spacing={editingState.editable ? 2 : 0}>
+
+            <Stack spacing={editingState ? 2 : 0}>
                 {DAYS.map((day, index) => {
                     return <Stack direction={"row"} spacing={2} key={index}>
                         <Typography width={60} display="inline">{day + ":"}</Typography>
-                        {editingState.editable ?
-                            <TextFieldElement name={"opening" + index} size="small" value={editingState.texts[index]}
-                                              // onChange={(e) => updateValue(index, e.target.value)}
-                                onChange={(e) => console.log("íííííííííí")}
-                            /> :
-                            <Typography display="inline">{editingState.texts[index]}</Typography>}
+                        <TextFieldElement name={"opening" + index} size="small"
+                                          disabled={!editingState} variant={editingState ? "outlined" : "standard"}
+                                          InputProps={{
+                                              disableUnderline: !editingState,
+                                          }}
+                        />
                     </Stack>
                 })}
             </Stack>
@@ -77,8 +56,7 @@ function Contact({editable}: IEditable) {
                     display="inline"
                 > Kontakt
                 </Typography>
-                {editable && <IconButton onClick={() => setEditingState(!editingState)}
-                                         type={!editingState ? "submit" : undefined}>
+                {editable && <IconButton onClick={() => setEditingState(!editingState)}>
                     <EditIcon/>
                 </IconButton>}
             </Box>
@@ -86,26 +64,38 @@ function Contact({editable}: IEditable) {
                 {/*TODO: add validation and potentially refactor to one*/}
                 <Stack direction={"row"} spacing={2}>
                     <Typography width={40} display="inline">Email:</Typography>
-                    {editingState ? <TextFieldElement name={"email"} type="email" size="small" value={"TEXT FIELD"}/> :
-                        <Typography display="inline">LABEL</Typography>}
+                    <TextFieldElement name={"email"} size="small" type="email"
+                                      disabled={!editingState} variant={editingState ? "outlined" : "standard"}
+                                      InputProps={{
+                                          disableUnderline: !editingState,
+                                      }}
+                    />
                 </Stack>
                 <Stack direction={"row"} spacing={2}>
                     <Typography width={40} display="inline">Tel:</Typography>
-                    {editingState ? <TextFieldElement name={"phone"} size="small" value={"TEXT FIELD"}/> :
-                        <Typography display="inline">LABEL</Typography>}
+                    <TextFieldElement name={"phone"} size="small"
+                                      disabled={!editingState} variant={editingState ? "outlined" : "standard"}
+                                      InputProps={{
+                                          disableUnderline: !editingState,
+                                      }}
+                    />
                 </Stack>
                 <Stack direction={"row"} spacing={2}>
                     <Typography width={40} display="inline">Web:</Typography>
-                    {editingState ? <TextFieldElement name={"web"} size="small" value={"TEXT FIELD"}/> :
-                        <Typography display="inline">LABEL</Typography>}
+                    <TextFieldElement name={"web"} size="small"
+                                      disabled={!editingState} variant={editingState ? "outlined" : "standard"}
+                                      InputProps={{
+                                          disableUnderline: !editingState,
+                                      }}
+                    />
                 </Stack>
             </Stack>
         </>)
 }
 
 function Languages({editable}: IEditable) {
+// TODO: change to languages type
     const [editingState, setEditingState] = useState(false);
-    // TODO: change to languages type
     return (
         <>
             <Box>
@@ -115,23 +105,20 @@ function Languages({editable}: IEditable) {
                     display="inline"
                 > Jazyky
                 </Typography>
-                {editable && <IconButton onClick={() => setEditingState(!editingState)}
-                                         type={!editingState ? "submit" : undefined}>
+                {editable && <IconButton onClick={() => setEditingState(!editingState)}>
                     <EditIcon/>
                 </IconButton>}
             </Box>
-            {
-                editingState ?
-                    <MultiSelectElement label="Jazyky" showCheckbox name="languages" menuItems={LANGUAGES}/> :
-                    <Typography display="inline">LABEL</Typography>
-            }
+            <MultiSelectElement showCheckbox name="languages" menuItems={LANGUAGES}
+                                disabled={!editingState} variant={editingState ? "outlined" : "standard"}
+                                disableUnderline
+            />
         </>
     )
 }
 
 function Description({editable}: IEditable) {
     const [editingState, setEditingState] = useState(false);
-    // TODO: change to languages type
     return (
         <>
             <Box>
@@ -141,15 +128,16 @@ function Description({editable}: IEditable) {
                     display="inline"
                 > Popis
                 </Typography>
-                {editable && <IconButton onClick={() => setEditingState(!editingState)}
-                                         type={!editingState ? "submit" : undefined}>
+                {editable && <IconButton onClick={() => setEditingState(!editingState)}>
                     <EditIcon/>
                 </IconButton>}
             </Box>
-            {
-                editingState ? <TextFieldElement name={"web"} size="small" value={"TEXT FIELD"} multiline/> :
-                    <Typography display="inline">LABEL</Typography>
-            }
+            <TextFieldElement name={"description"} size="small" multiline
+                              disabled={!editingState} variant={editingState ? "outlined" : "standard"}
+                              InputProps={{
+                                  disableUnderline: !editingState,
+                              }}
+            />
         </>)
 }
 
