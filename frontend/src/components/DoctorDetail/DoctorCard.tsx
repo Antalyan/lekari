@@ -63,13 +63,11 @@ export function DoctorCard(props: { detailed: boolean, doctor: IBasicDoctor }) {
             {!props.detailed &&
                 <Grid item xs={4} container direction="column" paddingRight={4} justifyContent={"center"}
                       alignItems={"flex-end"}>
-                    <Stack spacing={2}>
-                        <Button href={`/doctor/${props.doctor.id}`} variant='contained' color={'primary'}
-                                size={"medium"}
-                                onClick={() => console.log("DETAIL")}>DETAIL</Button>
-                        <Button variant='contained' color={'primary'} size={"medium"}>OBJEDNÁNÍ</Button>
-                    </Stack>
+                    <Button href={`/doctor/${props.doctor.id}`} variant='contained' color={'primary'}
+                            size={"medium"}
+                            onClick={() => console.log("DETAIL")}>DETAIL</Button>
                 </Grid>}
         </Grid>
     )
 }
+
