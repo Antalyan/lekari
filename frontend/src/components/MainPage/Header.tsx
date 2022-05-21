@@ -13,11 +13,67 @@ import MenuItem from '@mui/material/MenuItem';
 import {Icon, Link} from "@mui/material";
 
 import Logo from "../../images/logoREPLACE.png"
+import AvatarImg from "../../images/mock_profile.jpg"
 import {AccountCircle} from "@mui/icons-material";
 import {LoginForm} from "./LoginForm";
+import {userAtom} from "../../state/LoggedInAtom";
+import {useRecoilValue} from "recoil";
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+
+function LoginMenu(props: { anchorEl: HTMLElement | null, onClose: () => void }) {
+    const user = useRecoilValue(userAtom);
+    return <Menu
+        id="menu-appbar"
+        anchorEl={props.anchorEl}
+        anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+        }}
+        keepMounted
+        transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+        }}
+        open={Boolean(props.anchorEl)}
+        onClose={props.onClose}
+    >
+        {/* //TODO add: onClick={handleClose} */}
+        {user.id ? <>
+                {/*TODO: replace links with newly implemented pages*/}
+                <MenuItem>
+                    <Link href={"/register-patient"} underline="hover">
+                        {"Můj profil"}
+                    </Link>
+                </MenuItem>
+                <MenuItem>
+                    <Link href={"/register-doctor"} underline="hover">
+                        {"Moje rezervace"}
+                    </Link>
+                </MenuItem>
+                <MenuItem>
+                    <Link href={"/register-doctor"} underline="hover">
+                        {"Odhlásit se"}
+                    </Link>
+                </MenuItem>
+            </>
+            : <>
+                <LoginForm/>
+                <MenuItem>
+                    <Link href={"/register-patient"} underline="hover">
+                        {"Registrovat se - pacient"}
+                    </Link>
+                </MenuItem>
+                <MenuItem>
+                    <Link href={"/register-doctor"} underline="hover">
+                        {"Registrovat se - lékař"}
+                    </Link>
+                </MenuItem>
+            </>}
+    </Menu>;
+}
+
 export default function Header() {
     const [auth, setAuth] = useState(true);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -34,6 +90,9 @@ export default function Header() {
         setAnchorEl(null);
     };
 
+
+    const user = useRecoilValue(userAtom);
+
     return (
         <AppBar position="static">
             <Toolbar>
@@ -46,7 +105,8 @@ export default function Header() {
                 <Typography
                     sx={{m: 1}}
                     variant="h6"
-                >Nepřihlášený</Typography>
+                    align="right"
+                >{user.id != null ? user.name : "Nepřihlášený"}</Typography>
                 <IconButton
                     size="large"
                     aria-label="account of current user"
@@ -55,36 +115,10 @@ export default function Header() {
                     onClick={handleMenu}
                     color="inherit"
                 >
-                    <AccountCircle fontSize="large"/>
+                    {user.id ? <Avatar alt={user.name} src={AvatarImg} sx={{width: 60, height: 60}}/> :
+                        <AccountCircle fontSize="large"/>}
                 </IconButton>
-                <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorEl}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right',
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                    }}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                >
-                    {/* //TODO add: onClick={handleClose} */}
-                    <LoginForm/>
-                    <MenuItem>
-                        <Link href={"/register-patient"} underline="hover">
-                            {'Registrovat se - pacient'}
-                        </Link>
-                    </MenuItem>
-                    <MenuItem>
-                        <Link href={"/register-doctor"} underline="hover">
-                            {'Registrovat se - lékař'}
-                        </Link>
-                    </MenuItem>
-                </Menu>
+                <LoginMenu anchorEl={anchorEl} onClose={handleClose}/>
             </Toolbar>
         </AppBar>
     );

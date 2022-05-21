@@ -55,3 +55,10 @@ export interface IForm {
     type: DataFormType,
     isEdit: boolean
 }
+
+export interface IGlobalProfileInfo {
+    id?: number,
+    name?: string,
+    surname?: string,
+    profile_picture?: string
+}
