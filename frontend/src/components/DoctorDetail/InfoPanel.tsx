@@ -68,6 +68,7 @@ function Contact({editable}: IEditable) {
                                       disabled={!editingState} variant={editingState ? "outlined" : "standard"}
                                       InputProps={{
                                           disableUnderline: !editingState,
+                                          fullWidth: true
                                       }}
                     />
                 </Stack>

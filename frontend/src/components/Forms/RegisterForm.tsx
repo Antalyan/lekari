@@ -1,20 +1,23 @@
-import {DatePickerElement, FormContainer, PasswordElement, SelectElement, TextFieldElement} from "react-hook-form-mui";
-import {Box, Button, Grid, IconButton, styled, Typography} from "@mui/material";
+import {FormContainer, PasswordElement} from "react-hook-form-mui";
+import {Box, Button, Grid, IconButton, Stack, styled, Typography} from "@mui/material";
 import {useForm, useFormContext} from "react-hook-form";
 import * as React from "react";
 import {FunctionComponent} from "react";
-import {IForm, IPatient} from "./Interfaces";
-import {countries} from "../data/Countries";
+import {IForm} from "../Interfaces";
+import {countries} from "../../data/Countries";
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import {DataFormType} from "../data/Constants";
+import {DataFormType} from "../../data/Constants";
 import {PhotoCamera} from "@mui/icons-material";
-import {specializations} from "../data/MockData";
-import EditIcon from "@mui/icons-material/Edit";
+import {specializations} from "../../data/MockData";
+import {FormDatePicker, FormSelect, FormTextField} from "./FormComponents";
 
 const validateNumbers = {pattern: {value: /^[0-9]*$/, message: "Input must be only numeric"}}
 
-function getFormLabel(type: DataFormType): string {
+function getFormLabel(type: DataFormType, isEdit: boolean): string {
+    if (isEdit) {
+        return "Můj profil"
+    }
     switch (type) {
         case DataFormType.Doctor:
             return "Registrace lékaře"
@@ -25,8 +28,21 @@ function getFormLabel(type: DataFormType): string {
     }
 }
 
-export function RegisterForm({type}: IForm) {
-    //TODO: change type of form to correspond to generalized form
+export interface IFormFieldProps {
+    isEdit: boolean,
+    name: string,
+    label?: string,
+    type?: string,
+    required?: boolean,
+    fullWidth?: boolean,
+    validation?: any
+    options?: any[] | undefined
+}
+
+
+export function RegisterForm({type, isEdit}: IForm) {
+    // TODO: isEdit should depend on the page (passed as props)
+
     const formContext = useForm()
     const {handleSubmit} = formContext
 
@@ -61,6 +77,7 @@ export function RegisterForm({type}: IForm) {
     })
 
     const PasswordRepeat: FunctionComponent = () => {
+        // TODO: password change pop-up
         const {getValues} = useFormContext()
         return (
             <PasswordElement label={'Heslo znovu'}
@@ -85,7 +102,7 @@ export function RegisterForm({type}: IForm) {
             <Typography variant="h5" gutterBottom component="div" align={"center"}
                         bgcolor={"primary.main"} color={"common.white"}
                         padding={2}>
-                {getFormLabel(type)}
+                {getFormLabel(type, isEdit)}
             </Typography>
             <Box
                 display="flex"
@@ -107,65 +124,61 @@ export function RegisterForm({type}: IForm) {
                                 </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextFieldElement name={'title'} label={'Titul'}
-                                                  InputProps={{
-                                                      endAdornment: <
-                                                          IconButton>
-                                                          <EditIcon/>
-                                                      </IconButton>
-                                                  }}/>
+                                <FormTextField isEdit={isEdit} name={'title'} label={'Titul'}/>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextFieldElement name={'name'} label={'Jméno'} required fullWidth/>
+                                <FormTextField isEdit={isEdit} name={'name'} label={'Jméno'} required={true} fullWidth/>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextFieldElement name={'surname'} label={'Příjmení'} required fullWidth/>
+                                <FormTextField isEdit={isEdit} name={'surname'} label={'Příjmení'} required={true}
+                                               fullWidth/>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextFieldElement name={'street'} label={'Ulice'} fullWidth/>
+                                <FormTextField isEdit={isEdit} name={'street'} label={'Ulice'} fullWidth/>
                             </Grid>
                             <Grid item xs={6}>
-                                <TextFieldElement name={'streetNumber'} label={'Číslo popisné'}
-                                                  required={type != DataFormType.Reservation}
-                                                  fullWidth
-                                                  validation={validateNumbers}/>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextFieldElement name={'postalCode'} label={'PSČ'}
-                                                  required={type != DataFormType.Reservation}
-                                                  fullWidth
-                                                  validation={validateNumbers}/>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextFieldElement name={'city'} label={'Město'}
-                                                  required={type != DataFormType.Reservation}
-                                                  fullWidth/>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <SelectElement name={'country'} label={'Stát'}
+                                <FormTextField isEdit={isEdit} name={'streetNumber'} label={'Číslo popisné'}
                                                required={type != DataFormType.Reservation}
                                                fullWidth
-                                               options={countryOptions}
+                                               validation={validateNumbers}/>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <FormTextField isEdit={isEdit} name={'postalCode'} label={'PSČ'}
+                                               required={type != DataFormType.Reservation}
+                                               fullWidth
+                                               validation={validateNumbers}/>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormTextField isEdit={isEdit} name={'city'} label={'Město'}
+                                               required={type != DataFormType.Reservation}
+                                               fullWidth/>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormSelect isEdit={isEdit} name={'country'} label={'Stát'}
+                                            required={type != DataFormType.Reservation}
+                                            fullWidth
+                                            options={countryOptions}
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <DatePickerElement name={'birthdate'} label={'Datum narození'} required/>
+                                <FormDatePicker isEdit={isEdit} name={'birthdate'} label={'Datum narození'} required/>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextFieldElement name={'email'} label={'Email'} type={'email'} required fullWidth/>
+                                <FormTextField isEdit={isEdit} name={'email'} label={'Email'} type={'email'} required
+                                               fullWidth/>
                             </Grid>
                             <Grid item xs={12}>
-                                <SelectElement name={'phoneCode'} label={'Předvolba'} required fullWidth
-                                               options={phoneOptions}
+                                <FormSelect isEdit={isEdit} name={'phoneCode'} label={'Předvolba'} required fullWidth
+                                            options={phoneOptions}
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <TextFieldElement name={'phone'} label={'Telefon'} required fullWidth
-                                                  validation={validateNumbers}/>
+                                <FormTextField isEdit={isEdit} name={'phone'} label={'Telefon'} required fullWidth
+                                               validation={validateNumbers}/>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextFieldElement name={'insuranceNumber'} label={'Číslo pojišťovny'}
-                                                  validation={validateNumbers}/>
+                                <FormTextField isEdit={isEdit} name={'insuranceNumber'} label={'Číslo pojišťovny'}
+                                               validation={validateNumbers}/>
                             </Grid>
 
                             {type == DataFormType.Doctor &&
@@ -178,35 +191,37 @@ export function RegisterForm({type}: IForm) {
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <SelectElement name={'specialization'} label={'Specializace'}
-                                                       fullWidth required
-                                                       options={specializationOptions}
+                                        <FormSelect isEdit={isEdit} name={'specialization'} label={'Specializace'}
+                                                    fullWidth required
+                                                    options={specializationOptions}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <TextFieldElement name={'status'} label={'Aktualita pro pacienty'} fullWidth/>
+                                        <FormTextField isEdit={isEdit} name={'status'} label={'Aktualita pro pacienty'}
+                                                       fullWidth/>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <TextFieldElement name={'doctorStreet'} label={'Ulice'} fullWidth/>
+                                        <FormTextField isEdit={isEdit} name={'doctorStreet'} label={'Ulice'} fullWidth/>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <TextFieldElement name={'doctorStreetNumber'} label={'Číslo popisné'}
-                                                          fullWidth
-                                                          validation={validateNumbers}/>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <TextFieldElement name={'doctorPostalCode'} label={'PSČ'}
-                                                          fullWidth
-                                                          validation={validateNumbers}/>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextFieldElement name={'doctorCity'} label={'Město'}
-                                                          fullWidth/>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <SelectElement name={'doctorCountry'} label={'Stát'}
+                                        <FormTextField isEdit={isEdit} name={'doctorStreetNumber'}
+                                                       label={'Číslo popisné'}
                                                        fullWidth
-                                                       options={countryOptions}
+                                                       validation={validateNumbers}/>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <FormTextField isEdit={isEdit} name={'doctorPostalCode'} label={'PSČ'}
+                                                       fullWidth
+                                                       validation={validateNumbers}/>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <FormTextField isEdit={isEdit} name={'doctorCity'} label={'Město'}
+                                                       fullWidth/>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <FormSelect isEdit={isEdit} name={'doctorCountry'} label={'Stát'}
+                                                    fullWidth
+                                                    options={countryOptions}
                                         />
                                     </Grid>
                                 </>}
@@ -240,10 +255,17 @@ export function RegisterForm({type}: IForm) {
                                 </>}
 
                             <Grid item xs={12}>
-                                <Box display="flex" justifyContent="center">
-                                    <Button variant='contained' type={'submit'} color={'primary'}
-                                            onSubmit={onSubmit}>{"Registrovat se"}</Button>
-                                </Box>
+                                <Stack direction="row" justifyContent="space-evenly" spacing={2}>
+                                    {isEdit ?
+                                        <>
+                                            <Button variant='contained' type={'submit'} color={'primary'}
+                                                    onSubmit={onSubmit}>{"Uložit změny"}</Button>
+                                            <Button variant='contained' color={'primary'}
+                                            >{"Zrušit změny"}</Button>
+                                        </>
+                                        : <Button variant='contained' type={'submit'} color={'primary'}
+                                                  onSubmit={onSubmit}>{"Registrovat se"}</Button>}
+                                </Stack>
                             </Grid>
                         </Grid>
                     </FormContainer>

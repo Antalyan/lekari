@@ -21,7 +21,7 @@ import Pills from "./images/pills.jpg"
 import {MainPage} from './components/MainPage/MainPage';
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import {RegisterForm} from "./components/RegisterForm";
+import {RegisterForm} from "./components/Forms/RegisterForm";
 import {DoctorDetailPage} from "./components/DoctorDetail/DoctorDetailPage";
 import {DataFormType} from "./data/Constants";
 
@@ -30,14 +30,15 @@ theme = responsiveFontSizes(theme);
 
 export default function App() {
     return <ThemeProvider theme={theme}>
-        <GlobalStyles styles={{ul: {margin: 0, padding: 0, listStyle: 'none'}}}/>
+        <GlobalStyles styles={{ul: {margin: 0, padding: 0, listStyle: 'none'},}} />
         <CssBaseline/>
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<MainPage />}/>
-                <Route path="/register-patient" element={<RegisterForm {...{type: DataFormType.Patient}} />} />
-                <Route path="/register-doctor" element={<RegisterForm {...{type: DataFormType.Doctor}} />} />
-                <Route path="/doctor/:id/make-reservation" element={<RegisterForm {...{type: DataFormType.Reservation}} />} />
+                <Route path="/register-patient" element={<RegisterForm {...{type: DataFormType.Patient, isEdit: false}} />} />
+                <Route path="/register-doctor" element={<RegisterForm {...{type: DataFormType.Doctor,  isEdit: false}} />} />
+                <Route path="/doctor/:id/make-reservation" element={<RegisterForm {...{type: DataFormType.Reservation,  isEdit: false}} />} />
+                <Route path="/my-profile" element={<RegisterForm {...{type: DataFormType.Reservation,  isEdit: true}} />} />
                 <Route path="/doctor/:id" element={<DoctorDetailPage />} />
             </Routes>
         </BrowserRouter>

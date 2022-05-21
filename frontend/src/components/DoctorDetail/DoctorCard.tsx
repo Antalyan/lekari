@@ -26,7 +26,7 @@ export function DoctorCardLabels(props: { detailed: boolean, doctor: IBasicDocto
             </Typography>
         </Stack>
         {props.doctor.actuality != "" && <Stack direction="row" spacing={1}>
-            <Warning/>
+            <Warning color={"warning"}/>
             <Typography>
                 {props.doctor.actuality}
             </Typography>

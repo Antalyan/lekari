@@ -52,5 +52,6 @@ export interface IReview {
 }
 
 export interface IForm {
-    type: DataFormType
+    type: DataFormType,
+    isEdit: boolean
 }
