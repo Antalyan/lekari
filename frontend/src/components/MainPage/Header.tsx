@@ -17,13 +17,13 @@ import AvatarImg from "../../images/mock_profile.jpg"
 import {AccountCircle} from "@mui/icons-material";
 import {LoginForm} from "./LoginForm";
 import {userAtom} from "../../state/LoggedInAtom";
-import {useRecoilValue} from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function LoginMenu(props: { anchorEl: HTMLElement | null, onClose: () => void }) {
-    const user = useRecoilValue(userAtom);
+    const [user, setUser] = useRecoilState(userAtom);
     return <Menu
         id="menu-appbar"
         anchorEl={props.anchorEl}
@@ -53,8 +53,12 @@ function LoginMenu(props: { anchorEl: HTMLElement | null, onClose: () => void })
                     </Link>
                 </MenuItem>
                 <MenuItem>
-                    <Link href={"/register-doctor"} underline="hover">
-                        {"Odhlásit se"}
+                    <Link
+                        component="button"
+                        variant="body1"
+                        underline="hover"
+                        onClick={() => setUser({})}>
+                        Odhlásit se
                     </Link>
                 </MenuItem>
             </>

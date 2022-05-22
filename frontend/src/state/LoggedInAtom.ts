@@ -1,4 +1,4 @@
-import { atom } from "recoil";
+import {atom, selector} from "recoil";
 import {IGlobalProfileInfo} from "../components/Interfaces";
 import {recoilPersist} from "recoil-persist";
 
@@ -8,4 +8,12 @@ export const userAtom = atom<IGlobalProfileInfo>({
     key: "user",
     default: {},
     effects_UNSTABLE: [persistAtom],
+});
+
+export const isLoggedState = selector({
+    key: 'isLogged',
+    get: ({get}) => {
+        const user = get(userAtom);
+        return user.id != null;
+    },
 });

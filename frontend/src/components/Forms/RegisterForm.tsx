@@ -41,8 +41,6 @@ export interface IFormFieldProps {
 
 
 export function RegisterForm({type, isEdit}: IForm) {
-    // TODO: isEdit should depend on the page (passed as props)
-
     const formContext = useForm()
     const {handleSubmit} = formContext
 
