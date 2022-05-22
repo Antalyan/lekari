@@ -6,4 +6,5 @@ export enum DataFormType {
     Reservation = "RESERVATION",
     Invalid = "INVALID"
 }
+export const RESERVATION_INTERVAL_BOUNDS: number[] = [4, 20]
 

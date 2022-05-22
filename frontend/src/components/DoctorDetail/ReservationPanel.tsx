@@ -28,7 +28,7 @@ import {
 import {useForm} from "react-hook-form";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import {DAYS, LANGUAGES} from "../../data/Constants";
+import {DAYS, LANGUAGES, RESERVATION_INTERVAL_BOUNDS} from "../../data/Constants";
 import {INTERVALS, RESERVATION_TIMES} from "../../data/MockData";
 import {useParams} from "react-router-dom";
 import {useRecoilValue} from "recoil";
@@ -41,6 +41,21 @@ interface IReservationCreate {
 function getReservationTimes(date?: Date) {
     // TODO: replace with a database request
     return RESERVATION_TIMES
+}
+
+// interval | 60
+function countIntervals(interval: number) {
+    let result = [];
+    let start = new Date(1971, 0, 1);
+    start.setHours(RESERVATION_INTERVAL_BOUNDS[0]);
+    while (start.getHours() < RESERVATION_INTERVAL_BOUNDS[1]) {
+        result.push(start.getHours() + ":" + start.getMinutes() + (start.getMinutes() == 0 ? "0" : ""));
+        start.setMinutes(start.getMinutes() + interval);
+
+    }
+    return result.map((val: string, index) => {
+        return {id: index, title: val}
+    });
 }
 
 //create: TRUE is for new reservation, FALSE for free slot cancelling
@@ -107,6 +122,8 @@ function ReservationSlots() {
         }))
     };
 
+    const [intervalState, setIntervalState] = useState(INTERVALS[3]);
+
     return <>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             {/*@ts-ignore*/}
@@ -138,25 +155,25 @@ function ReservationSlots() {
                                         inputProps={{'aria-label': 'controlled'}}
                                     />} label={DAYS[index]}/>
                                 </Grid>
-                                {/*TODO: replace options by pre-loaded data*/}
                                 <Grid item xs={3}>
                                     <SelectElement name={'timeFrom' + index} label={'Od'} required
-                                                   options={RESERVATION_TIMES} fullWidth={true} size={"small"}
+                                                   options={countIntervals(intervalState.title)} fullWidth={true}
+                                                   size={"small"}
                                                    disabled={!daysState[index]}
                                     />
                                 </Grid>
                                 <Grid item xs={3}>
                                     <SelectElement name={'timeTo' + index} label={'Do'} required
-                                                   options={RESERVATION_TIMES} fullWidth={true} size={"small"}
+                                                   options={countIntervals(intervalState.title)} fullWidth={true}
+                                                   size={"small"}
                                                    disabled={!daysState[index]}
                                     />
                                 </Grid>
                             </Grid>)
-                        })
-                        }
+                        })}
                     </FormGroup>
                     <SelectElement name={'interval'} label={'Délka intervalu rezervací'} required
-                                   options={INTERVALS} fullWidth={true}/>
+                                   options={INTERVALS} fullWidth={true} onChange={(index) => {setIntervalState(INTERVALS[index])}}/>
                     <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>
                         {"Provést změnu"}
                     </Button>
