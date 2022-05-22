@@ -5,7 +5,7 @@ import {useState} from "react";
 import {ILogin} from "../Interfaces";
 import {useRecoilState} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
-import {DOCTORS} from "../../data/MockData";
+import {DOCTORS, REVIEWS} from "../../data/MockData";
 
 export function LoginForm () {
     const formContext = useForm<ILogin>({
@@ -34,9 +34,13 @@ export function LoginForm () {
             case "3":
                 logged_user = DOCTORS[2];
                 break;
+            case "4": // not a doctor
+                logged_user = REVIEWS[0];
+                break;
         }
         if (logged_user != null) {
-            setUser({id: logged_user.id, name: logged_user.name});
+            // @ts-ignore
+            setUser({id: logged_user.id, name: logged_user.name, isDoctor: logged_user.id <= 3});
         }
 
     })

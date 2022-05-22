@@ -10,10 +10,10 @@ export const userAtom = atom<IGlobalProfileInfo>({
     effects_UNSTABLE: [persistAtom],
 });
 
-export const isLoggedState = selector({
-    key: 'isLogged',
-    get: ({get}) => {
-        const user = get(userAtom);
-        return user.id != null;
-    },
-});
+// export const isDoctorState = selector({
+//     key: 'isDoctor',
+//     get: ({get}) => {
+//         const user = get(userAtom);
+//         return user.id != null;
+//     },
+// });

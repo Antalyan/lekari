@@ -3,6 +3,7 @@ export const LANGUAGES: string[] = ["čeština", "angličtina", "němčina", "ru
 export enum DataFormType {
     Patient = "PATIENT",
     Doctor = "DOCTOR",
-    Reservation = "RESERVATION"
+    Reservation = "RESERVATION",
+    Invalid = "INVALID"
 }
 

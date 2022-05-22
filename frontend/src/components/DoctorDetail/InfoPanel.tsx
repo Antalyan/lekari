@@ -10,10 +10,16 @@ import Box from "@mui/material/Box";
 import {FormContainer, MultiSelectElement, TextFieldElement} from "react-hook-form-mui";
 import {useForm} from "react-hook-form";
 import {DAYS, LANGUAGES} from "../../data/Constants";
+import {useRecoilValue} from "recoil";
+import {userAtom} from "../../state/LoggedInAtom";
+import {useParams} from "react-router-dom";
 
-function Opening({editable}: IEditable) {
+function Opening() {
     // TODO: editability should be checked at backend on submit as well
     const [editingState, setEditingState] = useState(false);
+    const user = useRecoilValue(userAtom)
+    const {id} = useParams();
+
     return (
         <>
             <Box>
@@ -23,7 +29,7 @@ function Opening({editable}: IEditable) {
                     display="inline"
                 > Otevírací doba
                 </Typography>
-                {editable && <IconButton onClick={() => setEditingState(!editingState)}>
+                {user.id == id && <IconButton onClick={() => setEditingState(!editingState)}>
                     <EditIcon/>
                 </IconButton>}
             </Box>
@@ -45,8 +51,10 @@ function Opening({editable}: IEditable) {
     )
 }
 
-function Contact({editable}: IEditable) {
+function Contact() {
     const [editingState, setEditingState] = useState(false);
+    const user = useRecoilValue(userAtom)
+    const {id} = useParams();
     return (
         <>
             <Box>
@@ -56,7 +64,7 @@ function Contact({editable}: IEditable) {
                     display="inline"
                 > Kontakt
                 </Typography>
-                {editable && <IconButton onClick={() => setEditingState(!editingState)}>
+                {user.id == id && <IconButton onClick={() => setEditingState(!editingState)}>
                     <EditIcon/>
                 </IconButton>}
             </Box>
@@ -94,9 +102,11 @@ function Contact({editable}: IEditable) {
         </>)
 }
 
-function Languages({editable}: IEditable) {
+function Languages() {
 // TODO: change to languages type
     const [editingState, setEditingState] = useState(false);
+    const user = useRecoilValue(userAtom)
+    const {id} = useParams();
     return (
         <>
             <Box>
@@ -106,7 +116,7 @@ function Languages({editable}: IEditable) {
                     display="inline"
                 > Jazyky
                 </Typography>
-                {editable && <IconButton onClick={() => setEditingState(!editingState)}>
+                {user.id == id && <IconButton onClick={() => setEditingState(!editingState)}>
                     <EditIcon/>
                 </IconButton>}
             </Box>
@@ -118,8 +128,10 @@ function Languages({editable}: IEditable) {
     )
 }
 
-function Description({editable}: IEditable) {
+function Description() {
     const [editingState, setEditingState] = useState(false);
+    const user = useRecoilValue(userAtom)
+    const {id} = useParams();
     return (
         <>
             <Box>
@@ -129,7 +141,7 @@ function Description({editable}: IEditable) {
                     display="inline"
                 > Popis
                 </Typography>
-                {editable && <IconButton onClick={() => setEditingState(!editingState)}>
+                {user.id == id && <IconButton onClick={() => setEditingState(!editingState)}>
                     <EditIcon/>
                 </IconButton>}
             </Box>
@@ -142,25 +154,25 @@ function Description({editable}: IEditable) {
         </>)
 }
 
-/*TODO: property *editable* depends on status (logged in/out) */
-export function InfoPanel({editable}: IEditable) {
+export function InfoPanel() {
     const formContext = useForm<string[]>();
     const {handleSubmit} = formContext;
     const onSubmit = handleSubmit((formData: string[]) => {
         // TODO: send data to database on this click
         console.log(formData);
-        console.log("XXX")
     });
+    const user = useRecoilValue(userAtom)
+    const {id} = useParams();
     // @ts-ignore
     return (<FormContainer
         formContext={formContext}
         handleSubmit={onSubmit}>
         <Stack spacing={2}>
-            <Opening editable={editable}/>
-            <Contact editable={editable}/>
-            <Languages editable={editable}/>
-            <Description editable={editable}/>
-            <Grid container>
+            <Opening/>
+            <Contact/>
+            <Languages/>
+            <Description/>
+            {user.id == id && <Grid container>
                 <Grid item xs={6}>
                     <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>Uložit
                         změny</Button>
@@ -170,7 +182,7 @@ export function InfoPanel({editable}: IEditable) {
                     <Button variant='contained' type={'submit'} color={'primary'} onClick={onSubmit}>Zrušit
                         změny</Button>
                 </Grid>
-            </Grid>
+            </Grid>}
         </Stack>
     </FormContainer>)
 }

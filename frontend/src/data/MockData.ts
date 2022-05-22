@@ -32,14 +32,14 @@ export const REVIEWS: IReview[] = [
         "date": new Date("2019-01-16"),
         "rating": 3,
         "text": "Komora usiluje o to, aby zákonná úprava podmínek pro poskytování daňového poradenství umožňovala výkon činnosti daňového poradce způsobem, který jim vyhovuje a který si sami zvolí. Komora usiluje o zachování takového znění zákona o daňovém poradenství, které umožní fyzickým i právnickým osobám v rámci KDP podnikat bez dalších omezení a zasazuje se o poskytování daňového poradenství pouze oprávněnými subjekty. Komora sleduje vývoj v postavení daňových poradců v České republice i v zahraničí a usiluje o přenos pozitivních zkušeností ze zahraničí do organizace činnosti daňového poradenství v České republice.",
-        "id": 1,
+        "id": 4,
     },
     {
         "name": "Emil Eben",
         "date": new Date("2020-01-31"),
         "rating": 1.5,
         "text": "Nedodán :/",
-        "id": 2,
+        "id": 5,
     }
 ]
 

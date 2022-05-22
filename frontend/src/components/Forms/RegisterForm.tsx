@@ -25,6 +25,8 @@ function getFormLabel(type: DataFormType, isEdit: boolean): string {
             return "Registrace pacienta"
         case DataFormType.Reservation:
             return "Rezervace"
+        case DataFormType.Invalid:
+            return "INVALID"
     }
 }
 
@@ -94,6 +96,12 @@ export function RegisterForm({type, isEdit}: IForm) {
     const Input = styled('input')({
         display: 'none',
     });
+
+    if (type == DataFormType.Invalid) {
+        return <>
+        INVALID PAGE!
+        </>
+    }
 
     return (
         <>
@@ -223,7 +231,7 @@ export function RegisterForm({type, isEdit}: IForm) {
                                         />
                                     </Grid>
                                 </>}
-                            {type != DataFormType.Reservation &&
+                                {type != DataFormType.Reservation &&
                                 <>
                                     <Grid item xs={12}>
                                         <Typography variant="h5" gutterBottom component="div" align={"center"}

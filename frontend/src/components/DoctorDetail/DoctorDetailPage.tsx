@@ -14,6 +14,8 @@ import {Rating, Tab, Tabs} from "@mui/material";
 import {InfoPanel} from "./InfoPanel";
 import {ReservationPanel} from "./ReservationPanel";
 import {ReviewPanel} from "./ReviewPanel";
+import {useRecoilValue} from "recoil";
+import {userAtom} from "../../state/LoggedInAtom";
 
 
 interface TabPanelProps {
@@ -62,9 +64,9 @@ export function DoctorDetailPage() {
     }
     const doctor = DOCTORS.filter((doctor) => doctor.id == parseInt(id))[0];
 
-
     return <>
         <Header/>
+
         <DoctorCard detailed={true} doctor={doctor}/>
         {doctor.rating != undefined && <Rating name="doctor-rating" value={doctor.rating} precision={0.5} readOnly
                                                sx={{m: 1, color: "primary.main"}}/>}
@@ -76,79 +78,16 @@ export function DoctorDetailPage() {
                 <Tab label="RECENZE" {...a11yProps(2)} />
             </Tabs>
             <TabPanel value={value} index={0}>
-                {/*TODO: evaluate editable based on login, perhaps through global context? */}
-                <InfoPanel editable={true}/>
+                <InfoPanel/>
             </TabPanel>
             <TabPanel value={value} index={1}>
-                <ReservationPanel editable={false}/>
+                <ReservationPanel/>
             </TabPanel>
             <TabPanel value={value} index={2}>
-                <ReviewPanel editable={true}/>
+                <ReviewPanel/>
             </TabPanel>
         </Box>
 
-
-
-        {/*<Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>*/}
-        {/*    <Grid item xs={4}>*/}
-        {/*        <Typography sx={{m: 2}}*/}
-        {/*                    component="h2"*/}
-        {/*                    variant="h3"*/}
-        {/*                    align="left"*/}
-        {/*                    color="text.primary"*/}
-        {/*                    gutterBottom*/}
-        {/*                    fontWeight="bold"*/}
-        {/*        >*/}
-        {/*            Hledáte<Box color="primary.main">nejlepšího<br/>lékaře?</Box>*/}
-        {/*        </Typography>*/}
-        {/*    </Grid>*/}
-        {/*    <Grid item xs={8}>*/}
-        {/*        <Box display="flex" height="20rem"*/}
-        {/*            // bgcolor="lightgreen"*/}
-        {/*             alignItems="right"*/}
-        {/*             margin={1}*/}
-        {/*             justifyContent="right">*/}
-        {/*            <img src={Pills} alt='Pills' height="100%"/>*/}
-        {/*        </Box>*/}
-        {/*    </Grid>*/}
-        {/*    <Grid item xs={12}>*/}
-        {/*        <Typography sx={{m: 2}}*/}
-        {/*            // component="body"*/}
-        {/*            // variant="body1"*/}
-        {/*                    align="left"*/}
-        {/*                    color="text.secondary"*/}
-        {/*                    gutterBottom*/}
-        {/*        >*/}
-        {/*            Využijte portál <strong><Box display="inline" color="primary.main">Luďkovi lékaři </Box></strong>*/}
-        {/*            k nalezení nejlepšího lékaře na Váš problém a rovnou se k němu objednejte!*/}
-        {/*        </Typography>*/}
-        {/*    </Grid>*/}
-        {/*    <Grid item xs={12}>*/}
-        {/*        <Typography sx={{m: 2}}*/}
-        {/*                    component="h2"*/}
-        {/*                    variant="h3"*/}
-        {/*                    align="center"*/}
-        {/*                    color="text.primary"*/}
-        {/*                    gutterBottom*/}
-        {/*                    fontWeight="bold"*/}
-        {/*        >*/}
-        {/*            Seznam lékařů*/}
-        {/*        </Typography>*/}
-        {/*    </Grid>*/}
-        {/*</Grid>*/}
-        {/*<Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>*/}
-        {/*    <Grid item xs={12}>*/}
-        {/*        <SearchBox/>*/}
-        {/*    </Grid>*/}
-        {/*</Grid>*/}
-
-        {/*<Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}} margin={1}>*/}
-        {/*    {doctors.map((doctor: IBasicDoctor) => (*/}
-        {/*        <Grid item key={doctor.name} xs={12}>*/}
-        {/*            <DoctorCard {...doctor}/>*/}
-        {/*        </Grid>*/}
-        {/*    ))}*/}
-        {/*</Grid>*/}
         <Footer/>
     </>
 }

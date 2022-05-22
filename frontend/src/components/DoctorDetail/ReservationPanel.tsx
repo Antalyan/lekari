@@ -31,6 +31,8 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import {DAYS, LANGUAGES} from "../../data/Constants";
 import {INTERVALS, RESERVATION_TIMES} from "../../data/MockData";
 import {useParams} from "react-router-dom";
+import {useRecoilValue} from "recoil";
+import {userAtom} from "../../state/LoggedInAtom";
 
 interface IReservationCreate {
     create: boolean
@@ -41,6 +43,7 @@ function getReservationTimes(date?: Date) {
     return RESERVATION_TIMES
 }
 
+//create: TRUE is for new reservation, FALSE for free slot cancelling
 function ReservationDatePanel({create}: IReservationCreate) {
     const {id} = useParams();
 
@@ -164,10 +167,15 @@ function ReservationSlots() {
     </>
 }
 
-export function ReservationPanel({editable}: IEditable) {
+export function ReservationPanel() {
+    const user = useRecoilValue(userAtom)
+    const {id} = useParams();
     return <Stack spacing={4}>
-        <ReservationSlots/>
-        <ReservationDatePanel create={false}/>
-        <ReservationDatePanel create={true}/>
+        {user.id == id ?
+            <>
+                <ReservationSlots/>
+                <ReservationDatePanel create={false}/>
+            </> :
+            <ReservationDatePanel create={true}/>}
     </Stack>
 }

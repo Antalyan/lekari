@@ -5,6 +5,9 @@ import {REVIEWS} from "../../data/MockData";
 import {FormContainer, TextFieldElement} from "react-hook-form-mui";
 import {useForm} from "react-hook-form";
 import Button from "@mui/material/Button";
+import {useRecoilValue} from "recoil";
+import {userAtom} from "../../state/LoggedInAtom";
+import {useParams} from "react-router-dom";
 
 function ReviewCreate() {
     const formContext = useForm<IReview>()
@@ -35,7 +38,7 @@ function ReviewCreate() {
                 </Button>
             </Stack>
         </FormContainer>
-        </>)
+    </>)
 }
 
 function ReviewCard({name, date, rating, text, id}: IReview) {
@@ -71,9 +74,11 @@ function ReviewCard({name, date, rating, text, id}: IReview) {
     </>
 }
 
-export function ReviewPanel({editable}: IEditable) {
+export function ReviewPanel() {
+    const user = useRecoilValue(userAtom)
+    const {id} = useParams();
     return <Stack spacing={4}>
-        {editable && <ReviewCreate/>}
+        {user.id != id  && <ReviewCreate/>}
         {REVIEWS.map((review) => <ReviewCard {...review}/>)}
     </Stack>
 }

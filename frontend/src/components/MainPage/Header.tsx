@@ -41,17 +41,27 @@ function LoginMenu(props: { anchorEl: HTMLElement | null, onClose: () => void })
     >
         {/* //TODO add: onClick={handleClose} */}
         {user.id ? <>
-                {/*TODO: replace links with newly implemented pages*/}
                 <MenuItem>
                     <Link href={"/my-profile"} underline="hover">
                         {"Můj profil"}
                     </Link>
                 </MenuItem>
+                {user.isDoctor && <MenuItem>
+                    <Link href={"/doctor/" + user.id} underline="hover">
+                        {"Moje stránka lékaře"}
+                    </Link>
+                </MenuItem>}
+                {/*TODO: replace links with newly implemented pages (both reservations) */}
                 <MenuItem>
-                    <Link href={"/register-doctor"} underline="hover">
+                    <Link href={"/"} underline="hover">
                         {"Moje rezervace"}
                     </Link>
                 </MenuItem>
+                {user.isDoctor && <MenuItem>
+                    <Link href={"/"} underline="hover">
+                        {"Rezervace pacientů"}
+                    </Link>
+                </MenuItem>}
                 <MenuItem>
                     <Link
                         component="button"

@@ -60,5 +60,6 @@ export interface IGlobalProfileInfo {
     id?: number,
     name?: string,
     surname?: string,
-    profile_picture?: string
+    profile_picture?: string,
+    isDoctor?: boolean
 }
