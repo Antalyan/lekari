@@ -173,7 +173,9 @@ function ReservationSlots() {
                         })}
                     </FormGroup>
                     <SelectElement name={'interval'} label={'Délka intervalu rezervací'} required
-                                   options={INTERVALS} fullWidth={true} onChange={(index) => {setIntervalState(INTERVALS[index])}}/>
+                                   options={INTERVALS} fullWidth={true} onChange={(index) => {
+                        setIntervalState(INTERVALS[index])
+                    }}/>
                     <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>
                         {"Provést změnu"}
                     </Button>
