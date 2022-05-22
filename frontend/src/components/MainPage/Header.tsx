@@ -43,7 +43,7 @@ function LoginMenu(props: { anchorEl: HTMLElement | null, onClose: () => void })
         {user.id ? <>
                 {/*TODO: replace links with newly implemented pages*/}
                 <MenuItem>
-                    <Link href={"/register-patient"} underline="hover">
+                    <Link href={"/my-profile"} underline="hover">
                         {"Můj profil"}
                     </Link>
                 </MenuItem>
