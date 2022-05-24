@@ -51,14 +51,13 @@ function LoginMenu(props: { anchorEl: HTMLElement | null, onClose: () => void })
                         {"Moje stránka lékaře"}
                     </Link>
                 </MenuItem>}
-                {/*TODO: replace links with newly implemented pages (both reservations) */}
                 <MenuItem>
-                    <Link href={"/"} underline="hover">
+                    <Link href={"/my-reservations"} underline="hover">
                         {"Moje rezervace"}
                     </Link>
                 </MenuItem>
                 {user.isDoctor && <MenuItem>
-                    <Link href={"/"} underline="hover">
+                    <Link href={"/patient-reservations"} underline="hover">
                         {"Rezervace pacientů"}
                     </Link>
                 </MenuItem>}

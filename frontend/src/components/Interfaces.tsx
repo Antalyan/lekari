@@ -60,6 +60,18 @@ export interface IGlobalProfileInfo {
     id?: number,
     name?: string,
     surname?: string,
-    profile_picture?: string,
+    profilePicture?: string,
     isDoctor?: boolean
+}
+
+export interface IReservation {
+    id?: number,
+    patientID: number,
+    doctorID: number,
+    patientName: string,
+    doctorName: string,
+    creationAt: Date,
+    visitDate: Date,
+    address: string,
+    note?: string
 }

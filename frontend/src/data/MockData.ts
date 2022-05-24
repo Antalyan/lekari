@@ -1,4 +1,4 @@
-import {IBasicDoctor, IReview} from "../components/Interfaces";
+import {IBasicDoctor, IReservation, IReview} from "../components/Interfaces";
 
 export const DOCTORS: IBasicDoctor[] = [
     {
@@ -40,6 +40,30 @@ export const REVIEWS: IReview[] = [
         "rating": 1.5,
         "text": "Nedodán :/",
         "id": 5,
+    }
+]
+
+export const RESERVATIONS: IReservation[] = [
+    {
+        "id": 1269,
+        "patientID": 4,
+        "doctorID": 1,
+        "patientName": "Dáda Dloubavá",
+        "doctorName": "Mudr. Adam Ananas",
+        "creationAt": new Date("2020-01-31"),
+        "visitDate": new Date('December 17, 1995 03:24:00'),
+        "address": "Ovocná 65, Sadovice",
+        "note": "Chci se objednat s problémem s rovnováhou."
+    },
+    {
+        "id": 1269,
+        "patientID": 4,
+        "doctorID": 2,
+        "patientName": "Dáda Dloubavá",
+        "doctorName": "Beáta Boubelatá",
+        "creationAt": new Date("2020-01-01"),
+        "visitDate": new Date('December 17, 2050 03:08'),
+        "address": "Blábolivý Brod u Blátovic, Bláhová 55/6"
     }
 ]
 

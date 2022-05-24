@@ -13,6 +13,7 @@ import {DataFormType} from "./data/Constants";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "./state/LoggedInAtom";
 import {IGlobalProfileInfo} from "./components/Interfaces";
+import {MyReservationPage} from "./components/Reservations/MyReservationPage";
 
 let theme = createTheme();
 theme = responsiveFontSizes(theme);
@@ -42,6 +43,8 @@ export default function App() {
                 <Route path="/doctor/:id/make-reservation" element={<RegisterForm {...{type: DataFormType.Reservation,  isEdit: false}} />} />
                 <Route path="/my-profile" element={<RegisterForm {...{type: getProfileType(user),  isEdit: true}} />} />
                 <Route path="/doctor/:id" element={<DoctorDetailPage />} />
+                <Route path="/my-reservations" element={<MyReservationPage {...{isPatient: true}}/>} />
+                <Route path="/patient-reservations" element={<MyReservationPage {...{isPatient: false}} />} />
             </Routes>
         </BrowserRouter>
     </ThemeProvider>
