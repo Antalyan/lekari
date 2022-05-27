@@ -80,7 +80,6 @@ model Reference {
   comment        String
   rate           Int        // TODO: enum? What about stars number
   author         String     // TODO: connection to user?
-  doctor_comment String     // TODO: What about response?
   created        DateTime @default(now())
 }
 
@@ -100,5 +99,5 @@ model OpeningHours {
   toTime   DateTime
   fromDate DateTime @default(now()) // TODO: in diagram it is time
 
-  @@unique([doctorId, day])
+  @@unique([doctorId, day, fromDate])
 }
