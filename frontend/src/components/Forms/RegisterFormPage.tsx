@@ -13,6 +13,8 @@ import {specializations} from "../../data/MockData";
 import {FormDatePicker, FormSelect, FormTextField} from "./FormComponents";
 import Header from "../Header";
 import {Footer} from "../Footer";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {userAtom} from "../../state/LoggedInAtom";
 
 const validateNumbers = {pattern: {value: /^[0-9]*$/, message: "Input must be only numeric"}}
 
@@ -99,9 +101,16 @@ export function RegisterFormPage({type, isEdit}: IForm) {
         display: 'none',
     });
 
+    // Logout automatically
+    const [user, setUser] = useRecoilState(userAtom)
+    if (!isEdit && user.id != null) {
+        // TODO: add popup info that you will be logged out
+        setUser({})
+    }
+
     if (type == DataFormType.Invalid) {
         return <>
-        INVALID PAGE!
+            INVALID PAGE!
         </>
     }
 

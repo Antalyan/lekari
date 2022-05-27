@@ -33,20 +33,26 @@ export default function App() {
     const user = useRecoilValue(userAtom);
 
     return <ThemeProvider theme={theme}>
-        <GlobalStyles styles={{ul: {margin: 0, padding: 0, listStyle: 'none'},}} />
+        <GlobalStyles styles={{ul: {margin: 0, padding: 0, listStyle: 'none'},}}/>
         <CssBaseline/>
         <BrowserRouter>
             <Routes>
                 {/*TODO: add my-reservations, patient-reservations*/}
-                <Route path="/" element={<MainPage />}/>
-                <Route path="/register-patient" element={<RegisterFormPage {...{type: DataFormType.Patient, isEdit: false}} />} />
-                <Route path="/register-doctor" element={<RegisterFormPage {...{type: DataFormType.Doctor,  isEdit: false}} />} />
-                <Route path="/doctor/:id/make-reservation" element={<RegisterFormPage {...{type: DataFormType.Reservation,  isEdit: false}} />} />
-                <Route path="/my-profile" element={<RegisterFormPage {...{type: getProfileType(user),  isEdit: true}} />} />
-                <Route path="/doctor/:id" element={<DoctorDetailPage />} />
-                <Route path="/my-reservations" element={<MyReservationPage {...{isPatient: true}}/>} />
-                <Route path="/patient-reservations" element={<MyReservationPage {...{isPatient: false}} />} />
-                <Route path="*" element={<NotFoundPage/>} />
+                <Route path="/" element={<MainPage/>}/>
+                <Route path="/register-patient"
+                       element={<RegisterFormPage {...{type: DataFormType.Patient, isEdit: false}} />}/>
+                <Route path="/register-doctor"
+                       element={<RegisterFormPage {...{type: DataFormType.Doctor, isEdit: false}} />}/>
+                <Route path="/doctor/:id/make-reservation"
+                       element={<RegisterFormPage {...{type: DataFormType.Reservation, isEdit: false}} />}/>
+                <Route path="/my-profile" element={user.id == null ? <NotFoundPage/> :
+                    <RegisterFormPage {...{type: getProfileType(user), isEdit: true}} />}/>
+                <Route path="/doctor/:id" element={<DoctorDetailPage/>}/>
+                <Route path="/my-reservations"
+                       element={user.id == null ? <NotFoundPage/> : <MyReservationPage {...{isPatient: true}}/>}/>
+                <Route path="/patient-reservations"
+                       element={!user.isDoctor ? <NotFoundPage/> : <MyReservationPage {...{isPatient: false}} />}/>
+                <Route path="*" element={<NotFoundPage/>}/>
             </Routes>
         </BrowserRouter>
     </ThemeProvider>
