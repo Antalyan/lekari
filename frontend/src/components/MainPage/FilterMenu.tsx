@@ -1,31 +1,32 @@
 import {Button, Grid, Stack, Typography} from "@mui/material";
 import {useForm} from "react-hook-form";
 import * as React from "react";
-import {useState} from "react";
-import {IBasicDoctor} from "./Interfaces";
+import {IBasicDoctor} from "../Interfaces";
 import {AutoSelect} from "./AutoSelect";
+import {cities, specializations} from "../../data/MockData";
 
 function FilterForm() {
 
     const defaultValues: IBasicDoctor = {
         name: "",
-        specialization: "DEFAULT",
+        specialization: "",
         location: "",
-        actuality: ""
+        actuality: "",
+        id: -1
     }
-    const { handleSubmit, control } = useForm({ defaultValues });
-    const [data, setData] = useState(defaultValues);
+    const {handleSubmit, control} = useForm({defaultValues});
     const onSubmit = (data: IBasicDoctor) => {
-        setData(data)
+        console.log(data)
     }
 
-    return  <form onSubmit={handleSubmit(onSubmit)}>
+    return <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2} margin={2}>
-            <AutoSelect control={control} id="combo-box-spec" name="specialization" label="Specializace" options={specializations}/>
+            <AutoSelect control={control} id="combo-box-spec" name="specialization" label="Specializace"
+                        options={specializations}/>
             <AutoSelect control={control} id="combo-box-location" name="location" label="Lokace" options={cities}/>
             <Grid container justifyContent="center">
                 <Button variant='contained' type={'submit'} color={'primary'} onSubmit={handleSubmit(onSubmit)}>
-                    {data.specialization + " " + data.location}
+                    Nastavit
                 </Button>
             </Grid>
         </Stack>
@@ -44,8 +45,5 @@ export function FilterMenu() {
         </>
     )
 }
-
-const specializations = ["Chirurg", "Praktik"];
-const cities = ["Praha", "Brno", "Ostrava", "Žďár nad Sázavou"]
 
 

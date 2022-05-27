@@ -1,8 +1,12 @@
+import {DataFormType} from "../data/Constants";
+
 export interface IBasicDoctor {
     name: string,
     specialization: string,
     location: string,
-    actuality: string
+    actuality: string,
+    id: number,
+    rating?: number
 }
 
 export interface ILogin {
@@ -27,4 +31,47 @@ export interface IPatient {
     password: string,
     passwordCheck: string,
     profilePicture: string
+}
+
+export interface IContact {
+    email: string,
+    phone: string,
+    web: string
+}
+
+export interface IEditable {
+    editable: boolean
+}
+
+export interface IReview {
+    name?: string,
+    date: Date,
+    rating: number,
+    text: string,
+    id?: number
+}
+
+export interface IForm {
+    type: DataFormType,
+    isEdit: boolean
+}
+
+export interface IGlobalProfileInfo {
+    id?: number,
+    name?: string,
+    surname?: string,
+    profilePicture?: string,
+    isDoctor?: boolean
+}
+
+export interface IReservation {
+    id?: number,
+    patientID: number,
+    doctorID: number,
+    patientName: string,
+    doctorName: string,
+    creationAt: Date,
+    visitDate: Date,
+    address: string,
+    note?: string
 }

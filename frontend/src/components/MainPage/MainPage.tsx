@@ -1,48 +1,20 @@
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-import Header from "./Header";
+import Header from "../Header";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import Pills from "../images/pills.jpg";
+import Pills from "../../images/pills.jpg";
 import {SearchBox} from "./SearchBox";
-import {IBasicDoctor} from "./Interfaces";
-import {DoctorCard} from "./DoctorCard";
-
-function Copyright(props: any) {
-    return (
-        <Typography variant="body2" align="center" color={"common.white"} {...props}>
-            {'©'}
-            {new Date().getFullYear()}
-            {" Luďkovi lékaři, PB138"}
-        </Typography>
-    );
-}
-
-const doctors = [
-    {
-        "name": "MUDr. Adam Ananas",
-        "specialization": "Neurolog",
-        "location": "Brno",
-        "actuality": "Jsem na dovolené"
-    },
-    {
-        "name": "Beata Boubelatá",
-        "specialization": "Kardiolog",
-        "location": "Praha",
-        "actuality": ""
-    },
-    {
-        "name": "MVDr. Cecil Cukrový",
-        "specialization": "Vlčí zvěrolékař",
-        "location": "Nové Město na Moravě",
-        "actuality": "Přijímám nové vlky! Dokud mě nesní..."
-    }
-]
+import {IBasicDoctor} from "../Interfaces";
+import {DoctorCard} from "../DoctorDetail/DoctorCard";
+import {Footer} from "../Footer";
+import {DOCTORS} from "../../data/MockData";
 
 export function MainPage() {
     return <>
         <Header/>
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
+            {/*TODO: make img as background*/}
             <Grid item xs={4}>
                 <Typography sx={{m: 2}}
                             component="h2"
@@ -96,23 +68,13 @@ export function MainPage() {
         </Grid>
 
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}} margin={1}>
-            {doctors.map((doctor: IBasicDoctor) => (
+            {/*TODO: check whether this is the correct index*/}
+            {DOCTORS.map((doctor: IBasicDoctor) => (
                 <Grid item key={doctor.name} xs={12}>
-                    <DoctorCard {...doctor}/>
+                    <DoctorCard detailed={false} doctor={doctor}/>
                 </Grid>
             ))}
         </Grid>
-        <Box
-            bgcolor={"primary.main"}
-            maxWidth="md"
-            component="footer"
-            sx={{
-                borderTop: (theme) => `1px solid ${theme.palette.divider}`,
-                mt: 2,
-                py: [2, 2],
-            }}
-        >
-            <Copyright/>
-        </Box>
+        <Footer/>
     </>
 }

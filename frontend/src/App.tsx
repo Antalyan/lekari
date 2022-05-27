@@ -1,39 +1,58 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
 import CssBaseline from '@mui/material/CssBaseline';
-import Grid from '@mui/material/Grid';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
 import GlobalStyles from '@mui/material/GlobalStyles';
-import Container from '@mui/material/Container';
-import {Icon, Stack, ThemeProvider} from "@mui/material";
-import Header from "./components/Header";
+import {ThemeProvider} from "@mui/material";
 
 import {createTheme, responsiveFontSizes} from '@mui/material/styles';
-import Pills from "./images/pills.jpg"
-import {MainPage} from './components/MainPage';
+import {MainPage} from './components/MainPage/MainPage';
 
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import {RegisterPatientForm} from "./components/RegisterPatientForm";
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import {RegisterFormPage} from "./components/Forms/RegisterFormPage";
+import {DoctorDetailPage} from "./components/DoctorDetail/DoctorDetailPage";
+import {DataFormType} from "./data/Constants";
+import {useRecoilValue} from "recoil";
+import {userAtom} from "./state/LoggedInAtom";
+import {IGlobalProfileInfo} from "./components/Interfaces";
+import {MyReservationPage} from "./components/Reservations/MyReservationPage";
+import {NotFoundPage} from "./NotFoundPage";
 
 let theme = createTheme();
 theme = responsiveFontSizes(theme);
 
+function getProfileType(user: IGlobalProfileInfo): DataFormType {
+    if (user == null) {
+        return DataFormType.Invalid;
+    }
+    if (user.isDoctor) {
+        return DataFormType.Doctor;
+    }
+    return DataFormType.Patient
+}
+
 export default function App() {
+    const user = useRecoilValue(userAtom);
+
     return <ThemeProvider theme={theme}>
-        <GlobalStyles styles={{ul: {margin: 0, padding: 0, listStyle: 'none'}}}/>
+        <GlobalStyles styles={{ul: {margin: 0, padding: 0, listStyle: 'none'},}}/>
         <CssBaseline/>
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<MainPage />}/>
-                <Route path="/register/patient" element={<RegisterPatientForm />} />
+                {/*TODO: add my-reservations, patient-reservations*/}
+                <Route path="/" element={<MainPage/>}/>
+                <Route path="/register-patient"
+                       element={<RegisterFormPage {...{type: DataFormType.Patient, isEdit: false}} />}/>
+                <Route path="/register-doctor"
+                       element={<RegisterFormPage {...{type: DataFormType.Doctor, isEdit: false}} />}/>
+                <Route path="/doctor/:id/make-reservation"
+                       element={<RegisterFormPage {...{type: DataFormType.Reservation, isEdit: false}} />}/>
+                <Route path="/my-profile" element={user.id == null ? <NotFoundPage/> :
+                    <RegisterFormPage {...{type: getProfileType(user), isEdit: true}} />}/>
+                <Route path="/doctor/:id" element={<DoctorDetailPage/>}/>
+                <Route path="/my-reservations"
+                       element={user.id == null ? <NotFoundPage/> : <MyReservationPage {...{isPatient: true}}/>}/>
+                <Route path="/patient-reservations"
+                       element={!user.isDoctor ? <NotFoundPage/> : <MyReservationPage {...{isPatient: false}} />}/>
+                <Route path="*" element={<NotFoundPage/>}/>
             </Routes>
         </BrowserRouter>
     </ThemeProvider>

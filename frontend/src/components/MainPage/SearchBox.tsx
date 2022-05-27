@@ -6,23 +6,21 @@ import * as React from "react";
 import {AccountCircle, FilterList} from "@mui/icons-material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import {LoginForm} from "./LoginForm";
 import {useState} from "react";
 import {FilterMenu} from "./FilterMenu";
-import Header from "./Header";
+import Header from "../Header";
 
 export function SearchBox() {
-    const formContext = useForm<{ name: string }>({
+    const formContext = useForm<{ search: string }>({
         defaultValues: {
-            name: '',
+            search: '',
         }
     })
     const {handleSubmit} = formContext
 
-    const [tmp, setTmpState] = useState(true);
-    const onSubmit = handleSubmit((formData: any) => {
+    const onSubmit = handleSubmit((formData: { search: string }) => {
         {/*TODO Handle data*/
-            setTmpState(formData)
+            console.log(formData)
         }
     })
 
