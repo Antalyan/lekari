@@ -109,11 +109,15 @@ export default function Header() {
     return (
         <AppBar position="static">
             <Toolbar>
-                <img src={Logo} alt="Logo" width="50" height="50"/>
+                <Link href={"/"} underline="hover">
+                    <img src={Logo} alt="Logo" width="50" height="50"/>
+                </Link>
                 <Typography
                     sx={{m: 2, flexGrow: 1}}
                     variant="h6"
-                >Luďkovi<br/>Lékaři
+                    color="white"
+                >
+                    Luďkovi<br/>Lékaři
                 </Typography>
                 <Typography
                     sx={{m: 1}}
