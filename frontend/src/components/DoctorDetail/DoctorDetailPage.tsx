@@ -1,13 +1,13 @@
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-import Header from "../MainPage/Header";
+import Header from "../Header";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Profile from "../../images/mock_profile.jpg";
 import {SearchBox} from "../MainPage/SearchBox";
 import {IBasicDoctor} from "../Interfaces";
 import {DoctorCard} from "./DoctorCard";
-import {Footer} from "../MainPage/Footer";
+import {Footer} from "../Footer";
 import {DOCTORS} from "../../data/MockData";
 import {useParams} from 'react-router-dom';
 import {Rating, Tab, Tabs} from "@mui/material";

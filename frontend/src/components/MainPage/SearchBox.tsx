@@ -8,7 +8,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import {useState} from "react";
 import {FilterMenu} from "./FilterMenu";
-import Header from "./Header";
+import Header from "../Header";
 
 export function SearchBox() {
     const formContext = useForm<{ search: string }>({

@@ -12,11 +12,11 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import {Icon, Link} from "@mui/material";
 
-import Logo from "../../images/logoREPLACE.png"
-import AvatarImg from "../../images/mock_profile.jpg"
+import Logo from "../images/logoREPLACE.png"
+import AvatarImg from "../images/mock_profile.jpg"
 import {AccountCircle} from "@mui/icons-material";
-import {LoginForm} from "./LoginForm";
-import {userAtom} from "../../state/LoggedInAtom";
+import {LoginForm} from "./MainPage/LoginForm";
+import {userAtom} from "../state/LoggedInAtom";
 import {useRecoilState, useRecoilValue} from "recoil";
 
 const pages = ['Products', 'Pricing', 'Blog'];

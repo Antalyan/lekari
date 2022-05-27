@@ -6,8 +6,8 @@ import Pills from "../../images/pills.jpg";
 import {IBasicDoctor, IReservation} from "../Interfaces";
 import {DoctorCard} from "../DoctorDetail/DoctorCard";
 import {DOCTORS, RESERVATIONS} from "../../data/MockData";
-import Header from "../MainPage/Header";
-import {Footer} from "../MainPage/Footer";
+import Header from "../Header";
+import {Footer} from "../Footer";
 import {ReservationCard} from "./ReservationCard";
 
 export function MyReservationPage(props: {isPatient: boolean}) {

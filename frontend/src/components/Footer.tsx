@@ -15,7 +15,6 @@ function Copyright(props: any) {
 export function Footer() {
     return <Box
         bgcolor={"primary.main"}
-        maxWidth="md"
         component="footer"
         sx={{
             borderTop: (theme) => `1px solid ${theme.palette.divider}`,

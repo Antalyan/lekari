@@ -11,7 +11,8 @@ import {DataFormType} from "../../data/Constants";
 import {PhotoCamera} from "@mui/icons-material";
 import {specializations} from "../../data/MockData";
 import {FormDatePicker, FormSelect, FormTextField} from "./FormComponents";
-import Header from "../MainPage/Header";
+import Header from "../Header";
+import {Footer} from "../Footer";
 
 const validateNumbers = {pattern: {value: /^[0-9]*$/, message: "Input must be only numeric"}}
 
@@ -279,6 +280,7 @@ export function RegisterForm({type, isEdit}: IForm) {
                     </FormContainer>
                 </LocalizationProvider>
             </Box>
+            <Footer/>
         </>
     )
 }
