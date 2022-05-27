@@ -1,5 +1,5 @@
 import {FormContainer, PasswordElement} from "react-hook-form-mui";
-import {Box, Button, Grid, IconButton, Stack, styled, Typography} from "@mui/material";
+import {Box, Button, Divider, Grid, IconButton, Stack, styled, Typography} from "@mui/material";
 import {useForm, useFormContext} from "react-hook-form";
 import * as React from "react";
 import {FunctionComponent} from "react";
@@ -11,6 +11,7 @@ import {DataFormType} from "../../data/Constants";
 import {PhotoCamera} from "@mui/icons-material";
 import {specializations} from "../../data/MockData";
 import {FormDatePicker, FormSelect, FormTextField} from "./FormComponents";
+import Header from "../MainPage/Header";
 
 const validateNumbers = {pattern: {value: /^[0-9]*$/, message: "Input must be only numeric"}}
 
@@ -105,9 +106,10 @@ export function RegisterForm({type, isEdit}: IForm) {
 
     return (
         <>
+            <Header/>
             <Typography variant="h5" gutterBottom component="div" align={"center"}
                         bgcolor={"primary.main"} color={"common.white"}
-                        padding={2}>
+                        padding={2} marginTop={1}>
                 {getFormLabel(type, isEdit)}
             </Typography>
             <Box
