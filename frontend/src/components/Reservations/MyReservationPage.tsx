@@ -22,7 +22,7 @@ export function MyReservationPage(props: { isPatient: boolean }) {
                     gutterBottom
                     fontWeight="bold"
         >
-            Moje rezervace
+            {props.isPatient ? "Moje rezervace" : "Rezervace pacientů"}
         </Typography>
 
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}} margin={1}>
