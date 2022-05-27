@@ -44,7 +44,7 @@ export interface IFormFieldProps {
 }
 
 
-export function RegisterForm({type, isEdit}: IForm) {
+export function RegisterFormPage({type, isEdit}: IForm) {
     const formContext = useForm()
     const {handleSubmit} = formContext
 

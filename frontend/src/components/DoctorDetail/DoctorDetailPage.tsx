@@ -25,7 +25,7 @@ interface TabPanelProps {
 }
 
 function TabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
+    const {children, value, index, ...other} = props;
     return (
         <div
             role="tabpanel"
@@ -35,7 +35,7 @@ function TabPanel(props: TabPanelProps) {
             {...other}
         >
             {value === index && (
-                <Box sx={{ p: 3 }}>
+                <Box sx={{p: 3}}>
                     <Typography>{children}</Typography>
                 </Box>
             )}
@@ -67,25 +67,27 @@ export function DoctorDetailPage() {
     return <>
         <Header/>
 
-        <DoctorCard detailed={true} doctor={doctor}/>
-        {doctor.rating != undefined && <Rating name="doctor-rating" value={doctor.rating} precision={0.5} readOnly
-                                               sx={{m: 1, color: "primary.main"}}/>}
+        <Box width={"100vw"}>
+            <DoctorCard detailed={true} doctor={doctor}/>
+            {doctor.rating != undefined && <Rating name="doctor-rating" value={doctor.rating} precision={0.5} readOnly
+                                                   sx={{m: 1, color: "primary.main"}}/>}
 
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={value} onChange={handleChange} aria-label="doctor-detail-tabs" centered variant="fullWidth">
-                <Tab label="INFO" {...a11yProps(0)} />
-                <Tab label="OBJEDNÁNÍ" {...a11yProps(1)} />
-                <Tab label="RECENZE" {...a11yProps(2)} />
-            </Tabs>
-            <TabPanel value={value} index={0}>
-                <InfoPanel/>
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                <ReservationPanel/>
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-                <ReviewPanel/>
-            </TabPanel>
+            <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
+                <Tabs value={value} onChange={handleChange} aria-label="doctor-detail-tabs" centered variant="fullWidth">
+                    <Tab label="INFO" {...a11yProps(0)} />
+                    <Tab label="OBJEDNÁNÍ" {...a11yProps(1)} />
+                    <Tab label="RECENZE" {...a11yProps(2)} />
+                </Tabs>
+                <TabPanel value={value} index={0}>
+                    <InfoPanel/>
+                </TabPanel>
+                <TabPanel value={value} index={1}>
+                    <ReservationPanel/>
+                </TabPanel>
+                <TabPanel value={value} index={2}>
+                    <ReviewPanel/>
+                </TabPanel>
+            </Box>
         </Box>
 
         <Footer/>

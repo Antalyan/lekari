@@ -7,13 +7,14 @@ import {createTheme, responsiveFontSizes} from '@mui/material/styles';
 import {MainPage} from './components/MainPage/MainPage';
 
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
-import {RegisterForm} from "./components/Forms/RegisterForm";
+import {RegisterFormPage} from "./components/Forms/RegisterFormPage";
 import {DoctorDetailPage} from "./components/DoctorDetail/DoctorDetailPage";
 import {DataFormType} from "./data/Constants";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "./state/LoggedInAtom";
 import {IGlobalProfileInfo} from "./components/Interfaces";
 import {MyReservationPage} from "./components/Reservations/MyReservationPage";
+import {NotFoundPage} from "./NotFoundPage";
 
 let theme = createTheme();
 theme = responsiveFontSizes(theme);
@@ -38,13 +39,14 @@ export default function App() {
             <Routes>
                 {/*TODO: add my-reservations, patient-reservations*/}
                 <Route path="/" element={<MainPage />}/>
-                <Route path="/register-patient" element={<RegisterForm {...{type: DataFormType.Patient, isEdit: false}} />} />
-                <Route path="/register-doctor" element={<RegisterForm {...{type: DataFormType.Doctor,  isEdit: false}} />} />
-                <Route path="/doctor/:id/make-reservation" element={<RegisterForm {...{type: DataFormType.Reservation,  isEdit: false}} />} />
-                <Route path="/my-profile" element={<RegisterForm {...{type: getProfileType(user),  isEdit: true}} />} />
+                <Route path="/register-patient" element={<RegisterFormPage {...{type: DataFormType.Patient, isEdit: false}} />} />
+                <Route path="/register-doctor" element={<RegisterFormPage {...{type: DataFormType.Doctor,  isEdit: false}} />} />
+                <Route path="/doctor/:id/make-reservation" element={<RegisterFormPage {...{type: DataFormType.Reservation,  isEdit: false}} />} />
+                <Route path="/my-profile" element={<RegisterFormPage {...{type: getProfileType(user),  isEdit: true}} />} />
                 <Route path="/doctor/:id" element={<DoctorDetailPage />} />
                 <Route path="/my-reservations" element={<MyReservationPage {...{isPatient: true}}/>} />
                 <Route path="/patient-reservations" element={<MyReservationPage {...{isPatient: false}} />} />
+                <Route path="*" element={<NotFoundPage/>} />
             </Routes>
         </BrowserRouter>
     </ThemeProvider>

@@ -10,7 +10,7 @@ import Header from "../Header";
 import {Footer} from "../Footer";
 import {ReservationCard} from "./ReservationCard";
 
-export function MyReservationPage(props: {isPatient: boolean}) {
+export function MyReservationPage(props: { isPatient: boolean }) {
     return <>
         <Header/>
 
@@ -36,6 +36,7 @@ export function MyReservationPage(props: {isPatient: boolean}) {
                 </Grid>
             ))}
         </Grid>
+
         <Footer/>
     </>
 }

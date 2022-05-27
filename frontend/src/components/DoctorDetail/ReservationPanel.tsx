@@ -33,6 +33,7 @@ import {INTERVALS, RESERVATION_TIMES} from "../../data/MockData";
 import {useParams} from "react-router-dom";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
+import {isDate} from "util/types";
 
 interface IReservationCreate {
     create: boolean
@@ -103,7 +104,6 @@ function ReservationDatePanel({create}: IReservationCreate) {
                 </Stack>
             </FormContainer>
         </LocalizationProvider>
-        {!create && <Divider/>}
     </>
 }
 
@@ -124,6 +124,9 @@ function ReservationSlots() {
 
     const [intervalState, setIntervalState] = useState(INTERVALS[3]);
 
+    const [fromDateState, setFromDateState] = useState<Date>();
+
+    // @ts-ignore
     return <>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             {/*@ts-ignore*/}
@@ -139,10 +142,13 @@ function ReservationSlots() {
                     </Typography>
                     <Grid container>
                         <Grid item xs={6} container direction={"row"} paddingRight={2}>
-                            <DatePickerElement name={'fromDate'} label={'Od'} required/>
+                            <DatePickerElement name={'fromDate'} label={'Od'} required
+                                               onAccept={(date) => {
+                                                   date instanceof Date && setFromDateState(date)
+                                               }}/>
                         </Grid>
                         <Grid item xs={6} container justifyContent={"right"} direction={"row"}>
-                            <DatePickerElement name={'toDate'} label={'Do'} required/>
+                            <DatePickerElement name={'toDate'} label={'Do'} required minDate={fromDateState}/>
                         </Grid>
                     </Grid>
                     <FormGroup>
