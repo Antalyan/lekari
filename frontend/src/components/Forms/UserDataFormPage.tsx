@@ -15,6 +15,7 @@ import Header from "../Header";
 import {Footer} from "../Footer";
 import {useRecoilState} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
+import {DeleteProfileDialog} from "./ProfileDialogs";
 
 function getFormLabel(type: DataFormType, isEdit: boolean): string {
     if (isEdit) {
@@ -32,7 +33,7 @@ function getFormLabel(type: DataFormType, isEdit: boolean): string {
     }
 }
 
-export function RegisterFormPage({type, isEdit}: IForm) {
+export function UserDataFormPage({type, isEdit}: IForm) {
     const formContext = useForm()
     const {handleSubmit} = formContext
 
@@ -68,15 +69,14 @@ export function RegisterFormPage({type, isEdit}: IForm) {
     })
 
     const PasswordRepeat: FunctionComponent = () => {
-        // TODO: add password change pop-up for profile edit
         const {getValues} = useFormContext()
         return (
-            <PasswordElement label={'Heslo znovu'}
+            <PasswordElement label={'Nové heslo znovu'}
                              required fullWidth
                              validation={{
                                  validate: (value: string) => {
-                                     const {password} = getValues()
-                                     return value === password || 'Password should match'
+                                     const {newPassword} = getValues()
+                                     return value === newPassword || 'Password should match'
                                  }
                              }}
                              name={'passwordCheck'}
@@ -239,8 +239,15 @@ export function RegisterFormPage({type, isEdit}: IForm) {
                                             Profil
                                         </Typography>
                                     </Grid>
+                                    {isEdit &&  <Grid item xs={12}>
+                                        <PasswordElement name={'oldPassword'} label={'Staré heslo'}
+                                                         autoComplete="new-password"
+                                                         required
+                                                         fullWidth/>
+                                    </Grid>}
                                     <Grid item xs={12}>
-                                        <PasswordElement name={'password'} label={'Heslo'} autoComplete="new-password"
+                                        <PasswordElement name={'newPassword'} label={"Nové heslo"}
+                                                         autoComplete="new-password"
                                                          required
                                                          fullWidth/>
                                     </Grid>
@@ -273,6 +280,10 @@ export function RegisterFormPage({type, isEdit}: IForm) {
                                                   onSubmit={onSubmit}>{"Registrovat se"}</Button>}
                                 </Stack>
                             </Grid>
+
+                            {isEdit && <Grid item xs={11}>
+                                <DeleteProfileDialog/>
+                            </Grid>}
                         </Grid>
                     </FormContainer>
                 </LocalizationProvider>

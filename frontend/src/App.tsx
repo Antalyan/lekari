@@ -7,7 +7,7 @@ import {createTheme, responsiveFontSizes} from '@mui/material/styles';
 import {MainPage} from './components/MainPage/MainPage';
 
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
-import {RegisterFormPage} from "./components/Forms/RegisterFormPage";
+import {UserDataFormPage} from "./components/Forms/UserDataFormPage";
 import {DoctorDetailPage} from "./components/DoctorDetail/DoctorDetailPage";
 import {DataFormType} from "./data/Constants";
 import {useRecoilValue} from "recoil";
@@ -40,13 +40,13 @@ export default function App() {
                 {/*TODO: add my-reservations, patient-reservations*/}
                 <Route path="/" element={<MainPage/>}/>
                 <Route path="/register-patient"
-                       element={<RegisterFormPage {...{type: DataFormType.Patient, isEdit: false}} />}/>
+                       element={<UserDataFormPage {...{type: DataFormType.Patient, isEdit: false}} />}/>
                 <Route path="/register-doctor"
-                       element={<RegisterFormPage {...{type: DataFormType.Doctor, isEdit: false}} />}/>
+                       element={<UserDataFormPage {...{type: DataFormType.Doctor, isEdit: false}} />}/>
                 <Route path="/doctor/:id/make-reservation"
-                       element={<RegisterFormPage {...{type: DataFormType.Reservation, isEdit: false}} />}/>
+                       element={<UserDataFormPage {...{type: DataFormType.Reservation, isEdit: false}} />}/>
                 <Route path="/my-profile" element={user.id == null ? <NotFoundPage/> :
-                    <RegisterFormPage {...{type: getProfileType(user), isEdit: true}} />}/>
+                    <UserDataFormPage {...{type: getProfileType(user), isEdit: true}} />}/>
                 <Route path="/doctor/:id" element={<DoctorDetailPage/>}/>
                 <Route path="/my-reservations"
                        element={user.id == null ? <NotFoundPage/> : <MyReservationPage {...{isPatient: true}}/>}/>
