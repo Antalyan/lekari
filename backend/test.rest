@@ -1,0 +1,44 @@
+GET http://localhost:3000/persons
+###
+
+GET http://localhost:3000/personal-info/e70dc908-c9a7-4408-af65-14ca5f16a0be
+###
+
+GET http://localhost:3000/doctors
+###
+
+GET http://localhost:3000/doctors/9d4689b0-e9a8-4e74-b09a-e0df502aa619
+###
+
+DELETE http://localhost:4000/logout Content-Type: application/json
+
+{
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSmltIiwiaWF0IjoxNTY4NzU5OTIyfQ.RT6wszuCeFLwC_6ksmNMIELxiC5s-uRivfRxyZof5ag"
+}
+
+###
+
+POST http://localhost:4000/token Content-Type: application/json
+
+{
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSmltIiwiaWF0IjoxNTY4NzU5OTIyfQ.RT6wszuCeFLwC_6ksmNMIELxiC5s-uRivfRxyZof5ag"
+}
+
+###
+
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+    "firstname": "Adam",
+    "surename": "Ananas",
+    "degree": "MUDr.",
+    "birthdate": "",
+    "email": "adam.ananas@seznam.cz",
+    "insuranceNumber": 56789,
+    "country": "Česká republika",
+    "city": "Brno",
+    "postalCode": 60020,
+    "street": "Kounicova",
+    "password": "AnAnAs",
+}
