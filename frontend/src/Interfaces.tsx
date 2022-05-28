@@ -1,4 +1,4 @@
-import {DataFormType} from "../data/Constants";
+import {DataFormType} from "./data/Constants";
 
 export interface IBasicDoctor {
     name: string,
@@ -74,4 +74,15 @@ export interface IReservation {
     visitDate: Date,
     address: string,
     note?: string
+}
+
+export interface IFormFieldProps {
+    isEdit: boolean,
+    name: string,
+    label?: string,
+    type?: string,
+    required?: boolean,
+    fullWidth?: boolean,
+    validation?: any
+    options?: any[] | undefined
 }

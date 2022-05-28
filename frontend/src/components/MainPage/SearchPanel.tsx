@@ -10,7 +10,7 @@ import {useState} from "react";
 import {FilterMenu} from "./FilterMenu";
 import Header from "../Header";
 
-export function SearchBox() {
+export function SearchPanel() {
     const formContext = useForm<{ search: string }>({
         defaultValues: {
             search: '',
@@ -19,7 +19,9 @@ export function SearchBox() {
     const {handleSubmit} = formContext
 
     const onSubmit = handleSubmit((formData: { search: string }) => {
-        {/*TODO Handle data*/
+        /*TODO Handle data: send to database and retrieve updated doctors */
+        /*Doctors will probably need to be connected with MainPage via a state */
+        {
             console.log(formData)
         }
     })
@@ -72,7 +74,6 @@ export function SearchBox() {
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
                 >
-                    {/* //TODO add: onClick={handleClose} */}
                     <FilterMenu/>
                 </Menu>
             </Box>

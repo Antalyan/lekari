@@ -2,7 +2,7 @@ import * as React from "react";
 import Grid from "@mui/material/Grid";
 import {Stack} from "@mui/material";
 import Button from "@mui/material/Button";
-import {IBasicDoctor} from "../Interfaces";
+import {IBasicDoctor} from "../../Interfaces";
 import Typography from "@mui/material/Typography";
 import {LocationOn, Person, Warning} from "@mui/icons-material";
 import Box from "@mui/material/Box";
@@ -36,7 +36,7 @@ export function DoctorCardLabels(props: { detailed: boolean, doctor: IBasicDocto
 
 export function DoctorCard(props: { detailed: boolean, doctor: IBasicDoctor }) {
     return (
-        // TODO change bgcolor
+        // TODO change bgcolor if desired
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
             {props.detailed && <Grid item xs={12}>
                 <Typography sx={{m: 2}}

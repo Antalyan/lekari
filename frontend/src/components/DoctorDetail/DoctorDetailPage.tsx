@@ -4,8 +4,8 @@ import Header from "../Header";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Profile from "../../images/mock_profile.jpg";
-import {SearchBox} from "../MainPage/SearchBox";
-import {IBasicDoctor} from "../Interfaces";
+import {SearchPanel} from "../MainPage/SearchPanel";
+import {IBasicDoctor} from "../../Interfaces";
 import {DoctorCard} from "./DoctorCard";
 import {Footer} from "../Footer";
 import {DOCTORS} from "../../data/MockData";
@@ -57,11 +57,14 @@ export function DoctorDetailPage() {
         setValue(newValue);
     };
 
-    // TODO: change doctors to API request
+    // TODO: return error or redirect if the user with this id does not exist
     const {id} = useParams();
     if (id === undefined) {
+        // This should never happen in fact (redirecting elsewhere)
         return <>ERROR</>
     }
+
+    // TODO: change doctors to API data request
     const doctor = DOCTORS.filter((doctor) => doctor.id == parseInt(id))[0];
 
     return <>

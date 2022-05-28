@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import EditIcon from '@mui/icons-material/Edit';
-import {IBasicDoctor, IContact, IEditable, IPatient} from "../Interfaces";
+import {IBasicDoctor, IContact, IEditable, IPatient} from "../../Interfaces";
 import Typography from "@mui/material/Typography";
 import {LocationOn, Person, Warning} from "@mui/icons-material";
 import Box from "@mui/material/Box";
@@ -67,6 +67,8 @@ function ReservationDatePanel({create}: IReservationCreate) {
     const {handleSubmit} = formContext;
 
     const onSubmit = handleSubmit((formData: any) => {
+        // TODO: change formData type to an interface
+        // TODO: according to <create>, redirect to reservation form or store fake reservation (blocked timeslot by doctor)
         console.log(formData)
     })
 
@@ -88,7 +90,6 @@ function ReservationDatePanel({create}: IReservationCreate) {
                     <DatePickerElement name={'reservationDate'} label={'Datum rezervace'} required
                         // @ts-ignore
                                        inputProps={{fullWidth: true}} onChange={(e) => setDateState(e)}/>
-                    {/*TODO: time options must be database requests, based on a selected day*/}
                     {dateState != null &&
                         <SelectElement name={'reservationTime'} label={'Čas rezervace'} required fullWidth
                                        options={getReservationTimes(dateState)}
@@ -96,7 +97,7 @@ function ReservationDatePanel({create}: IReservationCreate) {
                     {create && dateState != null &&
                         <TextFieldElement name={"reservationNote"} label={"Poznámka pro lékaře"} size="small"
                                           multiline/>}
-                    {/*TODO: change href for reservation cancel*/}
+                    {/*TODO: change href for reservation creation or cancel based on <create> */}
                     {dateState != null &&
                         <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>
                             {create ? "Vytvořit rezervaci" : "Zrušit rezervační slot"}
@@ -111,12 +112,15 @@ function ReservationSlots() {
     const formContext = useForm();
     const {handleSubmit} = formContext;
     const onSubmit = handleSubmit((formData: any) => {
+        // TODO: add formData type to check type
+        // TODO: store into database (check if not conflicting with reservations made on backend)
+        // TODO: show result to the user
         console.log(formData)
     })
 
     const [daysState, setDaysState] = useState<boolean[]>([true, true, true, true, true, false, false]);
     const setArray = (index: number) => {
-        // TODO: fix setter
+        // TODO: fix setter???
         return setDaysState(daysState.map((val, ind) => {
             return index == ind ? !val : val
         }))
@@ -162,14 +166,14 @@ function ReservationSlots() {
                                     />} label={DAYS[index]}/>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <SelectElement name={'timeFrom' + index} label={'Od'} required
+                                    <SelectElement name={'timeFrom' + index} label={'Od'} required={daysState[index]}
                                                    options={countIntervals(intervalState.title)} fullWidth={true}
                                                    size={"small"}
                                                    disabled={!daysState[index]}
                                     />
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <SelectElement name={'timeTo' + index} label={'Do'} required
+                                    <SelectElement name={'timeTo' + index} label={'Do'} required={daysState[index]}
                                                    options={countIntervals(intervalState.title)} fullWidth={true}
                                                    size={"small"}
                                                    disabled={!daysState[index]}

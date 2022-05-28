@@ -1,4 +1,4 @@
-import {IEditable, IPatient, IReview} from "../Interfaces";
+import {IEditable, IPatient, IReview} from "../../Interfaces";
 import {Divider, Grid, Rating, Stack, Typography} from "@mui/material";
 import * as React from "react";
 import {REVIEWS} from "../../data/MockData";
@@ -29,7 +29,7 @@ function ReviewCreate() {
                             display={"inline"}>
                     Nové hodnocení
                 </Typography>
-                <Rating name="rating" value={0} precision={0.5}
+                <Rating name="rating" precision={0.5}
                         sx={{color: "primary.main"}}/>
                 <TextFieldElement name={"name"} label={"Autor"} size="medium"/>
                 <TextFieldElement name={"text"} label={"Text"} size="medium" multiline/>
@@ -79,6 +79,7 @@ export function ReviewPanel() {
     const {id} = useParams();
     return <Stack spacing={4}>
         {user.id != id  && <ReviewCreate/>}
+        {/*TODO: replace review with database request, sorted by date*/}
         {REVIEWS.map((review) => <ReviewCard {...review}/>)}
     </Stack>
 }

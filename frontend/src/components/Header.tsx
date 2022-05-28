@@ -19,9 +19,6 @@ import {LoginForm} from "./MainPage/LoginForm";
 import {userAtom} from "../state/LoggedInAtom";
 import {useRecoilState, useRecoilValue} from "recoil";
 
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
-
 function LoginMenu(props: { anchorEl: HTMLElement | null, onClose: () => void }) {
     const [user, setUser] = useRecoilState(userAtom);
     return <Menu
@@ -39,7 +36,6 @@ function LoginMenu(props: { anchorEl: HTMLElement | null, onClose: () => void })
         open={Boolean(props.anchorEl)}
         onClose={props.onClose}
     >
-        {/* //TODO add: onClick={handleClose} */}
         {user.id ? <>
                 <MenuItem>
                     <Link href={"/my-profile"} underline="hover">
@@ -62,6 +58,7 @@ function LoginMenu(props: { anchorEl: HTMLElement | null, onClose: () => void })
                     </Link>
                 </MenuItem>}
                 <MenuItem>
+                    {/*Logout*/}
                     <Link
                         component="button"
                         variant="body1"

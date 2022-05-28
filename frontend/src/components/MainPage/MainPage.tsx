@@ -4,8 +4,8 @@ import Header from "../Header";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Pills from "../../images/pills.jpg";
-import {SearchBox} from "./SearchBox";
-import {IBasicDoctor} from "../Interfaces";
+import {SearchPanel} from "./SearchPanel";
+import {IBasicDoctor} from "../../Interfaces";
 import {DoctorCard} from "../DoctorDetail/DoctorCard";
 import {Footer} from "../Footer";
 import {DOCTORS} from "../../data/MockData";
@@ -29,6 +29,7 @@ export function MainPage() {
             </Grid>
             <Grid item xs={8}>
                 <Box display="flex" height="20rem"
+                     // TODO: adjust box color?
                     // bgcolor="lightgreen"
                      alignItems="right"
                      margin={1}
@@ -38,8 +39,6 @@ export function MainPage() {
             </Grid>
             <Grid item xs={12}>
                 <Typography sx={{m: 2}}
-                    // component="body"
-                    // variant="body1"
                             align="left"
                             color="text.secondary"
                             gutterBottom
@@ -63,14 +62,14 @@ export function MainPage() {
         </Grid>
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
             <Grid item xs={12}>
-                <SearchBox/>
+                <SearchPanel/>
             </Grid>
         </Grid>
 
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}} margin={1}>
-            {/*TODO: check whether this is the correct index*/}
+            {/*TODO: get doctors from database using SWR? */}
             {DOCTORS.map((doctor: IBasicDoctor) => (
-                <Grid item key={doctor.name} xs={12}>
+                <Grid item key={doctor.id} xs={12}>
                     <DoctorCard detailed={false} doctor={doctor}/>
                 </Grid>
             ))}

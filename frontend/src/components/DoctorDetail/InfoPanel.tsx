@@ -4,18 +4,18 @@ import Grid from "@mui/material/Grid";
 import {IconButton, Stack} from "@mui/material";
 import Button from "@mui/material/Button";
 import EditIcon from '@mui/icons-material/Edit';
-import {IEditable} from "../Interfaces";
+import {IEditable} from "../../Interfaces";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {FormContainer, MultiSelectElement, TextFieldElement} from "react-hook-form-mui";
 import {useForm} from "react-hook-form";
-import {DAYS, LANGUAGES} from "../../data/Constants";
+import {DAYS, LANGUAGES, validateNumbers, validateUrl} from "../../data/Constants";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {useParams} from "react-router-dom";
 
 function Opening() {
-    // TODO: editability should be checked at backend on submit as well
+    // TODO: editability could be checked at backend on submit as well?
     const [editingState, setEditingState] = useState(false);
     const user = useRecoilValue(userAtom)
     const {id} = useParams();
@@ -69,7 +69,6 @@ function Contact() {
                 </IconButton>}
             </Box>
             <Stack spacing={editingState ? 2 : 0}>
-                {/*TODO: add validation and potentially refactor to one*/}
                 <Stack direction={"row"} spacing={2}>
                     <Typography width={40} display="inline">Email:</Typography>
                     <TextFieldElement name={"email"} size="small" type="email"
@@ -82,7 +81,7 @@ function Contact() {
                 </Stack>
                 <Stack direction={"row"} spacing={2}>
                     <Typography width={40} display="inline">Tel:</Typography>
-                    <TextFieldElement name={"phone"} size="small"
+                    <TextFieldElement name={"phone"} size="small" validation={validateNumbers}
                                       disabled={!editingState} variant={editingState ? "outlined" : "standard"}
                                       InputProps={{
                                           disableUnderline: !editingState,
@@ -91,7 +90,7 @@ function Contact() {
                 </Stack>
                 <Stack direction={"row"} spacing={2}>
                     <Typography width={40} display="inline">Web:</Typography>
-                    <TextFieldElement name={"web"} size="small"
+                    <TextFieldElement name={"web"} size="small" validation={validateUrl}
                                       disabled={!editingState} variant={editingState ? "outlined" : "standard"}
                                       InputProps={{
                                           disableUnderline: !editingState,
@@ -103,7 +102,7 @@ function Contact() {
 }
 
 function Languages() {
-// TODO: change to languages type
+// TODO: change to languages type (retrieved from db or FE constant?)
     const [editingState, setEditingState] = useState(false);
     const user = useRecoilValue(userAtom)
     const {id} = useParams();
@@ -158,7 +157,7 @@ export function InfoPanel() {
     const formContext = useForm<string[]>();
     const {handleSubmit} = formContext;
     const onSubmit = handleSubmit((formData: string[]) => {
-        // TODO: send data to database on this click
+        // TODO: send data to database on this click and show confirmation?
         console.log(formData);
     });
     const user = useRecoilValue(userAtom)
@@ -178,7 +177,7 @@ export function InfoPanel() {
                         změny</Button>
                 </Grid>
                 <Grid item xs={6}>
-                    {/*TODO: change onSubmit to function resetting form (refresh page basically)*/}
+                    {/*TODO: change onSubmit to message with function resetting form (refresh page basically)*/}
                     <Button variant='contained' type={'submit'} color={'primary'} onClick={onSubmit}>Zrušit
                         změny</Button>
                 </Grid>

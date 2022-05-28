@@ -1,7 +1,7 @@
 import {Button, Grid, Stack, Typography} from "@mui/material";
 import {useForm} from "react-hook-form";
 import * as React from "react";
-import {IBasicDoctor} from "../Interfaces";
+import {IBasicDoctor} from "../../Interfaces";
 import {AutoSelect} from "./AutoSelect";
 import {cities, specializations} from "../../data/MockData";
 
@@ -14,8 +14,11 @@ function FilterForm() {
         actuality: "",
         id: -1
     }
+
     const {handleSubmit, control} = useForm({defaultValues});
     const onSubmit = (data: IBasicDoctor) => {
+        /*TODO Handle data: send to database and retrieve updated doctors */
+        /*Doctors will probably need to be connected with MainPage via a state */
         console.log(data)
     }
 

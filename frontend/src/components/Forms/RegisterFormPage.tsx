@@ -1,22 +1,20 @@
 import {FormContainer, PasswordElement} from "react-hook-form-mui";
-import {Box, Button, Divider, Grid, IconButton, Stack, styled, Typography} from "@mui/material";
+import {Box, Button, Grid, IconButton, Stack, styled, Typography} from "@mui/material";
 import {useForm, useFormContext} from "react-hook-form";
 import * as React from "react";
 import {FunctionComponent} from "react";
-import {IForm} from "../Interfaces";
+import {IForm} from "../../Interfaces";
 import {countries} from "../../data/Countries";
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import {DataFormType} from "../../data/Constants";
+import {DataFormType, validateNumbers} from "../../data/Constants";
 import {PhotoCamera} from "@mui/icons-material";
 import {specializations} from "../../data/MockData";
 import {FormDatePicker, FormSelect, FormTextField} from "./FormComponents";
 import Header from "../Header";
 import {Footer} from "../Footer";
-import {useRecoilState, useRecoilValue} from "recoil";
+import {useRecoilState} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
-
-const validateNumbers = {pattern: {value: /^[0-9]*$/, message: "Input must be only numeric"}}
 
 function getFormLabel(type: DataFormType, isEdit: boolean): string {
     if (isEdit) {
@@ -34,25 +32,14 @@ function getFormLabel(type: DataFormType, isEdit: boolean): string {
     }
 }
 
-export interface IFormFieldProps {
-    isEdit: boolean,
-    name: string,
-    label?: string,
-    type?: string,
-    required?: boolean,
-    fullWidth?: boolean,
-    validation?: any
-    options?: any[] | undefined
-}
-
-
 export function RegisterFormPage({type, isEdit}: IForm) {
     const formContext = useForm()
     const {handleSubmit} = formContext
 
     const onSubmit = handleSubmit((formData) => {
-        // TODO: handle action should depend on form type
+        // TODO: store data to database, should depend on form type: save as new OR update
         console.log(formData)
+        // TODO: show message about success / error, redirect to profile page on successful registration
     })
 
     let copiedCountries = countries.map((country) => country.label)
@@ -63,7 +50,14 @@ export function RegisterFormPage({type, isEdit}: IForm) {
             "title": country
         }
     })
+    const phoneOptions = countries.map((country, index) => {
+        return {
+            "id": index + 1,
+            "title": country.label + ": +" + country.phone
+        }
+    })
 
+    //TODO: replace specializations with real specializations, will they be retrieved from db or stored on FE?
     let copiedSpecs = specializations;
     copiedSpecs.sort()
     const specializationOptions = copiedSpecs.map((spec, index) => {
@@ -73,15 +67,8 @@ export function RegisterFormPage({type, isEdit}: IForm) {
         }
     })
 
-    const phoneOptions = countries.map((country, index) => {
-        return {
-            "id": index + 1,
-            "title": country.label + ": +" + country.phone
-        }
-    })
-
     const PasswordRepeat: FunctionComponent = () => {
-        // TODO: password change pop-up
+        // TODO: add password change pop-up for profile edit
         const {getValues} = useFormContext()
         return (
             <PasswordElement label={'Heslo znovu'}
@@ -101,10 +88,10 @@ export function RegisterFormPage({type, isEdit}: IForm) {
         display: 'none',
     });
 
-    // Logout automatically
     const [user, setUser] = useRecoilState(userAtom)
     if (!isEdit && user.id != null) {
         // TODO: add popup info that you will be logged out
+        // TODO: logout automatically
         setUser({})
     }
 
@@ -265,6 +252,7 @@ export function RegisterFormPage({type, isEdit}: IForm) {
                                             <Typography display={"inline"} color="text.secondary">Profilové
                                                 foto</Typography>
                                             <Input accept="image/*" id="icon-button-file" type="file"/>
+                                            {/*TODO: handle image upload*/}
                                             <IconButton color="primary" aria-label="upload picture" component="span">
                                                 <PhotoCamera/>
                                             </IconButton>

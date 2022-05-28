@@ -2,7 +2,7 @@ import * as React from "react";
 import Grid from "@mui/material/Grid";
 import {Divider, Stack} from "@mui/material";
 import Button from "@mui/material/Button";
-import {IBasicDoctor, IReservation} from "../Interfaces";
+import {IBasicDoctor, IReservation} from "../../Interfaces";
 import Typography from "@mui/material/Typography";
 import {LocationOn, Person, Warning} from "@mui/icons-material";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -51,7 +51,12 @@ export function ReservationCardLabels(props: { isPatient: boolean, reservation: 
     </Stack>;
 }
 
+function deleteReservation (isPatient: boolean, reservation: IReservation): void {
+    // TODO: delete reservation from database AND update GUI (perhaps automatically using SWR?)
+}
+
 export function ReservationCard(props: { isPatient: boolean, reservation: IReservation }) {
+
     return (
         // TODO change bgcolor
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
@@ -65,7 +70,7 @@ export function ReservationCard(props: { isPatient: boolean, reservation: IReser
                   alignItems={"flex-end"}>
                 <Button href={`/doctor/${props.reservation.id}`} variant='contained' color={'primary'}
                         size={"medium"}
-                        onClick={() => console.log("DETAIL")}>ZRUŠIT</Button>
+                        onClick={() => deleteReservation (props.isPatient, props.reservation)}>ZRUŠIT</Button>
             </Grid>
         </Grid>
     )

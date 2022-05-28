@@ -2,7 +2,7 @@ import {FormContainer, TextFieldElement} from "react-hook-form-mui";
 import {Button, Grid} from "@mui/material";
 import {useForm} from "react-hook-form";
 import {useState} from "react";
-import {ILogin} from "../Interfaces";
+import {ILogin} from "../../Interfaces";
 import {useRecoilState} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {DOCTORS, REVIEWS} from "../../data/MockData";
@@ -22,7 +22,7 @@ export function LoginForm () {
     const onSubmit = handleSubmit((formData: ILogin) => {
         {/*TODO Handle data*/}
         console.log(formData)
-        {/*TODO Replace with Database retrieval*/}
+        {/*TODO Replace with Database info about user retrieval*/}
         let logged_user = null;
         switch (formData.password) {
             case "1":
@@ -38,7 +38,11 @@ export function LoginForm () {
                 logged_user = REVIEWS[0];
                 break;
         }
-        if (logged_user != null) {
+        if (logged_user == null) {
+            // TODO: show pop-up window with incorrect password
+            console.log(logged_user)
+        }
+        else {
             // @ts-ignore
             setUser({id: logged_user.id, name: logged_user.name, isDoctor: logged_user.id <= 3});
         }
