@@ -3,7 +3,7 @@ import {Box, Button, Grid, IconButton, Stack, styled, Typography} from "@mui/mat
 import {useForm, useFormContext} from "react-hook-form";
 import * as React from "react";
 import {FunctionComponent} from "react";
-import {IForm, IFormPerson} from "../../Interfaces";
+import {IEditable, IForm, IFormPerson} from "../../Interfaces";
 import {countries} from "../../data/Countries";
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -32,6 +32,22 @@ function getFormLabel(type: DataFormType, isEdit: boolean): string {
         case DataFormType.Invalid:
             return "INVALID"
     }
+}
+
+function PasswordRepeat (editable: IEditable) {
+    const {getValues} = useFormContext()
+    return (
+        <PasswordElement label={'Nové heslo znovu'}
+                         required={!editable} fullWidth
+                         validation={{
+                             validate: (value: string) => {
+                                 const {newPassword} = getValues()
+                                 return value === newPassword || 'Password should match'
+                             }
+                         }}
+                         name={'passwordCheck'}
+        />
+    )
 }
 
 export function UserDataFormPage({type, isEdit}: IForm) {
@@ -70,22 +86,6 @@ export function UserDataFormPage({type, isEdit}: IForm) {
             "title": spec
         }
     })
-
-    const PasswordRepeat: FunctionComponent = () => {
-        const {getValues} = useFormContext()
-        return (
-            <PasswordElement label={'Nové heslo znovu'}
-                             required fullWidth
-                             validation={{
-                                 validate: (value: string) => {
-                                     const {newPassword} = getValues()
-                                     return value === newPassword || 'Password should match'
-                                 }
-                             }}
-                             name={'passwordCheck'}
-            />
-        )
-    }
 
     const Input = styled('input')({
         display: 'none',
@@ -245,17 +245,17 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                     {isEdit && <Grid item xs={12}>
                                         <PasswordElement name={'oldPassword'} label={'Staré heslo'}
                                                          autoComplete="new-password"
-                                                         required
+                                                         required={!isEdit}
                                                          fullWidth/>
                                     </Grid>}
                                     <Grid item xs={12}>
                                         <PasswordElement name={'newPassword'} label={"Nové heslo"}
                                                          autoComplete="new-password"
-                                                         required
+                                                         required={!isEdit}
                                                          fullWidth/>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <PasswordRepeat/>
+                                        <PasswordRepeat editable={isEdit}/>
                                     </Grid>
                                     <Grid item xs={11}>
                                         <label htmlFor="icon-button-file">

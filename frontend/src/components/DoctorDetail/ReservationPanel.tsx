@@ -49,7 +49,7 @@ function ReservationDatePanel({create}: IReservationCreate) {
     const onSubmit = handleSubmit((formData: IReservationBasic) => {
         // TODO: change formData type to an interface
         // TODO: according to <create>, redirect to reservation form or store fake reservation (blocked timeslot by doctor)
-        console.log(formData.reservationTime)
+        console.log(formData)
     })
 
     const [dateState, setDateState] = useState();
