@@ -18,13 +18,14 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
 
 const personSchema = object({
     firstname: string().required(),
-    surename: string().required(),
+    surename: string(),
     degree: string(),
     birthdate: date(),
     email: string(),
     phone: number(),
     insuranceNumber: number(),
-    insuranceId: string(),
+    insuranceCode: number(),
+    insuranceName: string(),
     country: string(),
     city: string(),
     postalCode: number(),
@@ -38,45 +39,63 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     let person: Prisma.PersonCreateInput
     try {
         const data = await personSchema.validate(req.body);
-        bcryptjs.hash(password, 10, (hashError, hash) => {
-            if (hashError) {
-                return res.status(401).json({
-                    message: hashError.message,
-                    error: hashError
-                });
-            }
-            data.password = hash;
-            const person = prisma.person.create({
-                data
+        const hash = await bcryptjs.hash(password, 10);
+        let p = {
+            firstname: data.firstname,
+            surename: data.surename,
+            degree: data.degree,
+            birthdate: data.birthdate,
+            email: data.email,
+            insuraceNumber: data.insuranceNumber,
+            phone: data.phone,
+            insurance:{
+                create: {
+                number: data.insuranceCode,
+                name:   data.insuranceName
+                }
+            },
+            address: {
+                create: {
+                country: data.country,
+                city: data.city,
+                postalCode: data.postalCode,
+                street: data.street,
+                }
+            },
+            password: hash
+        }
+            const person = await prisma.person.create({
+            data: p
             });
-            if(person){
-                return res.status(201).send({
-                    status: "success",
-                    data: person,
-                    message: "Person registered."
-                })
-            } else{
-                return res.status(500).send({
-                    status: "error",
-                    message: "",
-                })
-            }
-        });
-    } catch (e) {
+        if(person){
+            return res.status(201).send({
+                status: "success",
+                data: person,
+                message: "Person registered."
+            })
+        } else{
+            return res.status(500).send({
+                status: "error",
+                message: "",
+            })
+        }
+        } catch (e) {
             if (e instanceof ValidationError) {
-              return res.status(400).send({
+            return res.status(400).send({
                 status: "error",
                 data: e.errors,
                 message: e.message
-              });
-            }
-        
-            return res.status(500).send({
-              status: "error",
-              data: {},
-              message: "Something went wrong"
             });
-          }  
+            }
+            if (e instanceof Error)
+            {
+                return res.status(500).send({
+                    status: "error",
+                    data: e.message,
+                    message: "Something went wrong"
+                    });
+            }
+        }  
 };
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
