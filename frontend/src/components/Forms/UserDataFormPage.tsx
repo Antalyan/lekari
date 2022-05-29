@@ -15,7 +15,8 @@ import Header from "../Header";
 import {Footer} from "../Footer";
 import {useRecoilState} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
-import {DeleteProfileDialog} from "./ProfileDialogs";
+import {DeleteProfileDialog} from "./DeleteProfileDialog";
+import {useNavigate} from "react-router-dom";
 
 function getFormLabel(type: DataFormType, isEdit: boolean): string {
     if (isEdit) {
@@ -34,13 +35,15 @@ function getFormLabel(type: DataFormType, isEdit: boolean): string {
 }
 
 export function UserDataFormPage({type, isEdit}: IForm) {
+    let navigate = useNavigate()
     const formContext = useForm()
     const {handleSubmit} = formContext
 
     const onSubmit = handleSubmit((formData) => {
         // TODO: store data to database, should depend on form type: save as new OR update
         console.log(formData)
-        // TODO: show message about success / error, redirect to profile page on successful registration
+        // TODO: show message about success / error, redirect only on success
+        navigate("/")
     })
 
     let copiedCountries = countries.map((country) => country.label)
@@ -230,7 +233,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                         />
                                     </Grid>
                                 </>}
-                                {type != DataFormType.Reservation &&
+                            {type != DataFormType.Reservation &&
                                 <>
                                     <Grid item xs={12}>
                                         <Typography variant="h5" gutterBottom component="div" align={"center"}
@@ -239,7 +242,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                             Profil
                                         </Typography>
                                     </Grid>
-                                    {isEdit &&  <Grid item xs={12}>
+                                    {isEdit && <Grid item xs={12}>
                                         <PasswordElement name={'oldPassword'} label={'Staré heslo'}
                                                          autoComplete="new-password"
                                                          required

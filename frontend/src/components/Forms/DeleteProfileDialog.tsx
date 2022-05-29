@@ -1,8 +1,10 @@
 import * as React from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export function DeleteProfileDialog() {
-    // Dialog delete profile
+    let navigate = useNavigate();
+
     const [open, setOpen] = React.useState(false);
     const handleClickOpen = () => {
         setOpen(true);
@@ -12,7 +14,7 @@ export function DeleteProfileDialog() {
     };
     const handleDeleteProfile = () => {
         // TODO: delete profile from database
-        setOpen(false);
+        navigate("/")
     };
 
     return <>
@@ -32,7 +34,7 @@ export function DeleteProfileDialog() {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose} autoFocus>Nemazat profil</Button>
+                <Button onClick={handleClose} variant={"outlined"} autoFocus>Nemazat profil</Button>
                 <Button onClick={handleDeleteProfile}>
                     Smazat profil
                 </Button>

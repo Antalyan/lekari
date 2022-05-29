@@ -9,6 +9,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Box from "@mui/material/Box";
 import Profile from "../../images/mock_profile.jpg";
+import {DeleteReservationDialog} from "./DeleteProfileDialog";
 
 export function ReservationCardLabels(props: { isPatient: boolean, reservation: IReservation }) {
     return <Stack direction="column" spacing={2} padding={2}>
@@ -51,10 +52,6 @@ export function ReservationCardLabels(props: { isPatient: boolean, reservation: 
     </Stack>;
 }
 
-function deleteReservation (isPatient: boolean, reservation: IReservation): void {
-    // TODO: delete reservation from database AND update GUI (perhaps automatically using SWR?)
-}
-
 export function ReservationCard(props: { isPatient: boolean, reservation: IReservation }) {
 
     return (
@@ -68,9 +65,7 @@ export function ReservationCard(props: { isPatient: boolean, reservation: IReser
             </Grid>
             <Grid item xs={12} container direction="column" paddingRight={4} paddingBottom={2} justifyContent={"center"}
                   alignItems={"flex-end"}>
-                <Button href={`/doctor/${props.reservation.id}`} variant='contained' color={'primary'}
-                        size={"medium"}
-                        onClick={() => deleteReservation (props.isPatient, props.reservation)}>ZRUŠIT</Button>
+                <DeleteReservationDialog isPatient={props.isPatient} reservation={props.reservation}/>
             </Grid>
         </Grid>
     )
