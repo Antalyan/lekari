@@ -1,11 +1,11 @@
 import {DataFormType} from "./data/Constants";
 
 export interface IBasicDoctor {
+    id: number,
     name: string,
     specialization: string,
     location: string,
     actuality: string,
-    id: number,
     rating?: number
 }
 
@@ -14,23 +14,32 @@ export interface ILogin {
     password: string
 }
 
-export interface IPatient {
-    title: string,
+export interface IFormPerson {
+    id?: number,
     name: string,
     surname: string,
+    degree: string,
+    birthdate: Date,
     street: string,
     streetNumber?: number,
     city: string,
     postalCode?: number,
     country: string,
-    birthdate: Date,
     email: string,
     phoneCode?: number,
     phone?: number,
     insuranceNumber?: number,
-    password: string,
-    passwordCheck: string,
-    profilePicture: string
+    oldPassword?: string,
+    newPassword?: string,
+    passwordCheck?: string,
+    profilePicture: string,
+    specialization: string,
+    status?: string,
+    doctorStreet?: string,
+    doctorStreetNumber?: number,
+    doctorCity?: string,
+    doctorPostalCode?: number,
+    doctorCountry?: string,
 }
 
 export interface IContact {
@@ -76,6 +85,12 @@ export interface IReservation {
     note?: string
 }
 
+export interface IReservationBasic {
+    reservationDate: Date,
+    reservationTime: string,
+    reservationNote?: string
+}
+
 export interface IFormFieldProps {
     isEdit: boolean,
     name: string,
@@ -85,4 +100,24 @@ export interface IFormFieldProps {
     fullWidth?: boolean,
     validation?: any
     options?: any[] | undefined
+}
+
+export interface IReservationSlots {
+    fromDate: Date,
+    toDate: Date,
+    timeFrom1?: string,
+    timeFrom2?: string,
+    timeFrom3?: string,
+    timeFrom4?: string,
+    timeFrom5?: string,
+    timeFrom6?: string,
+    timeFrom7?: string,
+    timeTo1?: string,
+    timeTo2?: string,
+    timeTo3?: string,
+    timeTo4?: string,
+    timeTo5?: string,
+    timeTo6?: string,
+    timeTo7?: string,
+    interval: number
 }
