@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-const {PrismaClient} = require('@prisma/client');
+const {Prisma, PrismaClient} = require('@prisma/client');
+//import { Prisma, PrismaClient } from '@prisma/client'
 import { object, string, number, date, ValidationError, boolean } from 'yup';
 
 const prisma = new PrismaClient()
@@ -73,7 +74,24 @@ const doctorDetail = async (req: Request, res: Response, next: NextFunction) => 
 }
 
 const doctorList = async (req: Request, res: Response, next: NextFunction) => {
+  const { surename, location, specialization, orderBy } = req.query
+
   const doctors = await prisma.doctor.findMany({
+    where: {
+      person:{
+        surename: {
+          contains: surename != null ? surename : undefined
+        },
+      },
+      specialization: {
+        contains: specialization != null ? specialization: undefined
+      },
+      address: {
+        city: {
+          contains: location != null ? location: undefined
+        },
+      }
+    },
     select: {
         id: true,
         person: {
