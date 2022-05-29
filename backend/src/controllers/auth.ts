@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import bcryptjs from 'bcryptjs';
 import signJWT from '../functions/signJWT';
-import IUser from '../interfaces/person';
+import jwt from 'jsonwebtoken';
 const {PrismaClient} = require('@prisma/client');
 import { Prisma } from '@prisma/client'
 import { object, string, number, date, ValidationError, boolean } from 'yup';
@@ -141,5 +141,18 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
+const logout = async (req: Request, res: Response, next: NextFunction) => {
+    const authHeader = req.headers["authorization"];
+    if(authHeader){
+        jwt.sign(authHeader, "", { expiresIn: 1 } , (logout, err) => {
+            if (!err) {
+                res.send({message : 'You have been Logged Out' });
+            } else {
+                res.send({msg:'Error'});
+            }
+        });
+    }
+}
 
-export default { validateToken, register, login };
+
+export default { validateToken, register, login, logout};

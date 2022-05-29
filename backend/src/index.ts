@@ -40,6 +40,7 @@ api.get('/person-reservations', extractJWT, person.personReservations)
 api.get('/validate', extractJWT, auth.validateToken);
 api.post('/register', auth.register);
 api.post('/login', auth.login);
+api.put('/logout', auth.logout);
 /**
  * Start listening on connections
  */

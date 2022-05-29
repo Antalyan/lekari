@@ -270,12 +270,17 @@ const doctorSlots = async (req: Request, res: Response, next: NextFunction) => {
     lastTime.setMinutes( lastTime.getMinutes() + 30 )
   }
 
+  const reservationsTimes = reservations.map((item: { from: any; }) => item.from.toLocaleString())
+
   //let timeSlots = allTimeSlots.filter(slot => reservations.some(reservation => reservation.from === slot));
+
+  let timeSlots = allTimeSlots.filter( function( el ) {
+    return !reservationsTimes.includes(el.toLocaleString());
+  } );
 
   return res.send({
     status: "sucess",
-    data: reservations,
-    slots: allTimeSlots
+    data: timeSlots
   })
 }
 

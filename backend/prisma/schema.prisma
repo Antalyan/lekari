@@ -96,8 +96,8 @@ model OpeningHours {
   doctorId String
   doctor   Doctor   @relation(fields: [doctorId], references: [id])
   day      String           // TODO: enum
-  fromTime DateTime @db.Time(0)
-  toTime   DateTime @db.Time(0)
+  fromTime DateTime
+  toTime   DateTime
   fromDate DateTime @default(now()) // TODO: in diagram it is time
   interval Int @default(20)
   @@unique([doctorId, day, fromDate])
