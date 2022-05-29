@@ -9,17 +9,17 @@ datasource db {
 
 model Person {
   id             String           @id @default(uuid())
-  firstname           String
-  surename           String
-  degree         String
+  firstname      String
+  surename       String
+  degree         String?
   birthdate      DateTime
   email          String
-  phone          Int
-  insuraceNumber Int
-  insuranceId    String
-  insurance      InsuranceCompany @relation(fields: [insuranceId], references: [id])
-  addressId      String           @unique
-  address        Address          @relation(fields: [addressId], references: [id])
+  phone          Int?
+  insuranceNumber Int?
+  insuranceId    String?
+  insurance      InsuranceCompany? @relation(fields: [insuranceId], references: [id])
+  addressId      String?           @unique
+  address        Address?          @relation(fields: [addressId], references: [id])
   password       String
   reservations   Reservation[]
   doctor         Doctor?
@@ -38,6 +38,7 @@ model Address {
   city       String
   postalCode Int
   street     String
+  buildingNumber String
   person     Person?
   doctor     Doctor?
 }
@@ -57,12 +58,12 @@ model Reservation {
 model Doctor {
   id             String           @id @default(uuid())
   specialization String // TODO: enum
-  actuality      String
+  actuality      String?
   email          String
   phone          String
-  description    String
-  link           String
-  profilePicture String
+  description    String?
+  link           String?
+  profilePicture String?
   addressId      String           @unique
   address        Address          @relation(fields: [addressId], references: [id])
   personId       String           @unique
@@ -93,11 +94,11 @@ model DoctorLanguage {
 
 model OpeningHours {
   doctorId String
-  dostor   Doctor   @relation(fields: [doctorId], references: [id])
+  doctor   Doctor   @relation(fields: [doctorId], references: [id])
   day      String           // TODO: enum
   fromTime DateTime
   toTime   DateTime
   fromDate DateTime @default(now()) // TODO: in diagram it is time
-
+  interval Int @default(20)
   @@unique([doctorId, day, fromDate])
 }
