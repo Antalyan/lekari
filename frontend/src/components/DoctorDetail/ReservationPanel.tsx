@@ -1,39 +1,19 @@
 import * as React from "react";
-import Grid from "@mui/material/Grid";
-import {
-    Divider,
-    FormControlLabel,
-    FormGroup,
-    IconButton,
-    Stack,
-    Switch,
-    TextareaAutosize,
-    TextField
-} from "@mui/material";
-import Button from "@mui/material/Button";
-import EditIcon from '@mui/icons-material/Edit';
-import {IBasicDoctor, IContact, IEditable, IPatient} from "../../Interfaces";
-import Typography from "@mui/material/Typography";
-import {LocationOn, Person, Warning} from "@mui/icons-material";
-import Box from "@mui/material/Box";
-import Profile from "../../images/mock_profile.jpg";
 import {useState} from "react";
-import {
-    DatePickerElement,
-    FormContainer,
-    MultiSelectElement,
-    SelectElement,
-    TextFieldElement
-} from "react-hook-form-mui";
+import Grid from "@mui/material/Grid";
+import {Divider, FormControlLabel, FormGroup, Stack, Switch} from "@mui/material";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import {DatePickerElement, FormContainer, SelectElement, TextFieldElement} from "react-hook-form-mui";
 import {useForm} from "react-hook-form";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import {DAYS, LANGUAGES, RESERVATION_INTERVAL_BOUNDS} from "../../data/Constants";
+import {DAYS, RESERVATION_INTERVAL_BOUNDS} from "../../data/Constants";
 import {INTERVALS, RESERVATION_TIMES} from "../../data/MockData";
 import {useParams} from "react-router-dom";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
-import {isDate} from "util/types";
+import {IReservationBasic, IReservationSlots} from "../../Interfaces";
 
 interface IReservationCreate {
     create: boolean
@@ -63,13 +43,13 @@ function countIntervals(interval: number) {
 function ReservationDatePanel({create}: IReservationCreate) {
     const {id} = useParams();
 
-    const formContext = useForm();
+    const formContext = useForm<IReservationBasic>();
     const {handleSubmit} = formContext;
 
-    const onSubmit = handleSubmit((formData: any) => {
+    const onSubmit = handleSubmit((formData: IReservationBasic) => {
         // TODO: change formData type to an interface
         // TODO: according to <create>, redirect to reservation form or store fake reservation (blocked timeslot by doctor)
-        console.log(formData)
+        console.log(formData.reservationTime)
     })
 
     const [dateState, setDateState] = useState();
@@ -109,9 +89,9 @@ function ReservationDatePanel({create}: IReservationCreate) {
 }
 
 function ReservationSlots() {
-    const formContext = useForm();
+    const formContext = useForm<IReservationSlots>();
     const {handleSubmit} = formContext;
-    const onSubmit = handleSubmit((formData: any) => {
+    const onSubmit = handleSubmit((formData: IReservationSlots) => {
         // TODO: add formData type to check type
         // TODO: store into database (check if not conflicting with reservations made on backend)
         // TODO: show result to the user

@@ -1,4 +1,4 @@
-import {IEditable, IPatient, IReview} from "../../Interfaces";
+import {IEditable, IFormPerson, IReview} from "../../Interfaces";
 import {Divider, Grid, Rating, Stack, Typography} from "@mui/material";
 import * as React from "react";
 import {REVIEWS} from "../../data/MockData";
@@ -10,8 +10,8 @@ import {userAtom} from "../../state/LoggedInAtom";
 import {useParams} from "react-router-dom";
 
 function ReviewCreate() {
-    const formContext = useForm<IReview>()
-    const {handleSubmit} = formContext
+    const formContext = useForm<IReview>();
+    const {handleSubmit} = formContext;
 
     const onSubmit = handleSubmit((formData: IReview) => {
         // TODO: add date, save to db
