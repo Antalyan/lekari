@@ -5,7 +5,7 @@ import { object, string, number, date, ValidationError, boolean } from 'yup';
 const prisma = new PrismaClient()
 
 const doctorDetail = async (req: Request, res: Response, next: NextFunction) => {
-    const id = req.params.id;
+  const id = req.params.id;
 
   const doctor = await prisma.doctor.findUnique({
     where: {
@@ -193,4 +193,72 @@ const doctorReservations = async (req: Request, res: Response, next: NextFunctio
   })
 }
 
-export default { doctorList, doctorDetail, doctorUpdate, doctorReservations};
+const doctorSlots = async (req: Request, res: Response, next: NextFunction) => {
+  const id = req.params.id;
+  const date = new Date(req.params.date);
+  var tomorrow = new Date();
+  tomorrow.setDate(date.getDate()+1);
+  var weekday=new Array(7);
+  weekday[0]="Monday";
+  weekday[1]="Tuesday";
+  weekday[2]="Wednesday";
+  weekday[3]="Thursday";
+  weekday[4]="Friday";
+  weekday[5]="Saturday";
+  weekday[6]="Sunday";
+  const day = weekday[date.getDay()];
+  
+
+  const openingHours = await prisma.openingHours.findMany({
+    where: {
+      doctorId: id,
+      day: day,
+    },
+    select: {
+      fromTime: true,
+      toTime: true,
+      fromDate: true,
+      interval:true
+    }
+  });
+
+  const reservations = await prisma.reservation.findMany({
+    where: {
+      doctorId: id,
+      from: {
+        gte: date,
+        lt: tomorrow,
+      }
+    },
+    select: {
+      from: true
+    }
+  });
+
+  if (!openingHours) {
+    return res.status(404).send({
+      status: "error",
+      data: {},
+      message: "Opening hours was not found"
+    });
+  }
+  let dateFrom = new Date(date)
+  dateFrom.setTime(openingHours[0].fromTime.getTime())
+  let allTimeSlots = []
+  let time = openingHours[0].toTime.getTime() - openingHours[0].fromTime.getTime();
+  let lastTime = new Date (dateFrom);
+  for (let i = 0; i < (((time / 60) / openingHours[0].interval) / 1000); i++) {
+    allTimeSlots.push(new Date(lastTime))
+    lastTime.setMinutes( lastTime.getMinutes() + 30 )
+  }
+
+  //let timeSlots = allTimeSlots.filter(slot => reservations.some(reservation => reservation.from === slot));
+
+  return res.send({
+    status: "sucess",
+    data: reservations,
+    slots: allTimeSlots
+  })
+}
+
+export default { doctorList, doctorDetail, doctorUpdate, doctorReservations, doctorSlots};

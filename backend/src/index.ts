@@ -28,6 +28,7 @@ api.get('/', (req, res) => res.send({
  api.get('/doctors/:id', doctor.doctorDetail)
  api.patch('/doctors/:id', doctor.doctorUpdate)
  api.get('/doctor-reservations', extractJWT, doctor.doctorReservations)
+ api.get('/doctors/:id/slots/:date', doctor.doctorSlots)
 
 
 api.get('/persons', person.personList)
