@@ -3,6 +3,7 @@ import bcryptjs from 'bcryptjs';
 import signJWT from '../functions/signJWT';
 import IUser from '../interfaces/person';
 const {PrismaClient} = require('@prisma/client');
+import { Prisma } from '@prisma/client'
 import { object, string, number, date, ValidationError, boolean } from 'yup';
 
 const NAMESPACE = 'User';
@@ -16,8 +17,8 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const personSchema = object({
-    firstname: string(),
-    surename: string(),
+    firstname: string().required(),
+    surename: string().required(),
     degree: string(),
     birthdate: date(),
     email: string(),
@@ -34,6 +35,7 @@ const personSchema = object({
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
     let { password } = req.body;
+    let person: Prisma.PersonCreateInput
     try {
         const data = await personSchema.validate(req.body);
         bcryptjs.hash(password, 10, (hashError, hash) => {
@@ -43,17 +45,22 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
                     error: hashError
                 });
             }
-
-            data.password;
+            data.password = hash;
             const person = prisma.person.create({
-              data
+                data
             });
-        
-            return res.status(201).send({
-              status: "success",
-              data: person,
-              message: "Person registered."
-            })
+            if(person){
+                return res.status(201).send({
+                    status: "success",
+                    data: person,
+                    message: "Person registered."
+                })
+            } else{
+                return res.status(500).send({
+                    status: "error",
+                    message: "",
+                })
+            }
         });
     } catch (e) {
             if (e instanceof ValidationError) {
@@ -74,18 +81,19 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
     let { email, password } = req.body;
-    const person = await prisma.doctor.findUnique({
+
+    const person = await prisma.person.findMany({
         where: {
          email: email
         }})
     if(person){
-        bcryptjs.compare(password, person.password, (error, result) => {
+        bcryptjs.compare(password, person[0].password, (error, result) => {
             if (error) {
                 return res.status(401).json({
                     message: 'Password Mismatch'
                 });
             } else if (result) {
-                signJWT(person, (_error, token) => {
+                signJWT(person[0], (_error, token) => {
                     if (_error) {
                         return res.status(401).json({
                             message: 'Unable to Sign JWT',
@@ -95,9 +103,13 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
                         return res.status(200).json({
                             message: 'Auth Successful',
                             token,
-                            user: person
+                            user: person[0]
                         });
                     }
+                });
+            } else {
+                return res.status(600).json({
+                    message: 'Bad password',
                 });
             }
         });

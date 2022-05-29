@@ -42,3 +42,12 @@ Content-Type: application/json
     "street": "Kounicova",
     "password": "AnAnAs",
 }
+
+###
+
+PATCH http://localhost:3000/personal-info/e70dc908-c9a7-4408-af65-14ca5f16a0be
+Content-Type: application/json
+
+{
+    "firstname": "Tomáš",
+}

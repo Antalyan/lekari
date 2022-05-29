@@ -124,4 +124,38 @@ const personDetail = async (req: Request, res: Response, next: NextFunction) => 
  })
 }
 
-export default { personList, personDetail};
+const personUpdate = async (req: Request, res: Response, next: NextFunction) => {
+  const id = req.params.id;
+  try {
+    const data = await personSchema.validate(req.body);
+    const person = await prisma.person.updateMany({
+      where: {
+          id: id
+      },
+      data: data
+    })
+
+    if (!person) {
+      return res.status(404).send({
+        status: "error",
+        data: {},
+        message: "Person was not found"
+      });
+    }
+
+    return res.send({
+      status: "sucess",
+      data: person
+    })
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      return res.status(400).send({
+        status: "error",
+        data: e.errors,
+        message: e.message
+      });
+    }
+  }
+}
+
+export default { personList, personDetail, personUpdate};

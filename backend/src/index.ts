@@ -25,9 +25,12 @@ api.get('/', (req, res) => res.send({
 
  api.get('/doctors', doctor.doctorList)
  api.get('/doctors/:id', doctor.doctorDetail)
+ api.patch('/doctors/:id', doctor.doctorUpdate)
 
 api.get('/persons', person.personList)
 api.get('/personal-info/:id', person.personDetail)
+api.patch('/personal-info/:id', person.personUpdate)
+
 
 api.get('/validate', auth.validateToken);
 api.post('/register', auth.register);
