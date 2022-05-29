@@ -5,6 +5,7 @@ import doctor from './controllers/doctor';
 import express from 'express'
 const {PrismaClient} = require('@prisma/client');
 import { object, string, number, date, ValidationError, boolean } from 'yup';
+import extractJWT from './middleware/extractJWT';
 
 
 const api = express()
@@ -26,13 +27,16 @@ api.get('/', (req, res) => res.send({
  api.get('/doctors', doctor.doctorList)
  api.get('/doctors/:id', doctor.doctorDetail)
  api.patch('/doctors/:id', doctor.doctorUpdate)
+ api.get('/doctor-reservations', extractJWT, doctor.doctorReservations)
+
 
 api.get('/persons', person.personList)
-api.get('/personal-info/:id', person.personDetail)
-api.patch('/personal-info/:id', person.personUpdate)
+api.get('/personal-info', extractJWT, person.personDetail)
+api.patch('/personal-info', extractJWT, person.personUpdate)
+api.get('/person-reservations', extractJWT, person.personReservations)
 
 
-api.get('/validate', auth.validateToken);
+api.get('/validate', extractJWT, auth.validateToken);
 api.post('/register', auth.register);
 api.post('/login', auth.login);
 /**

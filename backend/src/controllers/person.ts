@@ -1,7 +1,8 @@
-//import { prisma, PrismaClient } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
 const {PrismaClient} = require('@prisma/client');
 import { object, string, number, date, ValidationError, boolean } from 'yup';
+import jwt from 'jsonwebtoken';
+import config from '../config/config';
 
 const prisma = new PrismaClient()
 
@@ -22,7 +23,8 @@ const personSchema = object({
    email: string(),
    phone: number(),
    insuranceNumber: number(),
-   insuranceId: string(),
+   insuranceCode: number(),
+   insuranceName: string(),
    country: string(),
    city: string(),
    postalCode: number(),
@@ -31,41 +33,10 @@ const personSchema = object({
    profilePicture: string(),
  });
 
-/*api.post('/person', async(req, res, next) => {
-   try {
-       const data = await personSchema.validate(req.body);
-       const person = await prisma.person.create({
-         data
-       });
-   
-       return res.status(201).send({
-         status: "success",
-         data: person,
-         message: "Person registered."
-       })
-     } catch (e) {
-       if (e instanceof ValidationError) {
-         return res.status(400).send({
-           status: "error",
-           data: e.errors,
-           message: e.message
-         });
-       }
-   
-       return res.status(500).send({
-         status: "error",
-         data: {},
-         message: "Something went wrong"
-       });
-     }
-});*/
-
 const personDetail = async (req: Request, res: Response, next: NextFunction) => {
-   const id = req.params.id;
-
- const person = await prisma.person.findUnique({
+  const person = await prisma.person.findMany({
    where: {
-     id: id
+     email: res.locals.jwt.username
    },
    select: {
        firstname: true,
@@ -73,7 +44,7 @@ const personDetail = async (req: Request, res: Response, next: NextFunction) => 
        degree: true,
        email: true,
        phone: true,
-       insuraceNumber: true,
+       insuranceNumber: true,
        insurance: {
            select: {
                number: true,
@@ -101,36 +72,16 @@ const personDetail = async (req: Request, res: Response, next: NextFunction) => 
 
  return res.send({
    status: "sucess",
-   data: person,
-   /*data: {
-       firstname: person.firstname,
-       surename: person.surename,
-       degree: person.degree,
-       email: person.email,
-       phone: person.phone,
-       insurance: {
-           insuranceNumber: person.insuranceNumber,
-           insuranceCompanyNumber: person.insurance.number,
-           insuranceCompanyName: person.insurance.name
-       },
-       address: {
-           country: person.address.country,
-           city: person.address.city,
-           postalCode: person.address.postalCode,
-           street: person.address.street,
-       }
-
-   }*/
+   data: person[0],
  })
 }
 
 const personUpdate = async (req: Request, res: Response, next: NextFunction) => {
-  const id = req.params.id;
   try {
     const data = await personSchema.validate(req.body);
     const person = await prisma.person.updateMany({
       where: {
-          id: id
+        email: res.locals.jwt.username
       },
       data: data
     })
@@ -158,4 +109,48 @@ const personUpdate = async (req: Request, res: Response, next: NextFunction) => 
   }
 }
 
-export default { personList, personDetail, personUpdate};
+const personReservations = async (req: Request, res: Response, next: NextFunction) => {
+  const reservations = await prisma.person.findMany({
+    where: {
+      email: res.locals.jwt.username
+    },
+    select: {
+        reservations: {
+            select: {
+              doctor: {
+                select: {
+                  person:{
+                    select: {
+                        firstname: true,
+                        surename: true,
+                        degree: true,
+                    }
+                },
+                specialization: true,
+                email: true,
+                }
+              },
+              from: true,
+              personComment: true,
+              doctorComment: true,
+              created: true
+            }
+        }
+    }
+  });
+
+  if (!reservations) {
+    return res.status(404).send({
+      status: "error",
+      data: {},
+      message: "Person was not found"
+    });
+  }
+ 
+  return res.send({
+    status: "sucess",
+    data: reservations[0],
+  })
+}
+
+export default { personList, personDetail, personUpdate, personReservations};

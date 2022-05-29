@@ -44,11 +44,11 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         let p = {
             firstname: data.firstname,
             surename: data.surename,
-            degree: data.degree,
+            degree: data.degree || null,
             birthdate: data.birthdate,
             email: data.email,
             insuranceNumber: data.insuranceNumber,
-            phone: data.phone,
+            phone: data.phone || null,
             insurance:{
                 create: {
                 number: data.insuranceCode,

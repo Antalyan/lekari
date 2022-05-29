@@ -151,4 +151,46 @@ const doctorUpdate = async (req: Request, res: Response, next: NextFunction) => 
   }
 }
 
-export default { doctorList, doctorDetail, doctorUpdate};
+const doctorReservations = async (req: Request, res: Response, next: NextFunction) => {
+  const reservations = await prisma.doctor.findMany({
+    where: {
+      person:{
+          email: res.locals.jwt.username
+      }
+    },
+    select: {
+        reservations: {
+            select: {
+              person: {
+                select: {
+                    firstname: true,
+                    surename: true,
+                    degree: true,
+                    email: true,
+                    phone: true
+                }
+              },
+              from: true,
+              personComment: true,
+              doctorComment: true,
+              created: true
+            }
+        }
+    }
+  });
+
+  if (!reservations) {
+    return res.status(404).send({
+      status: "error",
+      data: {},
+      message: "Person was not found"
+    });
+  }
+ 
+  return res.send({
+    status: "sucess",
+    data: reservations[0],
+  })
+}
+
+export default { doctorList, doctorDetail, doctorUpdate, doctorReservations};
