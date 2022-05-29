@@ -30,6 +30,7 @@ const personSchema = object({
     city: string(),
     postalCode: number(),
     street: string(),
+    buildingNumber: string(),
     password: string(),
     profilePicture: string(),
   });
@@ -46,7 +47,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
             degree: data.degree,
             birthdate: data.birthdate,
             email: data.email,
-            insuraceNumber: data.insuranceNumber,
+            insuranceNumber: data.insuranceNumber,
             phone: data.phone,
             insurance:{
                 create: {
@@ -60,6 +61,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
                 city: data.city,
                 postalCode: data.postalCode,
                 street: data.street,
+                buildingNumber: data.buildingNumber,
                 }
             },
             password: hash
