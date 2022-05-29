@@ -8,21 +8,21 @@ datasource db {
 }
 
 model Person {
-  id             String           @id @default(uuid())
-  firstname      String
-  surename       String
-  degree         String?
-  birthdate      DateTime
-  email          String
-  phone          Int?
+  id              String            @id @default(uuid())
+  firstname       String
+  surename        String
+  degree          String?
+  birthdate       DateTime
+  email           String
+  phone           Int?
   insuranceNumber Int?
-  insuranceId    String?
-  insurance      InsuranceCompany? @relation(fields: [insuranceId], references: [id])
-  addressId      String?           @unique
-  address        Address?          @relation(fields: [addressId], references: [id])
-  password       String
-  reservations   Reservation[]
-  doctor         Doctor?
+  insuranceId     String?
+  insurance       InsuranceCompany? @relation(fields: [insuranceId], references: [id])
+  addressId       String?           @unique
+  address         Address?          @relation(fields: [addressId], references: [id])
+  password        String
+  reservations    Reservation[]
+  doctor          Doctor?
 }
 
 model InsuranceCompany {
@@ -33,14 +33,14 @@ model InsuranceCompany {
 }
 
 model Address {
-  id         String  @id @default(uuid())
-  country    String
-  city       String
-  postalCode Int
-  street     String
+  id             String  @id @default(uuid())
+  country        String
+  city           String
+  postalCode     Int
+  street         String
   buildingNumber String
-  person     Person?
-  doctor     Doctor?
+  person         Person?
+  doctor         Doctor?
 }
 
 model Reservation {
@@ -57,7 +57,7 @@ model Reservation {
 
 model Doctor {
   id             String           @id @default(uuid())
-  specialization String // TODO: enum
+  specialization String     // TODO: enum
   actuality      String?
   email          String
   phone          String
@@ -75,13 +75,13 @@ model Doctor {
 }
 
 model Reference {
-  id             String   @id @default(uuid())
-  doctorId       String
-  doctor         Doctor   @relation(fields: [doctorId], references: [id])
-  comment        String
-  rate           Int        // TODO: enum? What about stars number
-  author         String     // TODO: connection to user?
-  created        DateTime @default(now())
+  id       String   @id @default(uuid())
+  doctorId String
+  doctor   Doctor   @relation(fields: [doctorId], references: [id])
+  comment  String
+  rate     Int              // TODO: enum? What about stars number
+  author   String
+  created  DateTime @default(now())
 }
 
 model DoctorLanguage {
@@ -98,7 +98,8 @@ model OpeningHours {
   day      String           // TODO: enum
   fromTime DateTime
   toTime   DateTime
-  fromDate DateTime @default(now()) // TODO: in diagram it is time
-  interval Int @default(20)
+  fromDate DateTime @default(now())
+  interval Int      @default(20)
+
   @@unique([doctorId, day, fromDate])
 }
