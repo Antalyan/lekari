@@ -12,6 +12,7 @@ const prisma = new PrismaClient()
 
 const validateToken = (req: Request, res: Response, next: NextFunction) => {
     return res.status(200).json({
+        status: 'success',
         message: 'Token(s) validated'
     });
 };
@@ -31,16 +32,24 @@ const personSchema = object({
     postalCode: number(),
     street: string(),
     buildingNumber: string(),
-    password: string(),
+    password1: string(),
     profilePicture: string(),
   });
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
-    let { password } = req.body;
+    let { password1, password2 } = req.body;
     let person: Prisma.PersonCreateInput
+
+    if(password1 !== password2){
+        return res.status(400).send({
+            status: "error",
+            data: {},
+            message: "Password doesn't match the controll."
+        })
+    }
     try {
         const data = await personSchema.validate(req.body);
-        const hash = await bcryptjs.hash(password, 10);
+        const hash = await bcryptjs.hash(password1, 10);
         let p = {
             firstname: data.firstname,
             surename: data.surename,
@@ -72,7 +81,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         if(person){
             return res.status(201).send({
                 status: "success",
-                data: person,
+                data: {id: person.id},
                 message: "Person registered."
             })
         } else{
@@ -111,6 +120,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         bcryptjs.compare(password, person[0].password, (error, result) => {
             if (error) {
                 return res.status(401).json({
+                    status: 'error',
+                    data: {},
                     message: 'Password Mismatch'
                 });
             } else if (result) {
@@ -130,12 +141,16 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
                 });
             } else {
                 return res.status(600).json({
+                    status: 'error',
+                    data: {},
                     message: 'Bad password',
                 });
             }
         });
     } else {
         return res.status(404).json({
+            status: "error",
+            data: {},
             message: 'User not found',
         });
     }
@@ -146,9 +161,15 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
     if(authHeader){
         jwt.sign(authHeader, "", { expiresIn: 1 } , (logout, err) => {
             if (!err) {
-                res.send({message : 'You have been Logged Out' });
+                res.send({
+                    status: "success",
+                    message : 'You have been Logged Out'
+                 });
             } else {
-                res.send({msg:'Error'});
+                res.send({
+                    status: "error",
+                    message:'Error'
+                });
             }
         });
     }
