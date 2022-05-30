@@ -1,13 +1,64 @@
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+    "firstname": "Adam",
+    "surename": "Ananas",
+    "birthdate": "1970-01-01T00:00:00",
+    "email": "adam@ananas.com",
+    "insuranceNumber": 456788,
+    "insuranceCode": 111,
+    "insuranceName": "VZP",
+    "country": "Česko",
+    "city": "Praha",
+    "postalCode": 4589,
+    "street": "Dejvická",
+    "buildingNumber": "45A",
+    "password": "CUKR"
+}
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email": "adam@ananas.com",
+    "password": "CUKR"
+}
+###
+
+PUT http://localhost:3000/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1Mzg2NDA4MCwiZXhwIjozMzA4MDg4MTYwLCJpc3MiOiJjb29sSXNzdWVyIn0.cqmFFpbjl0G4J-3ijRUrcno9WWVFqZxUKMc1DdLHg5U
+
+###
+
 GET http://localhost:3000/persons
 ###
 
-GET http://localhost:3000/personal-info/e70dc908-c9a7-4408-af65-14ca5f16a0be
+GET http://localhost:3000/personal-info
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1Mzg2NDYzNiwiZXhwIjozMzA4MDg5MjcyLCJpc3MiOiJjb29sSXNzdWVyIn0.kaDhAbCUYJNuE4gObArPyzYs-K4vU3TrBzL-C17FglA
+
 ###
 
-GET http://localhost:3000/doctors
+PATCH http://localhost:3000/personal-info
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1Mzg0MjA5MSwiZXhwIjozMzA4MDQ0MTgyLCJpc3MiOiJjb29sSXNzdWVyIn0.Qza3XXxkZ3MOsSXEPC9efhfG4eDTNqhtaqwpRvfJVGE
+Content-Type: application/json
+
+{
+    "degree": "MUDr."
+}
+
 ###
 
-GET http://localhost:3000/doctors/9d4689b0-e9a8-4e74-b09a-e0df502aa619
+GET http://localhost:3000/doctors?location=Pra&specialization=chir&surename=Cukr
+###
+
+GET http://localhost:3000/doctors/aacf7de4-8ee3-4f03-b179-98608a5d36a2
+###
+GET http://localhost:3000/doctor-reservations
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1Mzg0MzQ3OCwiZXhwIjozMzA4MDQ2OTU2LCJpc3MiOiJjb29sSXNzdWVyIn0.Rch3aNxTqIZYR4mbFBtk8JmvGeEo_i6K8vg-TWZmHno
+
 ###
 
 DELETE http://localhost:4000/logout Content-Type: application/json
@@ -18,36 +69,5 @@ DELETE http://localhost:4000/logout Content-Type: application/json
 
 ###
 
-POST http://localhost:4000/token Content-Type: application/json
+GET http://localhost:3000/doctors/aacf7de4-8ee3-4f03-b179-98608a5d36a2/slots/1970-01-01
 
-{
-"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSmltIiwiaWF0IjoxNTY4NzU5OTIyfQ.RT6wszuCeFLwC_6ksmNMIELxiC5s-uRivfRxyZof5ag"
-}
-
-###
-
-POST http://localhost:3000/register
-Content-Type: application/json
-
-{
-    "firstname": "Adam",
-    "surename": "Ananas",
-    "degree": "MUDr.",
-    "birthdate": "",
-    "email": "adam.ananas@seznam.cz",
-    "insuranceNumber": 56789,
-    "country": "Česká republika",
-    "city": "Brno",
-    "postalCode": 60020,
-    "street": "Kounicova",
-    "password": "AnAnAs",
-}
-
-###
-
-PATCH http://localhost:3000/personal-info/e70dc908-c9a7-4408-af65-14ca5f16a0be
-Content-Type: application/json
-
-{
-    "firstname": "Tomáš",
-}

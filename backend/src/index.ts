@@ -20,10 +20,11 @@ api.get('/', (req, res) => res.send({
  * Resource person
  */
 
-api.get('/doctors', doctor.doctorList)
-api.get('/doctors/:id', doctor.doctorDetail)
-api.patch('/doctors/:id', doctor.doctorUpdate)
-api.get('/doctor-reservations', extractJWT, doctor.doctorReservations)
+ api.get('/doctors', doctor.doctorList)
+ api.get('/doctors/:id', doctor.doctorDetail)
+ api.patch('/doctors/:id', doctor.doctorUpdate)
+ api.get('/doctor-reservations', extractJWT, doctor.doctorReservations)
+ api.get('/doctors/:id/slots/:date', doctor.doctorSlots)
 
 
 api.get('/persons', person.personList)
@@ -35,7 +36,7 @@ api.get('/person-reservations', extractJWT, person.personReservations)
 api.get('/validate', extractJWT, auth.validateToken);
 api.post('/register', auth.register);
 api.post('/login', auth.login);
-
+api.put('/logout', auth.logout);
 /**
  * Start listening on connections
  */
