@@ -1,12 +1,10 @@
 import { Request, Response } from 'express';
 import signJWT from '../functions/signJWT';
-import bcryptjs from 'bcryptjs';
 import { date, number, object, string, ValidationError } from 'yup';
-import jwt from 'jsonwebtoken';
+import prisma from '../client';
 
-const { PrismaClient } = require('@prisma/client');
-
-const prisma = new PrismaClient();
+const bcryptjs = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const validateToken = (req: Request, res: Response) => {
   return res.status(200)
@@ -129,7 +127,7 @@ const login = async (req: Request, res: Response) => {
     }
   });
   if (person) {
-    bcryptjs.compare(password, person[0].password, (error, result) => {
+    bcryptjs.compare(password, person[0].password, (error: any, result: any) => {
       if (error) {
         return res.status(401)
           .json({
@@ -176,7 +174,7 @@ const login = async (req: Request, res: Response) => {
 const logout = async (req: Request, res: Response) => {
   const authHeader = req.headers['authorization'];
   if (authHeader) {
-    jwt.sign(authHeader, '', { expiresIn: 1 }, (logout, err) => {
+    jwt.sign(authHeader, '', { expiresIn: 1 }, (_logout: any, err: any) => {
       if (!err) {
         res.send({
           status: 'success',

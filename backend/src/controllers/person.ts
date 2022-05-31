@@ -12,21 +12,31 @@ const personList = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const personSchema = object({
-  firstname: string(),
-  surname: string(),
+  firstname: string()
+    .required(),
+  surname: string()
+    .required(),
   degree: string(),
-  birthdate: date(),
-  email: string(),
-  phone: number(),
+  birthdate: date()
+    .required(),
+  email: string()
+    .required(),
+  phonePrefix: string()
+    .required(),
+  phone: number()
+    .required(),
   insuranceNumber: number(),
-  insuranceCode: number(),
-  insuranceName: string(),
-  country: string(),
-  city: string(),
-  postalCode: number(),
+  country: string()
+    .required(),
+  city: string()
+    .required(),
+  postalCode: number()
+    .required(),
   street: string(),
-  password: string(),
-  profilePicture: string(),
+  buildingNumber: string()
+    .required(),
+  password1: string()
+    .required(),
 });
 
 const personDetail = async (req: Request, res: Response) => {
