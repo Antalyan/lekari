@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import signJWT from '../functions/signJWT';
-import { date, number, object, string, ValidationError } from 'yup';
+import { ValidationError } from 'yup';
 import prisma from '../client';
+import personSchema from './schemas/personSchema';
 
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -13,34 +14,6 @@ const validateToken = (req: Request, res: Response) => {
       message: 'Token(s) validated'
     });
 };
-
-const personSchema = object({
-  firstname: string()
-    .required(),
-  surname: string()
-    .required(),
-  degree: string(),
-  birthdate: date()
-    .required(),
-  email: string()
-    .required(),
-  phonePrefix: string()
-    .required(),
-  phone: number()
-    .required(),
-  insuranceNumber: number(),
-  country: string()
-    .required(),
-  city: string()
-    .required(),
-  postalCode: number()
-    .required(),
-  street: string(),
-  buildingNumber: string()
-    .required(),
-  password1: string()
-    .required(),
-});
 
 const register = async (req: Request, res: Response) => {
   let {

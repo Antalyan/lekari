@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { date, number, object, string, ValidationError } from 'yup';
+import { ValidationError } from 'yup';
 import prisma from '../client';
+import personSchema from './schemas/personSchema';
 
 const personList = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -10,34 +11,6 @@ const personList = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
-
-const personSchema = object({
-  firstname: string()
-    .required(),
-  surname: string()
-    .required(),
-  degree: string(),
-  birthdate: date()
-    .required(),
-  email: string()
-    .required(),
-  phonePrefix: string()
-    .required(),
-  phone: number()
-    .required(),
-  insuranceNumber: number(),
-  country: string()
-    .required(),
-  city: string()
-    .required(),
-  postalCode: number()
-    .required(),
-  street: string(),
-  buildingNumber: string()
-    .required(),
-  password1: string()
-    .required(),
-});
 
 const personDetail = async (req: Request, res: Response) => {
   const person = await prisma.person.findMany({
