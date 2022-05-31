@@ -3,7 +3,7 @@ import prisma from '../client';
 import { object, string, ValidationError } from 'yup';
 
 const doctorDetail = async (req: Request, res: Response) => {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
 
   const doctor = await prisma.doctor.findUnique({
     where: {
@@ -135,12 +135,11 @@ const doctorSchema = object({
   phone: string(),
   description: string(),
   link: string(),
-  profilePicture: string(),
-  addressId: string()
+  profilePicture: string()
 });
 
 const doctorUpdate = async (req: Request, res: Response) => {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
   try {
     const data = await doctorSchema.validate(req.body);
     const doctor = await prisma.doctor.updateMany({
@@ -218,7 +217,7 @@ const doctorReservations = async (req: Request, res: Response) => {
 };
 
 const doctorSlots = async (req: Request, res: Response) => {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
   const date = new Date(req.params.date);
   const tomorrow = new Date();
   tomorrow.setDate(date.getDate() + 1);
@@ -258,7 +257,7 @@ const doctorSlots = async (req: Request, res: Response) => {
     }
   });
 
-  if (!openingHours) {
+  if (openingHours.length === 0) {
     return res.status(404)
       .send({
         status: 'error',

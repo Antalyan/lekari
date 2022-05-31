@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Person {
-  id              String        @id @default(uuid())
+  id              Int        @id @default(autoincrement())
   degree          String?
   firstname       String
   surname        String
@@ -17,7 +17,7 @@ model Person {
   phonePrefix     String
   phone           Int
   insuranceNumber Int?
-  addressId       String        @unique
+  addressId       Int        @unique
   address         Address       @relation(fields: [addressId], references: [id])
   password        String
   reservations    Reservation[]
@@ -25,7 +25,7 @@ model Person {
 }
 
 model PersonTmp {
-  id              String        @id @default(uuid())
+  id              Int        @id @default(autoincrement())
   degree          String?
   firstname       String
   surname        String
@@ -34,13 +34,13 @@ model PersonTmp {
   phonePrefix     String
   phone           Int
   insuranceNumber Int?
-  addressId       String?       @unique
+  addressId       Int?       @unique
   address         Address?      @relation(fields: [addressId], references: [id])
   reservations    Reservation[]
 }
 
 model Address {
-  id             String     @id @default(uuid())
+  id             Int     @id @default(autoincrement())
   country        String
   city           String
   postalCode     Int
@@ -53,11 +53,11 @@ model Address {
 
 model Reservation {
   id            String     @id @default(uuid())
-  personId      String
+  personId      Int
   person        Person     @relation(fields: [personId], references: [id])
-  personTmpId   String?
+  personTmpId   Int?
   personTmp     PersonTmp? @relation(fields: [personId], references: [id])
-  doctorId      String
+  doctorId      Int
   doctor        Doctor     @relation(fields: [doctorId], references: [id])
   from          DateTime
   personComment String?
@@ -65,12 +65,12 @@ model Reservation {
 }
 
 model Doctor {
-  id                     String                   @id @default(uuid())
+  id                     Int                   @id @default(autoincrement())
   specialization         String // TODO: enum
   actuality              String?
-  addressId              String                   @unique
+  addressId              Int                   @unique
   address                Address                  @relation(fields: [addressId], references: [id])
-  personId               String                   @unique
+  personId               Int                   @unique
   person                 Person                   @relation(fields: [personId], references: [id])
   profilePicture         String?
   //
@@ -87,7 +87,7 @@ model Doctor {
 
 model Review {
   id       String   @id @default(uuid())
-  doctorId String
+  doctorId Int
   doctor   Doctor   @relation(fields: [doctorId], references: [id])
   comment  String?
   rate     Int
@@ -96,7 +96,7 @@ model Review {
 }
 
 model DoctorLanguage {
-  doctorId String
+  doctorId Int
   doctor   Doctor @relation(fields: [doctorId], references: [id])
   language String // TODO: enum
 
@@ -104,7 +104,7 @@ model DoctorLanguage {
 }
 
 model ReservationHours {
-  doctorId String
+  doctorId Int
   doctor   Doctor   @relation(fields: [doctorId], references: [id])
   day      String // TODO: enum
   fromTime DateTime
@@ -116,7 +116,7 @@ model ReservationHours {
 }
 
 model OpeningHoursOrdination {
-  doctorId String
+  doctorId Int
   doctor   Doctor @relation(fields: [doctorId], references: [id])
   day      String
   opening  String
