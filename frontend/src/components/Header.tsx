@@ -107,7 +107,7 @@ export default function Header() {
         <AppBar position="static">
             <Toolbar>
                 <Link href={"/"} underline="hover">
-                    <img src={Logo} alt="Logo" width="50" height="50"/>
+                    <img src={Logo} alt="Logo" width="50" height="57"/>
                 </Link>
                 <Typography
                     sx={{m: 2, flexGrow: 1}}
