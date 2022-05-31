@@ -271,9 +271,6 @@ const doctorSlots = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   const reservationsTimes = reservations.map((item: { from: any; }) => item.from.toLocaleString())
-
-  //let timeSlots = allTimeSlots.filter(slot => reservations.some(reservation => reservation.from === slot));
-
   let timeSlots = allTimeSlots.filter( function( el ) {
     return !reservationsTimes.includes(el.toLocaleString());
   } );
