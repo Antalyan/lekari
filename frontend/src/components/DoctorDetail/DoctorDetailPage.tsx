@@ -70,12 +70,17 @@ export function DoctorDetailPage() {
     return <>
         <Header/>
 
-        <Box width={"100vw"}>
+        <Box width={"100vw"} marginLeft={{md: "auto"}}
+             marginRight={{md: "auto"}}
+             maxWidth={{md: 960}}>
             <DoctorCard detailed={true} doctor={doctor}/>
-            {doctor.rating != undefined && <Rating name="doctor-rating" value={doctor.rating} precision={0.5} readOnly
-                                                   sx={{m: 1, color: "primary.main"}}/>}
+            <Box margin={{xs: 1, md:3}}>
+                {doctor.rating != undefined && <Rating name="doctor-rating" value={doctor.rating} precision={0.5} readOnly
+                                                       sx={{color: "primary.main"}}/>}
+            </Box>
 
-            <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
+
+            <Box>
                 <Tabs value={value} onChange={handleChange} aria-label="doctor-detail-tabs" centered variant="fullWidth">
                     <Tab label="INFO" {...a11yProps(0)} />
                     <Tab label="OBJEDNÁNÍ" {...a11yProps(1)} />

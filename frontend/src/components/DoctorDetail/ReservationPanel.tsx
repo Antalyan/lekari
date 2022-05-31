@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useState} from "react";
 import Grid from "@mui/material/Grid";
-import {Divider, FormControlLabel, FormGroup, Stack, Switch} from "@mui/material";
+import {Box, Divider, FormControlLabel, FormGroup, Stack, Switch} from "@mui/material";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import {DatePickerElement, FormContainer, SelectElement, TextFieldElement} from "react-hook-form-mui";
@@ -62,7 +62,7 @@ function ReservationDatePanel({create}: IReservationCreate) {
                 handleSubmit={onSubmit}>
                 <Stack spacing={4}>
                     <Typography
-                        variant="subtitle1"
+                        variant="h6"
                         color={"primary.main"}
                         display="inline"
                     > {create ? "Vytvoření nové rezervace" : "Zrušení rezervačního slotu"}
@@ -78,10 +78,11 @@ function ReservationDatePanel({create}: IReservationCreate) {
                         <TextFieldElement name={"reservationNote"} label={"Poznámka pro lékaře"} size="small"
                                           multiline/>}
                     {/*TODO: change href for reservation creation or cancel based on <create> */}
-                    {dateState != null &&
-                        <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>
+                    {dateState != null && <Grid container justifyContent={"center"}>
+                        <Button variant='contained' size={"large"} type={'submit'} color={'primary'} onSubmit={onSubmit}>
                             {create ? "Vytvořit rezervaci" : "Zrušit rezervační slot"}
-                        </Button>}
+                        </Button>
+                    </Grid>}
                 </Stack>
             </FormContainer>
         </LocalizationProvider>
@@ -119,7 +120,7 @@ function ReservationSlots() {
                 handleSubmit={onSubmit}>
                 <Stack spacing={4}>
                     <Typography
-                        variant="subtitle1"
+                        variant="h6"
                         color={"primary.main"}
                         display="inline"
                     > Nastavení rezervačních slotů
@@ -138,7 +139,7 @@ function ReservationSlots() {
                     <FormGroup>
                         {DAYS.map((dayName, index) => {
                             return (<Grid container justifyContent={"space-between"} paddingBottom={2}>
-                                <Grid item xs={4}>
+                                <Grid item xs={3}>
                                     <FormControlLabel control={<Switch
                                         checked={daysState[index]}
                                         onClick={() => setArray(index)}
@@ -166,9 +167,11 @@ function ReservationSlots() {
                                    options={INTERVALS} fullWidth={true} onChange={(index) => {
                         setIntervalState(INTERVALS[index])
                     }}/>
-                    <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>
-                        {"Provést změnu"}
-                    </Button>
+                    <Grid container justifyContent={"center"}>
+                        <Button variant='contained' size={"large"} type={'submit'} color={'primary'} onSubmit={onSubmit}>
+                            {"Provést změnu"}
+                        </Button>
+                    </Grid>
                     <Divider/>
                 </Stack>
             </FormContainer>

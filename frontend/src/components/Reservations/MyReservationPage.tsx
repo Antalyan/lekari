@@ -25,7 +25,9 @@ export function MyReservationPage(props: { isPatient: boolean }) {
             {props.isPatient ? "Moje rezervace" : "Rezervace pacientů"}
         </Typography>
 
-        <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}} margin={1}>
+        <Grid container rowSpacing={1} columnSpacing={{xs: 1}} marginLeft={{md: "auto"}}
+              marginRight={{md: "auto"}}
+              maxWidth={{md: 960}}>
             {/*TODO: check whether this is the correct index*/}
             {/*TODO: display one reservation of the currently logged person (database request)*/}
             {/*TODO: order by date*/}

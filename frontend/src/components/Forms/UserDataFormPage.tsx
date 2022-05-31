@@ -123,7 +123,9 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                     <FormContainer
                         formContext={formContext}
                         handleSubmit={onSubmit}>
-                        <Grid container spacing={2} alignItems="center" justifyContent={"center"}>
+                        <Grid container spacing={2} alignItems="center" justifyContent={"center"} marginLeft={{md: "auto"}}
+                              marginRight={{md: "auto"}}
+                              maxWidth={{md: 500}}>
                             <Grid item xs={12}>
                                 <Typography variant="h5" gutterBottom component="div" align={"center"}
                                             color={"text.secondary"}

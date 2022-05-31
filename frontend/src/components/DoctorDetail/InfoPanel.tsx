@@ -24,9 +24,10 @@ function Opening() {
         <>
             <Box>
                 <Typography
-                    variant="subtitle1"
+                    variant="h6"
                     color={"primary.main"}
                     display="inline"
+                    fontWeight={"bold"}
                 > Otevírací doba
                 </Typography>
                 {user.id == id && <IconButton onClick={() => setEditingState(!editingState)}>
@@ -59,7 +60,7 @@ function Contact() {
         <>
             <Box>
                 <Typography
-                    variant="subtitle1"
+                    variant="h6"
                     color={"primary.main"}
                     display="inline"
                 > Kontakt
@@ -110,7 +111,7 @@ function Languages() {
         <>
             <Box>
                 <Typography
-                    variant="subtitle1"
+                    variant="h6"
                     color={"primary.main"}
                     display="inline"
                 > Jazyky
@@ -135,7 +136,7 @@ function Description() {
         <>
             <Box>
                 <Typography
-                    variant="subtitle1"
+                    variant="h6"
                     color={"primary.main"}
                     display="inline"
                 > Popis
@@ -172,13 +173,13 @@ export function InfoPanel() {
             <Languages/>
             <Description/>
             {user.id == id && <Grid container>
-                <Grid item xs={6}>
-                    <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>Uložit
+                <Grid container item xs={6} justifyContent={"center"}>
+                    <Button variant='contained' size={"large"} type={'submit'} color={'primary'} onSubmit={onSubmit}>Uložit
                         změny</Button>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid container item xs={6} justifyContent={"center"}>
                     {/*TODO: change onSubmit to message with function resetting form (refresh page basically)*/}
-                    <Button variant='contained' type={'submit'} color={'primary'} onClick={onSubmit}>Zrušit
+                    <Button variant='contained' size={"large"} type={'submit'} color={'primary'} onClick={onSubmit} >Zrušit
                         změny</Button>
                 </Grid>
             </Grid>}

@@ -10,7 +10,9 @@ import Profile from "../../images/mock_profile.jpg";
 
 export function DoctorCardLabels(props: { detailed: boolean, doctor: IBasicDoctor }) {
     return <Stack direction="column" spacing={2} padding={2}>
-        {!props.detailed && <Typography>
+        {!props.detailed && <Typography
+            variant="h5"
+            fontWeight="bold">
             {props.doctor.name}
         </Typography>}
         <Stack direction="row" spacing={1}>
@@ -38,7 +40,7 @@ export function DoctorCard(props: { detailed: boolean, doctor: IBasicDoctor }) {
     return (
         // TODO change bgcolor if desired
         <Grid container rowSpacing={1}
-              columnSpacing={{xs: 1, sm: 2, md: 3}}
+              columnSpacing={{xs: 0}}
               marginLeft={{md: "auto"}}
               marginRight={{md: "auto"}}
               maxWidth={{md: 960}}>
@@ -52,11 +54,12 @@ export function DoctorCard(props: { detailed: boolean, doctor: IBasicDoctor }) {
                 > {props.doctor.name}
                 </Typography>
             </Grid>}
-            {props.detailed && <Grid item xs={4}>
-                <Box display="flex" height="7rem"
+            {props.detailed && <Grid item xs={3}>
+                <Box display="flex"  height={{xs:"7rem", md: "11rem"}}
                     // bgcolor="lightgreen"
                      alignItems="left"
                      marginTop={1}
+                     marginLeft={{xs: 2, md:0}}
                      justifyContent="left">
                     <img src={Profile} alt='Doctor Profile' height="100%"/>
                 </Box>

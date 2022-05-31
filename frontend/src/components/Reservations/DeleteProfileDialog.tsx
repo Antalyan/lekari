@@ -17,7 +17,7 @@ export function DeleteReservationDialog(props: { isPatient: boolean, reservation
 
     return <>
         <Button variant='contained' color={'primary'}
-                size={"medium"}
+                size={"large"}
                 onClick={handleClickOpen}>ZRUŠIT
         </Button>
         <Dialog

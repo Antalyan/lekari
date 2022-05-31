@@ -24,7 +24,7 @@ function ReviewCreate() {
             formContext={formContext}
             handleSubmit={onSubmit}>
             <Stack spacing={3} marginLeft={1}>
-                <Typography variant="subtitle1"
+                <Typography variant="h6"
                             color={"primary.main"}
                             display={"inline"}>
                     Nové hodnocení
@@ -33,9 +33,10 @@ function ReviewCreate() {
                         sx={{color: "primary.main"}}/>
                 <TextFieldElement name={"name"} label={"Autor"} size="medium"/>
                 <TextFieldElement name={"text"} label={"Text"} size="medium" multiline/>
-                <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>
+                <Grid container justifyContent={"center"}><Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>
                     Odeslat recenzi
                 </Button>
+                </Grid>
             </Stack>
         </FormContainer>
     </>)

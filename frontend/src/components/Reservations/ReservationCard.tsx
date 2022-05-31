@@ -63,7 +63,7 @@ export function ReservationCard(props: { isPatient: boolean, reservation: IReser
             <Grid item xs={12}>
                 <ReservationCardLabels {...props}/>
             </Grid>
-            <Grid item xs={12} container direction="column" paddingRight={4} paddingBottom={2} justifyContent={"center"}
+            <Grid item xs={12} container direction="column" paddingRight={2} paddingBottom={2} justifyContent={"center"}
                   alignItems={"flex-end"}>
                 <DeleteReservationDialog isPatient={props.isPatient} reservation={props.reservation}/>
             </Grid>

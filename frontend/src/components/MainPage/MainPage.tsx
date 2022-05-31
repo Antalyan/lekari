@@ -14,7 +14,7 @@ import {Divider} from "@mui/material";
 export function MainPage() {
     return <>
         <Header/>
-        <Grid container rowSpacing={0} columnSpacing={{xs: 1, sm: 2, md: 3}} marginLeft={{md: "auto"}}
+        <Grid container rowSpacing={0} columnSpacing={{xs: 1}} marginLeft={{md: "auto"}}
               marginRight={{md: "auto"}} maxWidth={{md: 960}}>
             {/*TODO: make img as background*/}
             <Grid item xs={6} md={8}>
