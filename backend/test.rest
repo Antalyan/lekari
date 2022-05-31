@@ -2,20 +2,20 @@ POST http://localhost:3000/register
 Content-Type: application/json
 
 {
-    "firstname": "Adam",
-    "surename": "Ananas",
-    "birthdate": "1970-01-01T00:00:00",
-    "email": "adam@ananas.com",
-    "insuranceNumber": 456788,
-    "insuranceCode": 111,
-    "insuranceName": "VZP",
-    "country": "Česko",
-    "city": "Praha",
-    "postalCode": 4589,
-    "street": "Dejvická",
-    "buildingNumber": "45A",
-    "password1": "CUKR",
-    "password2": "CUKR"
+  "firstname": "Adam",
+  "surname": "Ananas",
+  "birthdate": "1970-01-01T00:00:00",
+  "email": "adam@ananas.com",
+  "insuranceNumber": 456788,
+  "insuranceCode": 111,
+  "insuranceName": "VZP",
+  "country": "Česko",
+  "city": "Praha",
+  "postalCode": 4589,
+  "street": "Dejvická",
+  "buildingNumber": "45A",
+  "password1": "CUKR",
+  "password2": "CUKR"
 }
 
 ###
@@ -24,9 +24,10 @@ POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-    "email": "adam@ananas.com",
-    "password": "CUKR"
+  "email": "adam@ananas.com",
+  "password": "CUKR"
 }
+
 ###
 
 PUT http://localhost:3000/logout
@@ -35,6 +36,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkY
 ###
 
 GET http://localhost:3000/persons
+
 ###
 
 GET http://localhost:3000/personal-info
@@ -52,15 +54,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkY
 Content-Type: application/json
 
 {
-    "degree": "MUDr."
+  "degree": "MUDr."
 }
 
 ###
 
-GET http://localhost:3000/doctors?location=Pra&specialization=chir&surename=Cukr
+GET http://localhost:3000/doctors?location=Pra&specialization=chir&surname=Cukr
+
 ###
 
 GET http://localhost:3000/doctors/aacf7de4-8ee3-4f03-b179-98608a5d36a2
+
 ###
 GET http://localhost:3000/doctor-reservations
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1Mzg0MzQ3OCwiZXhwIjozMzA4MDQ2OTU2LCJpc3MiOiJjb29sSXNzdWVyIn0.Rch3aNxTqIZYR4mbFBtk8JmvGeEo_i6K8vg-TWZmHno

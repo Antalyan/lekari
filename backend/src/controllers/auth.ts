@@ -19,7 +19,7 @@ const validateToken = (req: Request, res: Response) => {
 const personSchema = object({
   firstname: string()
     .required(),
-  surename: string()
+  surname: string()
     .required(),
   degree: string(),
   birthdate: date()
@@ -64,7 +64,7 @@ const register = async (req: Request, res: Response) => {
     const person = await prisma.person.create({
       data: {
         firstname: data.firstname,
-        surename: data.surename,
+        surname: data.surname,
         degree: data.degree || null,
         birthdate: data.birthdate,
         email: data.email,

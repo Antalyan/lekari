@@ -13,7 +13,7 @@ const doctorDetail = async (req: Request, res: Response) => {
       person: {
         select: {
           firstname: true,
-          surename: true,
+          surname: true,
           degree: true,
         }
       },
@@ -73,7 +73,7 @@ const doctorDetail = async (req: Request, res: Response) => {
 
 const doctorList = async (req: Request, res: Response) => {
   const {
-    surename,
+    surname,
     location,
     specialization
   } = req.query;
@@ -81,8 +81,8 @@ const doctorList = async (req: Request, res: Response) => {
   const doctors = await prisma.doctor.findMany({
     where: {
       person: {
-        surename: {
-          contains: surename as string || undefined
+        surname: {
+          contains: surname as string || undefined
         },
       },
       specialization: {
@@ -99,7 +99,7 @@ const doctorList = async (req: Request, res: Response) => {
       person: {
         select: {
           firstname: true,
-          surename: true,
+          surname: true,
         }
       },
       specialization: true,
@@ -188,7 +188,7 @@ const doctorReservations = async (req: Request, res: Response) => {
           person: {
             select: {
               firstname: true,
-              surename: true,
+              surname: true,
               degree: true,
               email: true,
               phone: true

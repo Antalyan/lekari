@@ -11,7 +11,7 @@ model Person {
   id              String        @id @default(uuid())
   degree          String?
   firstname       String
-  surename        String
+  surname        String
   birthdate       DateTime
   email           String        @unique
   phonePrefix     String
@@ -28,7 +28,7 @@ model PersonTmp {
   id              String        @id @default(uuid())
   degree          String?
   firstname       String
-  surename        String
+  surname        String
   birthdate       DateTime
   email           String?       @unique
   phonePrefix     String

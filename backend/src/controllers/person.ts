@@ -1,22 +1,22 @@
-import {NextFunction, Request, Response} from 'express';
-import {date, number, object, string, ValidationError} from 'yup';
+import { NextFunction, Request, Response } from 'express';
+import { date, number, object, string, ValidationError } from 'yup';
 
-const {PrismaClient} = require('@prisma/client');
+const { PrismaClient } = require('@prisma/client');
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 const personList = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const persons = await prisma.person.findMany({})
-        res.json(persons)
+        const persons = await prisma.person.findMany({});
+        res.json(persons);
     } catch (error) {
-        next(error)
+        next(error);
     }
 };
 
 const personSchema = object({
     firstname: string(),
-    surename: string(),
+    surname: string(),
     degree: string(),
     birthdate: date(),
     email: string(),
@@ -39,7 +39,7 @@ const personDetail = async (req: Request, res: Response) => {
         },
         select: {
             firstname: true,
-            surename: true,
+            surname: true,
             degree: true,
             email: true,
             phone: true,
@@ -62,18 +62,19 @@ const personDetail = async (req: Request, res: Response) => {
     });
 
     if (!person) {
-        return res.status(404).send({
-            status: "error",
-            data: {},
-            message: "Person was not found"
-        });
+        return res.status(404)
+          .send({
+              status: 'error',
+              data: {},
+              message: 'Person was not found'
+          });
     }
 
     return res.send({
-        status: "sucess",
+        status: 'sucess',
         data: person[0],
-    })
-}
+    });
+};
 
 const personUpdate = async (req: Request, res: Response) => {
     try {
@@ -83,30 +84,32 @@ const personUpdate = async (req: Request, res: Response) => {
                 email: res.locals.jwt.username
             },
             data: data
-        })
+        });
 
         if (!person) {
-            return res.status(404).send({
-                status: "error",
-                data: {},
-                message: "Person was not found"
-            });
+            return res.status(404)
+              .send({
+                  status: 'error',
+                  data: {},
+                  message: 'Person was not found'
+              });
         }
 
         return res.send({
-            status: "sucess",
+            status: 'sucess',
             data: person
-        })
+        });
     } catch (e) {
         if (e instanceof ValidationError) {
-            return res.status(400).send({
-                status: "error",
-                data: e.errors,
-                message: e.message
-            });
+            return res.status(400)
+              .send({
+                  status: 'error',
+                  data: e.errors,
+                  message: e.message
+              });
         }
     }
-}
+};
 
 const personReservations = async (req: Request, res: Response) => {
     const reservations = await prisma.person.findMany({
@@ -121,7 +124,7 @@ const personReservations = async (req: Request, res: Response) => {
                             person: {
                                 select: {
                                     firstname: true,
-                                    surename: true,
+                                    surname: true,
                                     degree: true,
                                 }
                             },
@@ -139,17 +142,23 @@ const personReservations = async (req: Request, res: Response) => {
     });
 
     if (!reservations) {
-        return res.status(404).send({
-            status: "error",
-            data: {},
-            message: "Person was not found"
-        });
+        return res.status(404)
+          .send({
+              status: 'error',
+              data: {},
+              message: 'Person was not found'
+          });
     }
 
     return res.send({
-        status: "sucess",
+        status: 'sucess',
         data: reservations[0],
-    })
-}
+    });
+};
 
-export default {personList, personDetail, personUpdate, personReservations};
+export default {
+    personList,
+    personDetail,
+    personUpdate,
+    personReservations
+};
