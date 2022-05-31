@@ -11,7 +11,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import {Icon, Link} from "@mui/material";
-
+import Grid from "@mui/material/Grid";
 import Logo from "../images/logoREPLACE.png"
 import AvatarImg from "../images/mock_profile.jpg"
 import {AccountCircle} from "@mui/icons-material";
@@ -105,21 +105,24 @@ export default function Header() {
 
     return (
         <AppBar position="static">
+
             <Toolbar>
-                <Link href={"/"} underline="hover">
+                <Box sx={{flexGrow: 1, display:"flex"}} marginRight={"auto"} marginLeft={"auto"} maxWidth={960}>
+                <Link href={"/"} underline="hover" marginTop={2}>
                     <img src={Logo} alt="Logo" width="50" height="57"/>
                 </Link>
                 <Typography
-                    sx={{m: 2, flexGrow: 1}}
+                    sx={{flexGrow: 1}}
                     variant="h6"
                     color="white"
+                    margin={2}
                 >
                     Luďkovi<br/>Lékaři
                 </Typography>
                 <Typography
-                    sx={{m: 1}}
                     variant="h6"
                     align="right"
+                    marginTop={6}
                 >{user.id != null ? user.name : "Nepřihlášený"}</Typography>
                 <IconButton
                     size="large"
@@ -133,6 +136,7 @@ export default function Header() {
                         <AccountCircle fontSize="large"/>}
                 </IconButton>
                 <LoginMenu anchorEl={anchorEl} onClose={handleClose}/>
+                </Box>
             </Toolbar>
         </AppBar>
     );

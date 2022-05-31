@@ -14,10 +14,11 @@ import {Divider} from "@mui/material";
 export function MainPage() {
     return <>
         <Header/>
-        <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
+        <Grid container rowSpacing={0} columnSpacing={{xs: 1, sm: 2, md: 3}} marginLeft={{md: "auto"}}
+              marginRight={{md: "auto"}} maxWidth={{md: 960}}>
             {/*TODO: make img as background*/}
-            <Grid item xs={6}>
-                <Box>
+            <Grid item xs={6} md={8}>
+                <Box display={{xs: "block", md: "none"}}>
                     <Typography sx={{m: 2}}
                                 component="h2"
                                 variant="h3"
@@ -29,9 +30,30 @@ export function MainPage() {
                         Hledáte<Box color="primary.main">nejlepšího<br/>lékaře?</Box>
                     </Typography>
                 </Box>
+                <Box display={{xs: "none", md: "block"}}>
+                    <Typography sx={{m: 2}}
+                                component="h2"
+                                variant="h3"
+                                align="left"
+                                color="text.primary"
+                                gutterBottom
+                                fontWeight="bold"
+                    >
+                        Hledáte<Box display="inline" color="primary.main"> nejlepšího lékaře?</Box>
+                    </Typography>
+                    <Typography sx={{m: 2}}
+                                align="left"
+                                paddingTop={2}
+                                color="text.secondary"
+                                gutterBottom
+                    >
+                        Využijte portál <strong><Box display="inline" color="primary.main">Luďkovi lékaři </Box></strong>
+                        k nalezení nejlepšího lékaře na Váš problém a rovnou se k němu objednejte!
+                    </Typography>
+                </Box>
             </Grid>
-            <Grid item xs={6}>
-                <Box display="flex" height="10rem"
+            <Grid item xs={6} md={4}>
+                <Box display="flex" height={{xs:"10rem", md:"13rem"}}
                     // TODO: adjust box color?
                     // bgcolor="lightgreen"
                      alignItems="right"
@@ -41,6 +63,7 @@ export function MainPage() {
                 </Box>
             </Grid>
             <Grid item xs={12}>
+                <Box display={{xs: "block", md: "none"}}>
                 <Typography sx={{m: 2}}
                             align="left"
                             color="text.secondary"
@@ -49,6 +72,7 @@ export function MainPage() {
                     Využijte portál <strong><Box display="inline" color="primary.main">Luďkovi lékaři </Box></strong>
                     k nalezení nejlepšího lékaře na Váš problém a rovnou se k němu objednejte!
                 </Typography>
+                </Box>
             </Grid>
             <Grid item xs={12}>
                 <Typography sx={{m: 2}}

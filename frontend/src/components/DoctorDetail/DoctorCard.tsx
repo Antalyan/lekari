@@ -37,7 +37,11 @@ export function DoctorCardLabels(props: { detailed: boolean, doctor: IBasicDocto
 export function DoctorCard(props: { detailed: boolean, doctor: IBasicDoctor }) {
     return (
         // TODO change bgcolor if desired
-        <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
+        <Grid container rowSpacing={1}
+              columnSpacing={{xs: 1, sm: 2, md: 3}}
+              marginLeft={{md: "auto"}}
+              marginRight={{md: "auto"}}
+              maxWidth={{md: 960}}>
             {props.detailed && <Grid item xs={12}>
                 <Typography sx={{m: 2}}
                             variant="h3"
@@ -57,14 +61,23 @@ export function DoctorCard(props: { detailed: boolean, doctor: IBasicDoctor }) {
                     <img src={Profile} alt='Doctor Profile' height="100%"/>
                 </Box>
             </Grid>}
-            <Grid item xs={8}>
+            {!props.detailed && <Grid item md={2}>
+                <Box display={{md: "flex", xs: "none"}} height={{xs:"7rem", md: "10rem"}}
+                    // bgcolor="lightgreen"
+                     alignItems="left"
+                     marginTop={1}
+                     justifyContent="left">
+                    <img src={Profile} alt='Doctor Profile' height="100%"/>
+                </Box>
+            </Grid>}
+            <Grid item xs={7} md={6}>
                 <DoctorCardLabels {...props}/>
             </Grid>
             {!props.detailed &&
-                <Grid item xs={4} container direction="column" paddingRight={4} justifyContent={"center"}
-                      alignItems={"flex-end"}>
+                <Grid item xs={4} container direction="column" paddingRight={4} justifyContent={"flex-start"}
+                      alignItems={"flex-end"} marginTop={3}>
                     <Button href={`/doctor/${props.doctor.id}`} variant='contained' color={'primary'}
-                            size={"medium"}
+                            size={"large"}
                             onClick={() => console.log("DETAIL")}>DETAIL</Button>
                 </Grid>}
         </Grid>

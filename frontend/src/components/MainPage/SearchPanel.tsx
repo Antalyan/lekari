@@ -40,8 +40,8 @@ export function SearchPanel() {
         // @ts-ignore
         <FormContainer
             formContext={formContext}
-            handleSubmit={onSubmit}>
-            <Box display={"flex"} alignItems={"center"} justifyContent={"space-between"}>
+            handleSubmit={onSubmit} >
+            <Box display={"flex"} alignItems={"center"} justifyContent={"space-between"} marginLeft={{md: "auto"}} marginRight={{md: "auto"}} maxWidth={{md: 960}}>
                 <TextFieldElement name={'search'}
                                   variant="outlined"
                                   placeholder="VYHLEDAT LÉKAŘE"
