@@ -302,5 +302,6 @@ export default {
   doctorSlots,
   signUp: notImplemented,
   postReference: notImplemented,
-  postComment: notImplemented
+  postComment: notImplemented,
+  createReservation: notImplemented
 };
