@@ -37,6 +37,8 @@ api.get('/personal-info', extractJWT, person.personDetail);
 api.patch('/personal-info', extractJWT, person.personUpdate);
 api.get('/person-reservations', extractJWT, person.personReservations);
 
+api.post('/profile-image', person.updateImage);
+
 api.get('/validate', extractJWT, auth.validateToken);       // Undocumented
 api.post('/register', auth.register);
 api.post('/login', auth.login);
