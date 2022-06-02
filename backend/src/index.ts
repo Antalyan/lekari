@@ -27,6 +27,7 @@ api.get('/doctor-reservations', extractJWT, doctor.doctorReservations);
 api.get('/doctors/:id(\\d+)/slots/:date', doctor.doctorSlots);
 
 api.post('/signup-doctor', doctor.signUp);
+api.post('/doctors/:id(\d+)/reference', doctor.postReference);
 
 api.get('/persons', person.personList);                     // Undocumented
 api.get('/personal-info', extractJWT, person.personDetail);

@@ -300,5 +300,6 @@ export default {
   doctorUpdate,
   doctorReservations,
   doctorSlots,
-  signUp: notImplemented
+  signUp: notImplemented,
+  postReference: notImplemented
 };
