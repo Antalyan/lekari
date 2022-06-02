@@ -30,6 +30,7 @@ api.post('/signup-doctor', doctor.signUp);
 api.post('/doctors/:id(\d+)/reference', doctor.postReference);
 api.post('/doctors/:doc_id(\d+)/reference/:ref_id(\d+)/comment', doctor.postComment);
 api.post('/doctors/:id(\d+)/reservations', doctor.createReservation);
+api.patch('/doctor-info', doctor.infoUpdate);
 
 api.get('/persons', person.personList);                     // Undocumented
 api.get('/personal-info', extractJWT, person.personDetail);

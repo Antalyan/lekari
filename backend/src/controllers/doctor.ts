@@ -303,5 +303,6 @@ export default {
   signUp: notImplemented,
   postReference: notImplemented,
   postComment: notImplemented,
-  createReservation: notImplemented
+  createReservation: notImplemented,
+  infoUpdate: notImplemented
 };
