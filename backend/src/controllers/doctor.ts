@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import prisma from '../client';
-import { object, string, ValidationError } from 'yup';
+import { number, object, string, ValidationError } from 'yup';
 
 const doctorDetail = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
@@ -294,14 +294,71 @@ const notImplemented = async (req: Request, res: Response) => {
     });
 };
 
+const reviewSchema = object({
+  author: string(),
+  rate: number()
+    .min(1)
+    .max(10)
+    .integer()
+    .required(),
+  comment: string()
+    .required()
+});
+
+const postReview = async (req: Request, res: Response) => {
+  try {
+    const doc_id = parseInt(req.params.id);
+    const data = await reviewSchema.validate(req.body);
+    const reference = await prisma.review.create({
+      data: {
+        doctorId: doc_id,
+        comment: data.comment,
+        rate: data.rate,
+        author: data.author || null
+      }
+    });
+    if (reference) {
+      return res.status(201)
+        .send({
+          status: 'success',
+          data: { id: reference.id },
+          message: 'Review saved.'
+        });
+    } else {
+      return res.status(500)
+        .send({
+          status: 'error',
+          message: '',
+        });
+    }
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      return res.status(400)
+        .send({
+          status: 'error',
+          data: e.errors,
+          message: e.message
+        });
+    }
+    if (e instanceof Error) {
+      return res.status(500)
+        .send({
+          status: 'error',
+          data: e.message,
+          message: 'Something went wrong'
+        });
+    }
+  }
+};
+
 export default {
   doctorList,
   doctorDetail,
   doctorUpdate,
   doctorReservations,
   doctorSlots,
+  postReview,
   signUp: notImplemented,
-  postReference: notImplemented,
   postComment: notImplemented,
   createReservation: notImplemented,
   infoUpdate: notImplemented
