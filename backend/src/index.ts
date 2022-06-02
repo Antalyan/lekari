@@ -26,12 +26,14 @@ api.patch('/doctors/:id(\\d+)', doctor.doctorUpdate);
 api.get('/doctor-reservations', extractJWT, doctor.doctorReservations);
 api.get('/doctors/:id(\\d+)/slots/:date', doctor.doctorSlots);
 
-api.get('/persons', person.personList);
+api.post('/signup-doctor', doctor.signUp);
+
+api.get('/persons', person.personList);                     // Undocumented
 api.get('/personal-info', extractJWT, person.personDetail);
 api.patch('/personal-info', extractJWT, person.personUpdate);
 api.get('/person-reservations', extractJWT, person.personReservations);
 
-api.get('/validate', extractJWT, auth.validateToken);
+api.get('/validate', extractJWT, auth.validateToken);       // Undocumented
 api.post('/register', auth.register);
 api.post('/login', auth.login);
 api.put('/logout', auth.logout);

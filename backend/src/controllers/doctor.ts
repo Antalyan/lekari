@@ -286,10 +286,19 @@ const doctorSlots = async (req: Request, res: Response) => {
   });
 };
 
+const notImplemented = async (req: Request, res: Response) => {
+  return res.status(501)
+    .send({
+      status: 'error',
+      message: 'Not implemented yet',
+    });
+};
+
 export default {
   doctorList,
   doctorDetail,
   doctorUpdate,
   doctorReservations,
-  doctorSlots
+  doctorSlots,
+  signUp: notImplemented
 };
