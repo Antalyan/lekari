@@ -23,6 +23,8 @@ const personDetail = async (req: Request, res: Response) => {
       degree: true,
       email: true,
       phone: true,
+      phonePrefix: true,
+      birthdate: true,
       insuranceNumber: true,
       address: {
         select: {

@@ -25,7 +25,7 @@ import {NavigateFunction, useNavigate} from "react-router-dom";
 import axios from 'axios';
 import {IDatabaseDoctor, IDatabasePatient} from "../../utils/DatabaseInterfaces";
 import useSWR from "swr";
-import fetcher from "../../utils/fetcher";
+import fetcher, {fetcherWithToken} from "../../utils/fetcher";
 
 function getFormLabel(type: DataFormType, isEdit: boolean): string {
     if (isEdit) {
@@ -78,33 +78,30 @@ export function UserDataFormPage({type, isEdit}: IForm) {
     const getDefaultValues = () => {
         // TODO: dependent on type - doctor or patient
         // TODO: database request
-        // const dbperson: IDatabasePatient = data.data;
-        // return {
-        //     name: dbperson.firstname,
-        //     surname: dbperson.surname,
-        //     degree: dbperson.degree,
-        //     birthdate: dbperson.birthdate.toString(),
-        //     street: dbperson.street,
-        //     streetNumber: dbperson.buildingNumber,
-        //     city: dbperson.city,
-        //     postalCode: dbperson.postalCode?.toString(),
-        //     country: findCountryIndex(dbperson.country),
-        //     email: dbperson.email,
-        //     phoneCode: findPhoneCodeIndex(dbperson.country),
-        //     phone: dbperson.phone?.toString(),
-        //     insuranceNumber: dbperson.insuranceNumber?.toString(),
-        //     profilePicture: "",
-        //     specialization: "",
-        //     status: "",
-        //     doctorStreet: "",
-        //     doctorStreetNumber: "",
-        //     doctorCity: "",
-        //     doctorPostalCode: "",
-        //     doctorCountry: -1,
-        // };
+        const dbperson: IDatabasePatient = data.data;
         return {
-            name: "IGOR"
-        }
+            name: dbperson.firstname,
+            surname: dbperson.surname,
+            degree: dbperson.degree,
+            birthdate: new Date(dbperson.birthdate).toLocaleDateString('en-US'),
+            street: dbperson.street,
+            streetNumber: dbperson.buildingNumber,
+            city: dbperson.city,
+            postalCode: dbperson.postalCode?.toString(),
+            country: findCountryIndex(dbperson.country),
+            email: dbperson.email,
+            phoneCode: dbperson.phonePrefix === undefined ? undefined : findPhoneCodeIndex(dbperson.phonePrefix),
+            phone: dbperson.phone?.toString(),
+            insuranceNumber: dbperson.insuranceNumber?.toString(),
+            profilePicture: "",
+            specialization: "",
+            status: "",
+            doctorStreet: "",
+            doctorStreetNumber: "",
+            doctorCity: "",
+            doctorPostalCode: "",
+            doctorCountry: -1,
+        };
     }
 
     const formContext = useForm<IFormPerson>();
@@ -116,8 +113,11 @@ export function UserDataFormPage({type, isEdit}: IForm) {
         navigate("/")
     }
 
-    const {data, error} = useSWR('http://localhost:4000/personal-info', fetcher);
-    let defaultValues = {}
+    const {data, error} = useSWR(isEdit ? ['http://localhost:4000/personal-info', user.token] : null, fetcherWithToken);
+    let defaultValues = {
+            name: "X",
+            country: 1,
+    }
     if (isEdit) {
         if (error) console.log(error.message);
         if (!data) return <div>Loading...</div>;
@@ -236,9 +236,8 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     {/*@ts-ignore*/}
                     <FormContainer
-                        formContext={formContext}
                         defaultValues={isEdit ? defaultValues : null}
-                        handleSubmit={onSubmit}>
+                        onSuccess={onSubmit}>
                         <Grid container spacing={2} alignItems="center" justifyContent={"center"}
                               marginLeft={{md: "auto"}}
                               marginRight={{md: "auto"}}
