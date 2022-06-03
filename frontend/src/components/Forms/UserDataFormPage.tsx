@@ -77,8 +77,6 @@ async function completeRegistration(url: string, subject: any, navigate: Navigat
 export function UserDataFormPage({type, isEdit}: IForm) {
     const getDefaultValues = () => {
         // TODO: dependent on type - doctor or patient
-        if (error) console.log(error.message)
-        if (!data) return <div>Loading...</div>;
         const dbperson: IDatabasePatient = data.data;
         return {
             name: dbperson.firstname,
@@ -105,11 +103,20 @@ export function UserDataFormPage({type, isEdit}: IForm) {
         };
     }
 
+    const formContext = useForm<IFormPerson>();
+    const {handleSubmit} = formContext;
+    let navigate = useNavigate();
+
+    const user = useRecoilValue(userAtom)
+    if (!isEdit && user.id != null) {
+        navigate("/")
+    }
+
     const {data, error} = useSWR('http://localhost:4000/personal-info', fetcher);
+    if (error) console.log(error.message)
+    if (!data) return <div>Loading...</div>;
+    if (data) console.log(data);
     const defaultValues = getDefaultValues();
-    const formContext = useForm({defaultValues})
-    const {handleSubmit} = formContext
-    let navigate = useNavigate()
 
     const registerPatient = async (formData: IFormPerson) => {
         const patient: IDatabasePatient = {
@@ -199,11 +206,6 @@ export function UserDataFormPage({type, isEdit}: IForm) {
         display: 'none',
     });
 
-    const user = useRecoilValue(userAtom)
-    if (!isEdit && user.id != null) {
-        navigate("/")
-    }
-
     if (type == DataFormType.Invalid) {
         return <>
             INVALID PAGE!
@@ -228,6 +230,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                     {/*@ts-ignore*/}
                     <FormContainer
                         formContext={formContext}
+                        defaultValues={defaultValues}
                         handleSubmit={onSubmit}>
                         <Grid container spacing={2} alignItems="center" justifyContent={"center"}
                               marginLeft={{md: "auto"}}
