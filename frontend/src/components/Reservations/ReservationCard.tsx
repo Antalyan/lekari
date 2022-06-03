@@ -2,7 +2,7 @@ import * as React from "react";
 import Grid from "@mui/material/Grid";
 import {Divider, Stack} from "@mui/material";
 import Button from "@mui/material/Button";
-import {IBasicDoctor, IReservation} from "../../Interfaces";
+import {IBasicDoctor, IReservation} from "../../utils/Interfaces";
 import Typography from "@mui/material/Typography";
 import {LocationOn, Person, Warning} from "@mui/icons-material";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';

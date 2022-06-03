@@ -3,7 +3,7 @@ import {Box, Button, Grid, IconButton, Stack, styled, Typography} from "@mui/mat
 import {useForm, useFormContext} from "react-hook-form";
 import * as React from "react";
 import {FunctionComponent} from "react";
-import {IEditable, IForm, IFormPerson} from "../../Interfaces";
+import {IEditable, IForm, IFormPerson} from "../../utils/Interfaces";
 import {countries} from "../../data/Countries";
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';

@@ -1,12 +1,14 @@
 import auth from './controllers/auth';
 import person from './controllers/person';
 import doctor from './controllers/doctor';
+import cors from 'cors';
 
 import extractJWT from './middleware/extractJWT';
 
 const express = require('express');
 const api = express();
 
+api.use(cors());
 api.use(express.json());
 api.use(express.urlencoded({ extended: true }));
 

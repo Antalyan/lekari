@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import {IconButton, Stack} from "@mui/material";
 import Button from "@mui/material/Button";
 import EditIcon from '@mui/icons-material/Edit';
-import {IEditable} from "../../Interfaces";
+import {IEditable} from "../../utils/Interfaces";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {FormContainer, MultiSelectElement, TextFieldElement} from "react-hook-form-mui";

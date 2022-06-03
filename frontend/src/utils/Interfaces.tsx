@@ -1,4 +1,4 @@
-import {DataFormType} from "./data/Constants";
+import {DataFormType} from "../data/Constants";
 
 export interface IBasicDoctor {
     id: number,

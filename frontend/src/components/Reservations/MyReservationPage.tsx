@@ -3,7 +3,7 @@ import * as React from "react";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Pills from "../../images/pills.jpg";
-import {IBasicDoctor, IReservation} from "../../Interfaces";
+import {IBasicDoctor, IReservation} from "../../utils/Interfaces";
 import {DoctorCard} from "../DoctorDetail/DoctorCard";
 import {DOCTORS, RESERVATIONS} from "../../data/MockData";
 import Header from "../Header";

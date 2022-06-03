@@ -5,18 +5,40 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Pills from "../../images/pills.png";
 import {SearchPanel} from "./SearchPanel";
-import {IBasicDoctor} from "../../Interfaces";
+import {IBasicDoctor} from "../../utils/Interfaces";
 import {DoctorCard} from "../DoctorDetail/DoctorCard";
 import {Footer} from "../Footer";
 import {DOCTORS} from "../../data/MockData";
 import {Divider} from "@mui/material";
+import useSWR from 'swr';
+import fetcher from "../../utils/fetcher";
+
+export interface DatabaseDoctor {
+    name: string,
+    specialization: string,
+    location: string,
+    actuality: string,
+    profile_picture: string
+}
 
 export function MainPage() {
+    const { data, error } = useSWR('http://localhost:4000/doctors', fetcher);
+    if (error) console.log(error.message)
+    if (!data) return <div>Loading...</div>;
+
+    const doctors: IBasicDoctor[] = data.data.map((doctor: DatabaseDoctor) => {
+        return {
+            name: doctor.name,
+            specialization: doctor.specialization,
+            location: doctor.location,
+            actuality: doctor.actuality,
+        }
+    });
+
     return <>
         <Header/>
         <Grid container rowSpacing={0} columnSpacing={{xs: 1}} marginLeft={{md: "auto"}}
               marginRight={{md: "auto"}} maxWidth={{md: 960}}>
-            {/*TODO: make img as background*/}
             <Grid item xs={6} md={8}>
                 <Box display={{xs: "block", md: "none"}}>
                     <Typography sx={{m: 2}}
@@ -95,8 +117,8 @@ export function MainPage() {
 
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}} margin={1}>
             {/*TODO: get doctors from database using SWR? */}
-            {DOCTORS.map((doctor: IBasicDoctor) => (
-                <Grid item key={doctor.id} xs={12}>
+            {doctors.map((doctor: IBasicDoctor, index) => (
+                <Grid item key={index} xs={12}>
                     <DoctorCard detailed={false} doctor={doctor}/>
                 </Grid>
             ))}

@@ -1,4 +1,4 @@
-import {IEditable, IFormPerson, IReview} from "../../Interfaces";
+import {IEditable, IFormPerson, IReview} from "../../utils/Interfaces";
 import {Divider, Grid, Rating, Stack, Typography} from "@mui/material";
 import * as React from "react";
 import {REVIEWS} from "../../data/MockData";

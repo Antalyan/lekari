@@ -1,4 +1,4 @@
-import {IBasicDoctor, IReservation, IReview} from "../Interfaces";
+import {IBasicDoctor, IReservation, IReview} from "../utils/Interfaces";
 
 export const DOCTORS: IBasicDoctor[] = [
     {

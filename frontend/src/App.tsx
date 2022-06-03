@@ -12,7 +12,7 @@ import {DoctorDetailPage} from "./components/DoctorDetail/DoctorDetailPage";
 import {DataFormType} from "./data/Constants";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "./state/LoggedInAtom";
-import {IGlobalProfileInfo} from "./Interfaces";
+import {IGlobalProfileInfo} from "./utils/Interfaces";
 import {MyReservationPage} from "./components/Reservations/MyReservationPage";
 import {NotFoundPage} from "./NotFoundPage";
 

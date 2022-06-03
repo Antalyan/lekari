@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
-import {IReservation} from "../../Interfaces";
+import {IReservation} from "../../utils/Interfaces";
 
 export function DeleteReservationDialog(props: { isPatient: boolean, reservation: IReservation }) {
     const [open, setOpen] = React.useState(false);

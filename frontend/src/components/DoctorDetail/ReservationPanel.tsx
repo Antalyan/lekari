@@ -13,7 +13,7 @@ import {INTERVALS, RESERVATION_TIMES} from "../../data/MockData";
 import {useParams} from "react-router-dom";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
-import {IReservationBasic, IReservationSlots} from "../../Interfaces";
+import {IReservationBasic, IReservationSlots} from "../../utils/Interfaces";
 
 interface IReservationCreate {
     create: boolean

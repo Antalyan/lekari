@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Profile from "../../images/mock_profile.jpg";
 import {SearchPanel} from "../MainPage/SearchPanel";
-import {IBasicDoctor} from "../../Interfaces";
+import {IBasicDoctor} from "../../utils/Interfaces";
 import {DoctorCard} from "./DoctorCard";
 import {Footer} from "../Footer";
 import {DOCTORS} from "../../data/MockData";

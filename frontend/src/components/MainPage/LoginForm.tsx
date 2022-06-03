@@ -2,7 +2,7 @@ import {FormContainer, TextFieldElement} from "react-hook-form-mui";
 import {Button, Grid} from "@mui/material";
 import {useForm} from "react-hook-form";
 import {useState} from "react";
-import {ILogin} from "../../Interfaces";
+import {ILogin} from "../../utils/Interfaces";
 import {useRecoilState} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {DOCTORS, REVIEWS} from "../../data/MockData";
