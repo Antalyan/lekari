@@ -77,30 +77,34 @@ async function completeRegistration(url: string, subject: any, navigate: Navigat
 export function UserDataFormPage({type, isEdit}: IForm) {
     const getDefaultValues = () => {
         // TODO: dependent on type - doctor or patient
-        const dbperson: IDatabasePatient = data.data;
+        // TODO: database request
+        // const dbperson: IDatabasePatient = data.data;
+        // return {
+        //     name: dbperson.firstname,
+        //     surname: dbperson.surname,
+        //     degree: dbperson.degree,
+        //     birthdate: dbperson.birthdate.toString(),
+        //     street: dbperson.street,
+        //     streetNumber: dbperson.buildingNumber,
+        //     city: dbperson.city,
+        //     postalCode: dbperson.postalCode?.toString(),
+        //     country: findCountryIndex(dbperson.country),
+        //     email: dbperson.email,
+        //     phoneCode: findPhoneCodeIndex(dbperson.country),
+        //     phone: dbperson.phone?.toString(),
+        //     insuranceNumber: dbperson.insuranceNumber?.toString(),
+        //     profilePicture: "",
+        //     specialization: "",
+        //     status: "",
+        //     doctorStreet: "",
+        //     doctorStreetNumber: "",
+        //     doctorCity: "",
+        //     doctorPostalCode: "",
+        //     doctorCountry: -1,
+        // };
         return {
-            name: dbperson.firstname,
-            surname: dbperson.surname,
-            degree: dbperson.degree,
-            birthdate: dbperson.birthdate.toString(),
-            street: dbperson.street,
-            streetNumber: dbperson.buildingNumber,
-            city: dbperson.city,
-            postalCode: dbperson.postalCode?.toString(),
-            country: findCountryIndex(dbperson.country),
-            email: dbperson.email,
-            phoneCode: findPhoneCodeIndex(dbperson.country),
-            phone: dbperson.phone?.toString(),
-            insuranceNumber: dbperson.insuranceNumber?.toString(),
-            profilePicture: "",
-            specialization: "",
-            status: "",
-            doctorStreet: "",
-            doctorStreetNumber: "",
-            doctorCity: "",
-            doctorPostalCode: "",
-            doctorCountry: -1,
-        };
+            name: "IGOR"
+        }
     }
 
     const formContext = useForm<IFormPerson>();
@@ -113,10 +117,13 @@ export function UserDataFormPage({type, isEdit}: IForm) {
     }
 
     const {data, error} = useSWR('http://localhost:4000/personal-info', fetcher);
-    if (error) console.log(error.message)
-    if (!data) return <div>Loading...</div>;
-    if (data) console.log(data);
-    const defaultValues = getDefaultValues();
+    let defaultValues = {}
+    if (isEdit) {
+        if (error) console.log(error.message);
+        if (!data) return <div>Loading...</div>;
+        if (data) console.log(data);
+        defaultValues = getDefaultValues();
+    }
 
     const registerPatient = async (formData: IFormPerson) => {
         const patient: IDatabasePatient = {
@@ -230,7 +237,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                     {/*@ts-ignore*/}
                     <FormContainer
                         formContext={formContext}
-                        defaultValues={defaultValues}
+                        defaultValues={isEdit ? defaultValues : null}
                         handleSubmit={onSubmit}>
                         <Grid container spacing={2} alignItems="center" justifyContent={"center"}
                               marginLeft={{md: "auto"}}
