@@ -4,6 +4,7 @@ import * as React from "react";
 import {IBasicDoctor} from "../../utils/Interfaces";
 import {AutoSelect} from "./AutoSelect";
 import {cities, specializations} from "../../data/MockData";
+import {SPECIALIZATIONS} from "../../data/Constants";
 
 function FilterForm() {
 
@@ -25,7 +26,7 @@ function FilterForm() {
     return <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2} margin={2}>
             <AutoSelect control={control} id="combo-box-spec" name="specialization" label="Specializace"
-                        options={specializations}/>
+                        options={SPECIALIZATIONS}/>
             <AutoSelect control={control} id="combo-box-location" name="location" label="Lokace" options={cities}/>
             <Grid container justifyContent="center">
                 <Button variant='contained' type={'submit'} color={'primary'} onSubmit={handleSubmit(onSubmit)}>

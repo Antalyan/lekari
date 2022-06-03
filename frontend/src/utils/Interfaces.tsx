@@ -18,7 +18,7 @@ export interface IFormPerson {
     id?: number,
     name: string,
     surname: string,
-    degree: string,
+    degree?: string,
     birthdate: string,
     street: string,
     streetNumber?: string,

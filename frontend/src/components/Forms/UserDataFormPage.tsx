@@ -1,36 +1,31 @@
 import {FormContainer, PasswordElement} from "react-hook-form-mui";
-import {
-    Box,
-    Button,
-    Dialog, DialogActions,
-    DialogContent, DialogContentText,
-    DialogTitle,
-    Grid,
-    IconButton,
-    Stack,
-    styled,
-    Typography
-} from "@mui/material";
+import {Box, Button, Grid, IconButton, Stack, styled, Typography} from "@mui/material";
 import {useForm, useFormContext} from "react-hook-form";
 import * as React from "react";
-import {FunctionComponent, useState} from "react";
-import {IEditable, IForm, IFormPerson} from "../../utils/Interfaces";
-import {COUNTRIES, findCountryCode, findCountryName} from "../../data/Countries";
+import {IBasicDoctor, IEditable, IForm, IFormPerson} from "../../utils/Interfaces";
+import {
+    COUNTRIES,
+    findPhoneCodeName,
+    findCountryName,
+    findCountryIndex,
+    findPhoneCodeIndex
+} from "../../data/Countries";
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import {DataFormType, validateNumbers} from "../../data/Constants";
+import {DataFormType, SPECIALIZATIONS, validateNumbers} from "../../data/Constants";
 import {PhotoCamera} from "@mui/icons-material";
 import {specializations} from "../../data/MockData";
 import {FormDatePicker, FormSelect, FormTextField} from "./FormComponents";
 import Header from "../Header";
 import {Footer} from "../Footer";
-import {useRecoilState, useRecoilValue} from "recoil";
+import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {DeleteProfileDialog} from "./DeleteProfileDialog";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import axios from 'axios';
 import {IDatabaseDoctor, IDatabasePatient} from "../../utils/DatabaseInterfaces";
-import {OpenInformationDialog} from "../OpenInformationDialog";
+import useSWR from "swr";
+import fetcher from "../../utils/fetcher";
 
 function getFormLabel(type: DataFormType, isEdit: boolean): string {
     if (isEdit) {
@@ -80,7 +75,39 @@ async function completeRegistration(url: string, subject: any, navigate: Navigat
 }
 
 export function UserDataFormPage({type, isEdit}: IForm) {
-    const formContext = useForm<IFormPerson>()
+    const getDefaultValues = () => {
+        // TODO: dependent on type - doctor or patient
+        if (error) console.log(error.message)
+        if (!data) return <div>Loading...</div>;
+        const dbperson: IDatabasePatient = data.data;
+        return {
+            name: dbperson.firstname,
+            surname: dbperson.surname,
+            degree: dbperson.degree,
+            birthdate: dbperson.birthdate.toString(),
+            street: dbperson.street,
+            streetNumber: dbperson.buildingNumber,
+            city: dbperson.city,
+            postalCode: dbperson.postalCode?.toString(),
+            country: findCountryIndex(dbperson.country),
+            email: dbperson.email,
+            phoneCode: findPhoneCodeIndex(dbperson.country),
+            phone: dbperson.phone?.toString(),
+            insuranceNumber: dbperson.insuranceNumber?.toString(),
+            profilePicture: "",
+            specialization: "",
+            status: "",
+            doctorStreet: "",
+            doctorStreetNumber: "",
+            doctorCity: "",
+            doctorPostalCode: "",
+            doctorCountry: -1,
+        };
+    }
+
+    const {data, error} = useSWR('http://localhost:4000/personal-info', fetcher);
+    const defaultValues = getDefaultValues();
+    const formContext = useForm({defaultValues})
     const {handleSubmit} = formContext
     let navigate = useNavigate()
 
@@ -96,7 +123,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
             postalCode: formData.postalCode === undefined ? undefined : parseInt(formData.postalCode),
             country: findCountryName(formData.country),
             email: formData.email,
-            phonePrefix: formData.phoneCode === undefined ? undefined : findCountryCode(formData.phoneCode).toString(),
+            phonePrefix: formData.phoneCode === undefined ? undefined : findPhoneCodeName(formData.phoneCode).toString(),
             phone: formData.phone === undefined ? undefined : parseInt(formData.phone),
             insuranceNumber: formData.insuranceNumber === undefined ? undefined : parseInt(formData.insuranceNumber),
             // TODO: password should not be sent in plaintext
@@ -129,7 +156,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
     //     await completeRegistration('http://localhost:4000/register', doctor);
     // };
 
-
+    // @ts-ignore
     const onSubmit = handleSubmit((formData: IFormPerson) => {
         // TODO: store data to database, should depend on form type: save as new OR update
         console.log(formData)
@@ -161,9 +188,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
         }
     })
 
-    let copiedSpecs = specializations;
-    copiedSpecs.sort()
-    const specializationOptions = copiedSpecs.map((spec, index) => {
+    const specializationOptions = SPECIALIZATIONS.map((spec, index) => {
         return {
             "id": index + 1,
             "title": spec
