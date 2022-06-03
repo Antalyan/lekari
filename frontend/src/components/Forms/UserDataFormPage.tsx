@@ -74,6 +74,20 @@ async function completeRegistration(url: string, subject: any, navigate: Navigat
         });
 }
 
+async function updateProfile(url: string, subject: any, navigate: NavigateFunction) {
+    await axios.put(url, subject)
+        .then(response => {
+            console.log(response);
+            if (response.data.status === "success") {
+                navigate("/");
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+            alert("Aktualizace selhala!\n\n" + error.response.data.message)
+        });
+}
+
 export function UserDataFormPage({type, isEdit}: IForm) {
     const getDefaultValues = () => {
         // TODO: dependent on type - doctor or patient
@@ -114,10 +128,29 @@ export function UserDataFormPage({type, isEdit}: IForm) {
     }
 
     const {data, error} = useSWR(isEdit ? ['http://localhost:4000/personal-info', user.token] : null, fetcherWithToken);
-    let defaultValues = {
-            name: "X",
-            country: 1,
-    }
+    let defaultValues: IFormPerson = {
+        name: "",
+        surname: "",
+        degree: "",
+        birthdate: "",
+        street: "",
+        streetNumber: "",
+        city: "",
+        postalCode: "",
+        country: -1,
+        email: "",
+        phoneCode: -1,
+        phone: "",
+        insuranceNumber: "",
+        profilePicture: "",
+        specialization: "",
+        status: "",
+        doctorStreet: "",
+        doctorStreetNumber: "",
+        doctorCity: "",
+        doctorPostalCode: "",
+        doctorCountry: -1,
+    };
     if (isEdit) {
         if (error) console.log(error.message);
         if (!data) return <div>Loading...</div>;
@@ -125,7 +158,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
         defaultValues = getDefaultValues();
     }
 
-    const registerPatient = async (formData: IFormPerson) => {
+    const storePatient = async (formData: IFormPerson, isEdit: boolean) => {
         const patient: IDatabasePatient = {
             firstname: formData.name,
             surname: formData.surname,
@@ -144,7 +177,11 @@ export function UserDataFormPage({type, isEdit}: IForm) {
             password1: formData.newPassword === undefined ? "" : formData.newPassword,
             password2: formData.passwordCheck === undefined ? "" : formData.passwordCheck
         }
-        await completeRegistration('http://localhost:4000/register', patient, navigate);
+        if (isEdit) {
+            await updateProfile('http://localhost:4000/personal-info', patient, navigate);
+        } else {
+            await completeRegistration('http://localhost:4000/register', patient, navigate);
+        }
 
     };
 
@@ -171,22 +208,23 @@ export function UserDataFormPage({type, isEdit}: IForm) {
     // };
 
     // @ts-ignore
-    const onSubmit = handleSubmit((formData: IFormPerson) => {
+    const onSubmit = (formData: IFormPerson) => {
         // TODO: store data to database, should depend on form type: save as new OR update
+        console.log("NAME:" + formData.name)
         console.log(formData)
         switch (type) {
             case DataFormType.Patient:
-                registerPatient(formData);
+                storePatient(formData, isEdit);
                 break;
             case DataFormType.Doctor:
-                registerPatient(formData);
+                storePatient(formData, isEdit);
                 break;
             default:
-                registerPatient(formData);
+                storePatient(formData, isEdit);
                 break;
         }
 
-    })
+    }
 
     let copiedCountries = COUNTRIES.map((country) => country.label)
     const countryOptions = copiedCountries.map((country, index) => {
@@ -236,7 +274,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     {/*@ts-ignore*/}
                     <FormContainer
-                        defaultValues={isEdit ? defaultValues : null}
+                        defaultValues={defaultValues}
                         onSuccess={onSubmit}>
                         <Grid container spacing={2} alignItems="center" justifyContent={"center"}
                               marginLeft={{md: "auto"}}
@@ -394,12 +432,12 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                     {isEdit ?
                                         <>
                                             <Button variant='contained' type={'submit'} color={'primary'}
-                                                    onSubmit={onSubmit}>{"Uložit změny"}</Button>
+                                                    >{"Uložit změny"}</Button>
                                             <Button variant='contained' color={'primary'}
                                             >{"Zrušit změny"}</Button>
                                         </>
                                         : <Button variant='contained' type={'submit'} color={'primary'}
-                                                  onSubmit={onSubmit}>{"Registrovat se"}</Button>}
+                                                  >{"Registrovat se"}</Button>}
                                 </Stack>
                             </Grid>
 
