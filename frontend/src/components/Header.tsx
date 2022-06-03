@@ -10,7 +10,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import {Icon, Link} from "@mui/material";
+import {Icon, Link, Stack} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Logo from "../images/logoREPLACE.png"
 import AvatarImg from "../images/mock_profile.jpg"
@@ -107,35 +107,36 @@ export default function Header() {
         <AppBar position="static">
 
             <Toolbar>
-                <Box sx={{flexGrow: 1, display:"flex"}} marginRight={"auto"} marginLeft={"auto"} maxWidth={960}>
-                <Link href={"/"} underline="hover" marginTop={2}>
-                    <img src={Logo} alt="Logo" width="50" height="57"/>
-                </Link>
-                <Typography
-                    sx={{flexGrow: 1}}
-                    variant="h6"
-                    color="white"
-                    margin={2}
-                >
-                    Luďkovi<br/>Lékaři
-                </Typography>
-                <Typography
-                    variant="h6"
-                    align="right"
-                    marginTop={6}
-                >{user.id != null ? user.name : "Nepřihlášený"}</Typography>
-                <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleMenu}
-                    color="inherit"
-                >
-                    {user.id ? <Avatar alt={user.name} src={AvatarImg} sx={{width: 60, height: 60}}/> :
-                        <AccountCircle fontSize="large"/>}
-                </IconButton>
-                <LoginMenu anchorEl={anchorEl} onClose={handleClose}/>
+                <Box sx={{flexGrow: 1, display: "flex"}} marginRight={"auto"} marginLeft={"auto"} maxWidth={960}>
+                    <Link href={"/"} underline="hover" marginTop={2}>
+                        <img src={Logo} alt="Logo" width="50" height="57"/>
+                    </Link>
+                    <Typography
+                        sx={{flexGrow: 1}}
+                        variant="h6"
+                        color="white"
+                        margin={2}
+                    >
+                        Luďkovi<br/>Lékaři
+                    </Typography>
+                    <Typography
+                        variant="h6"
+                        align="right"
+                        display={"block"}
+                        marginTop={user.id != null ? 2 : 4}
+                    >{user.id != null ? user.firstName: "Nepřihlášený"}<br/>{user.surname}</Typography>
+                    <IconButton
+                        size="large"
+                        aria-label="account of current user"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleMenu}
+                        color="inherit"
+                    >
+                        {user.id ? <Avatar alt={"user avatar"} src={AvatarImg} sx={{width: 60, height: 60}}/> :
+                            <AccountCircle fontSize="large"/>}
+                    </IconButton>
+                    <LoginMenu anchorEl={anchorEl} onClose={handleClose}/>
                 </Box>
             </Toolbar>
         </AppBar>

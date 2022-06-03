@@ -19,16 +19,16 @@ export interface IFormPerson {
     name: string,
     surname: string,
     degree: string,
-    birthdate: Date,
+    birthdate: string,
     street: string,
-    streetNumber?: number,
+    streetNumber?: string,
     city: string,
-    postalCode?: number,
-    country: string,
+    postalCode?: string,
+    country: number,
     email: string,
     phoneCode?: number,
-    phone?: number,
-    insuranceNumber?: number,
+    phone?: string,
+    insuranceNumber?: string,
     oldPassword?: string,
     newPassword?: string,
     passwordCheck?: string,
@@ -36,10 +36,10 @@ export interface IFormPerson {
     specialization: string,
     status?: string,
     doctorStreet?: string,
-    doctorStreetNumber?: number,
+    doctorStreetNumber?: string,
     doctorCity?: string,
-    doctorPostalCode?: number,
-    doctorCountry?: string,
+    doctorPostalCode?: string,
+    doctorCountry?: number,
 }
 
 export interface IContact {
@@ -67,9 +67,10 @@ export interface IForm {
 
 export interface IGlobalProfileInfo {
     id?: number,
-    name?: string,
+    firstName?: string,
     surname?: string,
     profilePicture?: string,
+    token?: string,
     isDoctor?: boolean
 }
 
@@ -120,4 +121,10 @@ export interface IReservationSlots {
     timeTo6?: string,
     timeTo7?: string,
     interval: number
+}
+
+export interface IDialogProps {
+    name: string,
+    title?: string,
+    text: string
 }

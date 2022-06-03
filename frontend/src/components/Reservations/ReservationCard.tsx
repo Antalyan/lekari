@@ -9,7 +9,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Box from "@mui/material/Box";
 import Profile from "../../images/mock_profile.jpg";
-import {DeleteReservationDialog} from "./DeleteProfileDialog";
+import {DeleteReservationDialog} from "./DeleteReservationDialog";
 
 export function ReservationCardLabels(props: { isPatient: boolean, reservation: IReservation }) {
     return <Stack direction="column" spacing={2} padding={2}>

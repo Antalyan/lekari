@@ -8,25 +8,16 @@ import {SearchPanel} from "./SearchPanel";
 import {IBasicDoctor} from "../../utils/Interfaces";
 import {DoctorCard} from "../DoctorDetail/DoctorCard";
 import {Footer} from "../Footer";
-import {DOCTORS} from "../../data/MockData";
-import {Divider} from "@mui/material";
 import useSWR from 'swr';
 import fetcher from "../../utils/fetcher";
-
-export interface DatabaseDoctor {
-    name: string,
-    specialization: string,
-    location: string,
-    actuality: string,
-    profile_picture: string
-}
+import {IDatabaseDoctor} from "../../utils/DatabaseInterfaces";
 
 export function MainPage() {
     const { data, error } = useSWR('http://localhost:4000/doctors', fetcher);
     if (error) console.log(error.message)
     if (!data) return <div>Loading...</div>;
 
-    const doctors: IBasicDoctor[] = data.data.map((doctor: DatabaseDoctor) => {
+    const doctors: IBasicDoctor[] = data.data.map((doctor: IDatabaseDoctor) => {
         return {
             name: doctor.name,
             specialization: doctor.specialization,

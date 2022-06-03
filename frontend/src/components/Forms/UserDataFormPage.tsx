@@ -1,10 +1,21 @@
 import {FormContainer, PasswordElement} from "react-hook-form-mui";
-import {Box, Button, Grid, IconButton, Stack, styled, Typography} from "@mui/material";
+import {
+    Box,
+    Button,
+    Dialog, DialogActions,
+    DialogContent, DialogContentText,
+    DialogTitle,
+    Grid,
+    IconButton,
+    Stack,
+    styled,
+    Typography
+} from "@mui/material";
 import {useForm, useFormContext} from "react-hook-form";
 import * as React from "react";
-import {FunctionComponent} from "react";
+import {FunctionComponent, useState} from "react";
 import {IEditable, IForm, IFormPerson} from "../../utils/Interfaces";
-import {countries} from "../../data/Countries";
+import {COUNTRIES, findCountryCode, findCountryName} from "../../data/Countries";
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import {DataFormType, validateNumbers} from "../../data/Constants";
@@ -13,10 +24,13 @@ import {specializations} from "../../data/MockData";
 import {FormDatePicker, FormSelect, FormTextField} from "./FormComponents";
 import Header from "../Header";
 import {Footer} from "../Footer";
-import {useRecoilState} from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {DeleteProfileDialog} from "./DeleteProfileDialog";
-import {useNavigate} from "react-router-dom";
+import {NavigateFunction, useNavigate} from "react-router-dom";
+import axios from 'axios';
+import {IDatabaseDoctor, IDatabasePatient} from "../../utils/DatabaseInterfaces";
+import {OpenInformationDialog} from "../OpenInformationDialog";
 
 function getFormLabel(type: DataFormType, isEdit: boolean): string {
     if (isEdit) {
@@ -34,7 +48,7 @@ function getFormLabel(type: DataFormType, isEdit: boolean): string {
     }
 }
 
-function PasswordRepeat (editable: IEditable) {
+function PasswordRepeat(editable: IEditable) {
     const {getValues} = useFormContext()
     return (
         <PasswordElement label={'Nové heslo znovu'}
@@ -50,34 +64,103 @@ function PasswordRepeat (editable: IEditable) {
     )
 }
 
+async function completeRegistration(url: string, subject: any, navigate: NavigateFunction) {
+    await axios.post(url, subject)
+        .then(response => {
+            console.log(response);
+            if (response.data.status === "success") {
+                alert("Registrace úspěšná! Nyní se můžete přihlásit.");
+                navigate("/");
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+            alert("Registrace selhala!\n\n" + error.response.data.message)
+        });
+}
+
 export function UserDataFormPage({type, isEdit}: IForm) {
-    let navigate = useNavigate()
     const formContext = useForm<IFormPerson>()
     const {handleSubmit} = formContext
+    let navigate = useNavigate()
+
+    const registerPatient = async (formData: IFormPerson) => {
+        const patient: IDatabasePatient = {
+            firstname: formData.name,
+            surname: formData.surname,
+            degree: formData.degree,
+            birthdate: new Date(formData.birthdate),
+            street: formData.street,
+            buildingNumber: formData.streetNumber === undefined ? undefined : formData.streetNumber,
+            city: formData.city,
+            postalCode: formData.postalCode === undefined ? undefined : parseInt(formData.postalCode),
+            country: findCountryName(formData.country),
+            email: formData.email,
+            phonePrefix: formData.phoneCode === undefined ? undefined : findCountryCode(formData.phoneCode).toString(),
+            phone: formData.phone === undefined ? undefined : parseInt(formData.phone),
+            insuranceNumber: formData.insuranceNumber === undefined ? undefined : parseInt(formData.insuranceNumber),
+            // TODO: password should not be sent in plaintext
+            password1: formData.newPassword === undefined ? "" : formData.newPassword,
+            password2: formData.passwordCheck === undefined ? "" : formData.passwordCheck
+        }
+        await completeRegistration('http://localhost:4000/register', patient, navigate);
+
+    };
+
+    // const registerDoctor = async (formData: IFormPerson) => {
+    //     const doctor: IDatabaseDoctor = {
+    //         firstname: formData.name,
+    //         surname: formData.surname,
+    //         degree: formData.degree,
+    //         birthdate: new Date(formData.birthdate),
+    //         street: formData.street,
+    //         buildingNumber: formData.streetNumber === undefined ? undefined :formData.streetNumber,
+    //         city: formData.city,
+    //         postalCode: formData.postalCode === undefined ? undefined : parseInt(formData.postalCode),
+    //         country: findCountryName(formData.country),
+    //         email: formData.email,
+    //         phonePrefix: formData.phoneCode === undefined ? undefined : findCountryCode(formData.phoneCode).toString(),
+    //         phone: formData.phone === undefined ? undefined : parseInt(formData.phone),
+    //         insuranceNumber: formData.insuranceNumber === undefined ? undefined : parseInt(formData.insuranceNumber),
+    //         // TODO: password should not be sent in plaintext
+    //         password1: formData.newPassword === undefined ? "" : formData.newPassword,
+    //         password2: formData.passwordCheck === undefined ? "" : formData.passwordCheck
+    //     }
+    //     await completeRegistration('http://localhost:4000/register', doctor);
+    // };
+
 
     const onSubmit = handleSubmit((formData: IFormPerson) => {
         // TODO: store data to database, should depend on form type: save as new OR update
         console.log(formData)
-        // TODO: show message about success / error, redirect only on success
-        navigate("/")
+        switch (type) {
+            case DataFormType.Patient:
+                registerPatient(formData);
+                break;
+            case DataFormType.Doctor:
+                registerPatient(formData);
+                break;
+            default:
+                registerPatient(formData);
+                break;
+        }
+
     })
 
-    let copiedCountries = countries.map((country) => country.label)
-    copiedCountries.sort()
+    let copiedCountries = COUNTRIES.map((country) => country.label)
     const countryOptions = copiedCountries.map((country, index) => {
         return {
             "id": index + 1,
             "title": country
         }
     })
-    const phoneOptions = countries.map((country, index) => {
+    const phoneOptions = COUNTRIES.map((country, index) => {
         return {
             "id": index + 1,
             "title": country.label + ": +" + country.phone
         }
     })
 
-    //TODO: replace specializations with real specializations, will they be retrieved from db or stored on FE?
     let copiedSpecs = specializations;
     copiedSpecs.sort()
     const specializationOptions = copiedSpecs.map((spec, index) => {
@@ -91,11 +174,9 @@ export function UserDataFormPage({type, isEdit}: IForm) {
         display: 'none',
     });
 
-    const [user, setUser] = useRecoilState(userAtom)
+    const user = useRecoilValue(userAtom)
     if (!isEdit && user.id != null) {
-        // TODO: add popup info that you will be logged out
-        // TODO: logout automatically
-        setUser({})
+        navigate("/")
     }
 
     if (type == DataFormType.Invalid) {
@@ -123,7 +204,8 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                     <FormContainer
                         formContext={formContext}
                         handleSubmit={onSubmit}>
-                        <Grid container spacing={2} alignItems="center" justifyContent={"center"} marginLeft={{md: "auto"}}
+                        <Grid container spacing={2} alignItems="center" justifyContent={"center"}
+                              marginLeft={{md: "auto"}}
                               marginRight={{md: "auto"}}
                               maxWidth={{md: 500}}>
                             <Grid item xs={12}>
@@ -149,8 +231,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                             <Grid item xs={6}>
                                 <FormTextField isEdit={isEdit} name={'streetNumber'} label={'Číslo popisné'}
                                                required={type != DataFormType.Reservation}
-                                               fullWidth
-                                               validation={validateNumbers}/>
+                                               fullWidth/>
                             </Grid>
                             <Grid item xs={6}>
                                 <FormTextField isEdit={isEdit} name={'postalCode'} label={'PSČ'}
@@ -174,11 +255,13 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                 <FormDatePicker isEdit={isEdit} name={'birthdate'} label={'Datum narození'} required/>
                             </Grid>
                             <Grid item xs={12}>
-                                <FormTextField isEdit={isEdit} name={'email'} label={'Email'} type={'email'} required
+                                <FormTextField isEdit={isEdit} name={'email'} label={'Email'} type={'email'}
+                                               required={type != DataFormType.Reservation}
                                                fullWidth/>
                             </Grid>
                             <Grid item xs={12}>
-                                <FormSelect isEdit={isEdit} name={'phoneCode'} label={'Předvolba'} required fullWidth
+                                <FormSelect isEdit={isEdit} name={'phoneCode'} label={'Předvolba'}
+                                            required={type != DataFormType.Reservation} fullWidth
                                             options={phoneOptions}
                                 />
                             </Grid>
@@ -211,26 +294,26 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                                        fullWidth/>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <FormTextField isEdit={isEdit} name={'doctorStreet'} label={'Ulice'} fullWidth/>
+                                        <FormTextField isEdit={isEdit} name={'doctorStreet'} label={'Ulice'} fullWidth
+                                                       required/>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <FormTextField isEdit={isEdit} name={'doctorStreetNumber'}
                                                        label={'Číslo popisné'}
-                                                       fullWidth
-                                                       validation={validateNumbers}/>
+                                                       fullWidth/>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <FormTextField isEdit={isEdit} name={'doctorPostalCode'} label={'PSČ'}
-                                                       fullWidth
+                                                       fullWidth required
                                                        validation={validateNumbers}/>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <FormTextField isEdit={isEdit} name={'doctorCity'} label={'Město'}
-                                                       fullWidth/>
+                                                       fullWidth required/>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <FormSelect isEdit={isEdit} name={'doctorCountry'} label={'Stát'}
-                                                    fullWidth
+                                                    fullWidth required
                                                     options={countryOptions}
                                         />
                                     </Grid>
@@ -286,6 +369,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                 </Stack>
                             </Grid>
 
+                            {/*TODO: profile dialog*/}
                             {isEdit && <Grid item xs={11}>
                                 <DeleteProfileDialog/>
                             </Grid>}
