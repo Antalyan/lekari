@@ -5,14 +5,20 @@ import {IFilter} from "../../utils/Interfaces";
 import {AutoSelect} from "./AutoSelect";
 import {cities, specializations} from "../../data/MockData";
 import {SPECIALIZATIONS} from "../../data/Constants";
+import {IPanelSetter} from "./SearchPanel";
 
-export function FilterMenu() {
+export function FilterMenu({filter, setFilter}: IPanelSetter) {
     const {handleSubmit, control} = useForm<IFilter>();
     const onSubmit = (data: IFilter) => {
         /*TODO Handle data: send to database and retrieve updated doctors */
         /*Doctors will probably need to be connected with MainPage via a state */
         console.log(data)
 
+        setFilter({
+            specialization: data.specialization,
+            location: data.location,
+            search: filter.search
+        });
     }
 
     return (

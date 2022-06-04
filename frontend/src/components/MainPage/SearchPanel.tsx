@@ -24,16 +24,13 @@ export function SearchPanel({filter, setFilter}: IPanelSetter) {
     const onSubmit = handleSubmit((formData: { search: string }) => {
         /*TODO Handle data: send to database and retrieve updated doctors */
         /*Doctors will probably need to be connected with MainPage via a state */
-        {
-            console.log(formData);
-            if (formData.search.trim().length > 0) {
-                filter.search = formData.search;
-            } else {
-                filter.search = undefined;
-            }
-            setFilter(filter);
-            console.log(filter);
-        }
+        console.log(formData);
+
+        setFilter({
+            specialization: filter.specialization,
+            location: filter.location,
+            search: formData.search
+        });
     })
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -84,7 +81,7 @@ export function SearchPanel({filter, setFilter}: IPanelSetter) {
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
                 >
-                    <FilterMenu/>
+                    <FilterMenu filter={filter} setFilter={setFilter}/>
                 </Menu>
             </Box>
         </FormContainer>
