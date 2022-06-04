@@ -27,7 +27,8 @@ export function LoginForm() {
                             id: response.data.user.id,
                             firstName: response.data.user.firstname,
                             surname: response.data.user.surname,
-                            isDoctor: response.data.user.id,
+                            // TODO: set isDoctor
+                            isDoctor: false,
                             token: response.data.token
                         })
                     }
@@ -37,28 +38,6 @@ export function LoginForm() {
                 console.error(error);
                 alert("Přihlášení selhalo!\n\n")
             });
-        let logged_user = null;
-        switch (formData.password) {
-            case "1":
-                logged_user = DOCTORS[0];
-                break;
-            case "2":
-                logged_user = DOCTORS[1];
-                break;
-            case "3":
-                logged_user = DOCTORS[2];
-                break;
-            case "4": // not a doctor
-                logged_user = REVIEWS[0];
-                break;
-        }
-        if (logged_user == null) {
-            // TODO: show pop-up window with incorrect password
-            console.log(logged_user)
-        } else {
-
-        }
-
     })
     return (
         // @ts-ignore

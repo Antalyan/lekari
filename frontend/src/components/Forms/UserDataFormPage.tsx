@@ -173,7 +173,6 @@ export function UserDataFormPage({type, isEdit}: IForm) {
             phonePrefix: formData.phoneCode === undefined ? undefined : findPhoneCodeName(formData.phoneCode).toString(),
             phone: formData.phone === undefined ? undefined : parseInt(formData.phone),
             insuranceNumber: formData.insuranceNumber === undefined ? undefined : parseInt(formData.insuranceNumber),
-            // TODO: password should not be sent in plaintext
             password1: formData.newPassword === undefined ? "" : formData.newPassword,
             password2: formData.passwordCheck === undefined ? "" : formData.passwordCheck
         }
