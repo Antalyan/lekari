@@ -1,12 +1,12 @@
 import {Control, Controller} from "react-hook-form";
 import {Autocomplete, TextField} from "@mui/material";
 import * as React from "react";
-import {IBasicDoctor} from "../../utils/Interfaces";
+import {IBasicDoctor, IFilter} from "../../utils/Interfaces";
 
 type AutoSelectProps = {
-    control: Control<IBasicDoctor>,
+    control: Control<IFilter>,
     id: string,
-    name: keyof IBasicDoctor,
+    name: keyof IFilter,
     label: string,
     options: any[]
 };

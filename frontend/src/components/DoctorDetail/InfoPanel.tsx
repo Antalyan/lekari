@@ -182,7 +182,6 @@ export function InfoPanel() {
                         změny</Button>
                 </Grid>
                 <Grid container item xs={6} justifyContent={"center"}>
-                    {/*TODO: change onSubmit to message with function resetting form (refresh page basically)*/}
                     <Button variant='contained' size={"large"} type={'submit'} color={'primary'} onClick={onReset} >Zrušit
                         změny</Button>
                 </Grid>

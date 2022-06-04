@@ -14,7 +14,7 @@ function ReviewCreate() {
     const {handleSubmit} = formContext;
 
     const onSubmit = handleSubmit((formData: IReview) => {
-        // TODO: add date, save to db
+        // TODO: save to db
         console.log(formData)
     })
 

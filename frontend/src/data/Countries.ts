@@ -19,7 +19,7 @@ export function findCountryIndex(name: string) {
 }
 
 export function findPhoneCodeName(id: number) {
-    return COUNTRIES[id - 1].code
+    return COUNTRIES[id - 1].phone
 }
 
 export function findPhoneCodeIndex(name: string) {

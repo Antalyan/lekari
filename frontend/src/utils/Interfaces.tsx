@@ -9,6 +9,11 @@ export interface IBasicDoctor {
     rating?: number
 }
 
+export interface IFilter {
+    specialization: string,
+    location: string,
+}
+
 export interface ILogin {
     email: string,
     password: string

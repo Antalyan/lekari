@@ -418,7 +418,6 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                 </Stack>
                             </Grid>
 
-                            {/*TODO: profile dialog*/}
                             {isEdit && <Grid item xs={11}>
                                 <DeleteProfileDialog/>
                             </Grid>}

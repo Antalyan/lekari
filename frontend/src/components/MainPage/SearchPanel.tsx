@@ -1,16 +1,19 @@
 import {useForm} from "react-hook-form";
 import {FormContainer, TextFieldElement} from "react-hook-form-mui";
-import {AppBar, Box, Button, Grid, IconButton, Toolbar, Typography} from "@mui/material";
+import {Box, IconButton} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import * as React from "react";
-import {AccountCircle, FilterList} from "@mui/icons-material";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import {useState} from "react";
+import {FilterList} from "@mui/icons-material";
+import Menu from "@mui/material/Menu";
 import {FilterMenu} from "./FilterMenu";
-import Header from "../Header";
 
-export function SearchPanel() {
+export interface IPanelSetter {
+    filter: {specialization?: string, location?: string, search?: string};
+    setFilter: React.Dispatch<React.SetStateAction<{specialization?: string, location?: string, search?: string}>>
+}
+
+export function SearchPanel({filter, setFilter}: IPanelSetter) {
     const formContext = useForm<{ search: string }>({
         defaultValues: {
             search: '',
@@ -22,7 +25,14 @@ export function SearchPanel() {
         /*TODO Handle data: send to database and retrieve updated doctors */
         /*Doctors will probably need to be connected with MainPage via a state */
         {
-            console.log(formData)
+            console.log(formData);
+            if (formData.search.trim().length > 0) {
+                filter.search = formData.search;
+            } else {
+                filter.search = undefined;
+            }
+            setFilter(filter);
+            console.log(filter);
         }
     })
 

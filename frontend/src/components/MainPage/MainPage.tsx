@@ -11,20 +11,59 @@ import {Footer} from "../Footer";
 import useSWR from 'swr';
 import fetcher from "../../utils/fetcher";
 import {IDatabaseDoctor} from "../../utils/DatabaseInterfaces";
+import {useEffect, useState} from "react";
 
 export function MainPage() {
-    const { data, error } = useSWR('http://localhost:4000/doctors', fetcher);
+    const [dataFilter, setDataFilter] = useState<{specialization?: string, location?: string, search?: string}>({
+        specialization: undefined,
+        location: undefined,
+        search: undefined
+    });
+
+    const [url, setUrl] = useState('http://localhost:4000/doctors');
+
+    useEffect(() => {
+        let tmpurl = 'http://localhost:4000/doctors'
+        if (dataFilter.specialization != undefined || dataFilter.location != undefined || dataFilter.search != undefined) {
+            tmpurl = tmpurl + "?";
+        }
+        if (dataFilter.specialization != undefined) {
+            tmpurl = tmpurl + "specialization=" + dataFilter.specialization
+        }
+        if (dataFilter.location != undefined) {
+            if (tmpurl.includes("=")) {
+                tmpurl = tmpurl + "&"
+            }
+            tmpurl = tmpurl + "location=" + dataFilter.location
+        }
+        // TODO: fix surname
+        if (dataFilter.search != null) {
+            if (tmpurl.includes("=")) {
+                tmpurl = tmpurl + "&"
+            }
+            tmpurl = tmpurl + "surname=" + dataFilter.search
+        }
+        setUrl(tmpurl);
+    }, [dataFilter])
+
+    const { data, error } = useSWR(url, fetcher);
     if (error) console.log(error.message)
     if (!data) return <div>Loading...</div>;
+    if (data) console.log(data)
 
-    const doctors: IBasicDoctor[] = data.data.map((doctor: IDatabaseDoctor) => {
-        return {
-            name: doctor.name,
-            specialization: doctor.specialization,
-            location: doctor.location,
-            actuality: doctor.actuality,
-        }
-    });
+    function convertDoctors() {
+        return data.data.map((doctor: IDatabaseDoctor) => {
+            return {
+                // TODO: fix name and adjust interface correspondingly (currently nested)
+                name: doctor.name,
+                specialization: doctor.specialization,
+                location: doctor.location,
+                actuality: doctor.actuality,
+            }
+        });
+    }
+
+    let doctors: IBasicDoctor[] = convertDoctors()
 
     return <>
         <Header/>
@@ -102,7 +141,7 @@ export function MainPage() {
         </Grid>
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
             <Grid item xs={12}>
-                <SearchPanel/>
+                <SearchPanel filter={dataFilter} setFilter={setDataFilter}/>
             </Grid>
         </Grid>
 

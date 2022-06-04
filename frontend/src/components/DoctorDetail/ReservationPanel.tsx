@@ -47,7 +47,6 @@ function ReservationDatePanel({create}: IReservationCreate) {
     const {handleSubmit} = formContext;
 
     const onSubmit = handleSubmit((formData: IReservationBasic) => {
-        // TODO: change formData type to an interface
         // TODO: according to <create>, redirect to reservation form or store fake reservation (blocked timeslot by doctor)
         console.log(formData)
     })
@@ -93,7 +92,6 @@ function ReservationSlots() {
     const formContext = useForm<IReservationSlots>();
     const {handleSubmit} = formContext;
     const onSubmit = handleSubmit((formData: IReservationSlots) => {
-        // TODO: add formData type to check type
         // TODO: store into database (check if not conflicting with reservations made on backend)
         // TODO: show result to the user
         console.log(formData)
@@ -101,7 +99,6 @@ function ReservationSlots() {
 
     const [daysState, setDaysState] = useState<boolean[]>([true, true, true, true, true, false, false]);
     const setArray = (index: number) => {
-        // TODO: fix setter???
         return setDaysState(daysState.map((val, ind) => {
             return index == ind ? !val : val
         }))
