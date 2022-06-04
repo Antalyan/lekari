@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import {IconButton, Stack} from "@mui/material";
 import Button from "@mui/material/Button";
 import EditIcon from '@mui/icons-material/Edit';
-import {IEditable} from "../../utils/Interfaces";
+import {IEditable, IFormPerson} from "../../utils/Interfaces";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {FormContainer, MultiSelectElement, TextFieldElement} from "react-hook-form-mui";
@@ -12,7 +12,7 @@ import {useForm} from "react-hook-form";
 import {DAYS, LANGUAGES, validateNumbers, validateUrl} from "../../data/Constants";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 function Opening() {
     // TODO: editability could be checked at backend on submit as well?
@@ -103,7 +103,6 @@ function Contact() {
 }
 
 function Languages() {
-// TODO: change to languages type (retrieved from db or FE constant?)
     const [editingState, setEditingState] = useState(false);
     const user = useRecoilValue(userAtom)
     const {id} = useParams();
@@ -161,8 +160,13 @@ export function InfoPanel() {
         // TODO: send data to database on this click and show confirmation?
         console.log(formData);
     });
+
     const user = useRecoilValue(userAtom)
     const {id} = useParams();
+
+    const onReset = () => {
+        formContext.reset();
+    }
     // @ts-ignore
     return (<FormContainer
         formContext={formContext}
@@ -179,10 +183,11 @@ export function InfoPanel() {
                 </Grid>
                 <Grid container item xs={6} justifyContent={"center"}>
                     {/*TODO: change onSubmit to message with function resetting form (refresh page basically)*/}
-                    <Button variant='contained' size={"large"} type={'submit'} color={'primary'} onClick={onSubmit} >Zrušit
+                    <Button variant='contained' size={"large"} type={'submit'} color={'primary'} onClick={onReset} >Zrušit
                         změny</Button>
                 </Grid>
             </Grid>}
         </Stack>
     </FormContainer>)
 }
+

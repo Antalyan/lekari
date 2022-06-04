@@ -51,10 +51,9 @@ function a11yProps(index: number) {
 }
 
 export function DoctorDetailPage() {
-    /*TODO: finish handles and values: are they needed? copies from doc*/
-    const [value, setValue] = React.useState(0);
+    const [tabValues, setTabValues] = React.useState(0);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
+        setTabValues(newValue);
     };
 
     // TODO: return error or redirect if the user with this id does not exist
@@ -63,7 +62,6 @@ export function DoctorDetailPage() {
         // This should never happen in fact (redirecting elsewhere)
         return <>ERROR</>
     }
-
     // TODO: change doctors to API data request
     const doctor = DOCTORS.filter((doctor) => doctor.id == parseInt(id))[0];
 
@@ -81,18 +79,18 @@ export function DoctorDetailPage() {
 
 
             <Box>
-                <Tabs value={value} onChange={handleChange} aria-label="doctor-detail-tabs" centered variant="fullWidth">
+                <Tabs value={tabValues} onChange={handleChange} aria-label="doctor-detail-tabs" centered variant="fullWidth">
                     <Tab label="INFO" {...a11yProps(0)} />
                     <Tab label="OBJEDNÁNÍ" {...a11yProps(1)} />
                     <Tab label="RECENZE" {...a11yProps(2)} />
                 </Tabs>
-                <TabPanel value={value} index={0}>
+                <TabPanel value={tabValues} index={0}>
                     <InfoPanel/>
                 </TabPanel>
-                <TabPanel value={value} index={1}>
+                <TabPanel value={tabValues} index={1}>
                     <ReservationPanel/>
                 </TabPanel>
-                <TabPanel value={value} index={2}>
+                <TabPanel value={tabValues} index={2}>
                     <ReviewPanel/>
                 </TabPanel>
             </Box>

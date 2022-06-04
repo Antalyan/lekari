@@ -128,29 +128,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
     }
 
     const {data, error} = useSWR(isEdit ? ['http://localhost:4000/personal-info', user.token] : null, fetcherWithToken);
-    let defaultValues: IFormPerson = {
-        name: "",
-        surname: "",
-        degree: "",
-        birthdate: "",
-        street: "",
-        streetNumber: "",
-        city: "",
-        postalCode: "",
-        country: -1,
-        email: "",
-        phoneCode: -1,
-        phone: "",
-        insuranceNumber: "",
-        profilePicture: "",
-        specialization: "",
-        status: "",
-        doctorStreet: "",
-        doctorStreetNumber: "",
-        doctorCity: "",
-        doctorPostalCode: "",
-        doctorCountry: -1,
-    };
+    let defaultValues = {};
     if (isEdit) {
         if (error) console.log(error.message);
         if (!data) return <div>Loading...</div>;
@@ -273,7 +251,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     {/*@ts-ignore*/}
                     <FormContainer
-                        defaultValues={defaultValues}
+                        defaultValues={isEdit ? defaultValues : null}
                         onSuccess={onSubmit}>
                         <Grid container spacing={2} alignItems="center" justifyContent={"center"}
                               marginLeft={{md: "auto"}}
