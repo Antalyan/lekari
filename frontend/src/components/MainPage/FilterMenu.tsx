@@ -6,8 +6,7 @@ import {AutoSelect} from "./AutoSelect";
 import {cities, specializations} from "../../data/MockData";
 import {SPECIALIZATIONS} from "../../data/Constants";
 
-function FilterForm() {
-
+export function FilterMenu() {
     const {handleSubmit, control} = useForm<IFilter>();
     const onSubmit = (data: IFilter) => {
         /*TODO Handle data: send to database and retrieve updated doctors */
@@ -16,21 +15,6 @@ function FilterForm() {
 
     }
 
-    return <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={2} margin={2}>
-            <AutoSelect control={control} id="combo-box-spec" name="specialization" label="Specializace"
-                        options={SPECIALIZATIONS}/>
-            <AutoSelect control={control} id="combo-box-location" name="location" label="Lokace" options={cities}/>
-            <Grid container justifyContent="center">
-                <Button variant='contained' type={'submit'} color={'primary'} onSubmit={handleSubmit(onSubmit)}>
-                    Nastavit
-                </Button>
-            </Grid>
-        </Stack>
-    </form>
-}
-
-export function FilterMenu() {
     return (
         <>
             <Typography variant="h5" gutterBottom component="div" align={"center"}
@@ -38,7 +22,19 @@ export function FilterMenu() {
                         padding={2}>
                 Nastavení filtru
             </Typography>
-            <FilterForm/>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <Stack spacing={2} margin={2}>
+                    <AutoSelect control={control} id="combo-box-spec" name="specialization" label="Specializace"
+                                options={SPECIALIZATIONS}/>
+                    <AutoSelect control={control} id="combo-box-location" name="location" label="Lokace"
+                                options={cities}/>
+                    <Grid container justifyContent="center">
+                        <Button variant='contained' type={'submit'} color={'primary'} onSubmit={handleSubmit(onSubmit)}>
+                            Nastavit
+                        </Button>
+                    </Grid>
+                </Stack>
+            </form>
         </>
     )
 }

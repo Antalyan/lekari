@@ -43,6 +43,7 @@ export function MainPage() {
             }
             tmpurl = tmpurl + "surname=" + dataFilter.search
         }
+        console.log(tmpurl);
         setUrl(tmpurl);
     }, [dataFilter])
 
