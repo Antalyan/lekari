@@ -9,6 +9,7 @@ const personSchema = object({
   birthdate: date()
     .required(),
   email: string()
+    .email()
     .required(),
   phonePrefix: string()
     .required(),

@@ -53,8 +53,8 @@ model Address {
 
 model Reservation {
   id            String     @id @default(uuid())
-  personId      Int
-  person        Person     @relation(fields: [personId], references: [id])
+  personId      Int?
+  person        Person?     @relation(fields: [personId], references: [id])
   personTmpId   Int?
   personTmp     PersonTmp? @relation(fields: [personId], references: [id])
   doctorId      Int

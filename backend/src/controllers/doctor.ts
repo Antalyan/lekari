@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import prisma from '../client';
 import { number, object, string, ValidationError } from 'yup';
+import personSchema from './schemas/personSchema';
+
+const bcryptjs = require('bcryptjs');
 
 const doctorDetail = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
@@ -64,6 +67,12 @@ const doctorDetail = async (req: Request, res: Response) => {
         message: 'Person was not found'
       });
   }
+
+  return res.status(200)
+    .json({
+      status: 'success',
+      data: doctor
+    });
 
   return res.send({
     status: 'success',
@@ -351,6 +360,109 @@ const postReview = async (req: Request, res: Response) => {
   }
 };
 
+const regDoctorSchema = personSchema.shape({
+  specialization: string()
+    .required(),
+  actuality: string(),
+  workCountry: string()
+    .required(),
+  workCity: string()
+    .required(),
+  workPostalCode: number()
+    .required(),
+  workStreet: string(),
+  workBuildingNumber: string()
+    .required(),
+});
+
+const signUp = async (req: Request, res: Response) => {
+  let {
+    password1,
+    password2
+  } = req.body;
+
+  if (password1 !== password2) {
+    return res.status(400)
+      .send({
+        status: 'error',
+        data: {},
+        message: 'Password doesn\'t match the controll.'
+      });
+  }
+  try {
+    const data = await regDoctorSchema.validate(req.body);
+    const hash = await bcryptjs.hash(password1, 10);
+    const person = await prisma.person.create({
+      data: {
+        firstname: data.firstname,
+        surname: data.surname,
+        degree: data.degree || null,
+        birthdate: data.birthdate,
+        email: data.email,
+        insuranceNumber: data.insuranceNumber || null,
+        phonePrefix: data.phonePrefix,
+        phone: data.phone,
+        address: {
+          create: {
+            country: data.country,
+            city: data.city,
+            postalCode: data.postalCode,
+            street: data.street || null,
+            buildingNumber: data.buildingNumber,
+          },
+        },
+        password: hash,
+        doctor: {
+          create: {
+            specialization: data.specialization,
+            actuality: data.actuality || null,
+            address: {
+              create: {
+                country: data.country,
+                city: data.city,
+                postalCode: data.postalCode,
+                street: data.street || null,
+                buildingNumber: data.buildingNumber,
+              }
+            }
+          }
+        }
+      }
+    });
+    if (person) {
+      return res.status(201)
+        .send({
+          status: 'success',
+          data: { id: person.id },
+          message: 'Person registered.'
+        });
+    } else {
+      return res.status(500)
+        .send({
+          status: 'error',
+          message: '',
+        });
+    }
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      return res.status(400)
+        .send({
+          status: 'error',
+          data: e.errors,
+          message: e.message
+        });
+    }
+    if (e instanceof Error) {
+      return res.status(500)
+        .send({
+          status: 'error',
+          data: e.message,
+          message: 'Something went wrong'
+        });
+    }
+  }
+};
+
 export default {
   doctorList,
   doctorDetail,
@@ -358,8 +470,8 @@ export default {
   doctorReservations,
   doctorSlots,
   postReview,
-  signUp: notImplemented,
-  postComment: notImplemented,
+  signUp,
   createReservation: notImplemented,
+  postComment: notImplemented,
   infoUpdate: notImplemented
 };
