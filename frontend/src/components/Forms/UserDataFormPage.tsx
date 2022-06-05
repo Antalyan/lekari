@@ -12,7 +12,7 @@ import {
 } from "../../data/Countries";
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import {DataFormType, SPECIALIZATIONS, validateNumbers} from "../../data/Constants";
+import {DataFormType, validateNumbers} from "../../data/Constants";
 import {PhotoCamera} from "@mui/icons-material";
 import {specializations} from "../../data/MockData";
 import {FormDatePicker, FormSelect, FormTextField} from "./FormComponents";
@@ -23,9 +23,10 @@ import {userAtom} from "../../state/LoggedInAtom";
 import {DeleteProfileDialog} from "./DeleteProfileDialog";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import axios from 'axios';
-import {IDatabaseDoctor, IDatabasePatient} from "../../utils/DatabaseInterfaces";
+import {IDatBasicDoctor, IDatDoctorProfile, IDatPatientProfile} from "../../utils/DatabaseInterfaces";
 import useSWR from "swr";
 import fetcher, {fetcherWithToken} from "../../utils/fetcher";
+import {findSpecializationIndex, findSpecializationName, SPECIALIZATIONS} from "../../data/Specializations";
 
 function getFormLabel(type: DataFormType, isEdit: boolean): string {
     if (isEdit) {
@@ -92,12 +93,12 @@ export function UserDataFormPage({type, isEdit}: IForm) {
     const getDefaultValues = () => {
         // TODO: dependent on type - doctor or patient
         // TODO: database request
-        const dbperson: IDatabasePatient = data.data;
+        const dbperson: IDatPatientProfile | IDatDoctorProfile = data.data;
         return {
             name: dbperson.firstname,
             surname: dbperson.surname,
             degree: dbperson.degree,
-            birthdate: new Date(dbperson.birthdate).toLocaleDateString('en-US'),
+            birthdate: dbperson.birthdate,
             street: dbperson.street,
             streetNumber: dbperson.buildingNumber,
             city: dbperson.city,
@@ -108,18 +109,16 @@ export function UserDataFormPage({type, isEdit}: IForm) {
             phone: dbperson.phone?.toString(),
             insuranceNumber: dbperson.insuranceNumber?.toString(),
             profilePicture: "",
-            specialization: "",
-            status: "",
-            doctorStreet: "",
-            doctorStreetNumber: "",
-            doctorCity: "",
-            doctorPostalCode: "",
-            doctorCountry: -1,
+            specialization: "specialization" in dbperson ? findSpecializationIndex(dbperson.specialization) : undefined,
+            status: "actuality" in dbperson ? dbperson.actuality : undefined,
+            doctorStreet: "workStreet" in dbperson ? dbperson.workStreet : undefined,
+            doctorStreetNumber: "workBuildingNumber" in dbperson ? dbperson.workBuildingNumber : undefined,
+            doctorCity: "workCity" in dbperson ? dbperson.workCity : undefined,
+            doctorPostalCode: "workPostalCode" in dbperson ? dbperson.workPostalCode : undefined,
+            doctorCountry: "workCountry" in dbperson ? findCountryIndex(dbperson.workCountry) : undefined,
         };
     }
 
-    const formContext = useForm<IFormPerson>();
-    const {handleSubmit} = formContext;
     let navigate = useNavigate();
 
     const user = useRecoilValue(userAtom)
@@ -137,24 +136,25 @@ export function UserDataFormPage({type, isEdit}: IForm) {
     }
 
     const storePatient = async (formData: IFormPerson, isEdit: boolean) => {
-        const patient: IDatabasePatient = {
+        const patient: IDatPatientProfile = {
             firstname: formData.name,
             surname: formData.surname,
             degree: formData.degree,
-            birthdate: new Date(formData.birthdate),
+            birthdate: formData.birthdate,
             street: formData.street,
-            buildingNumber: formData.streetNumber === undefined ? undefined : formData.streetNumber,
+            buildingNumber: formData.streetNumber,
             city: formData.city,
-            postalCode: formData.postalCode === undefined ? undefined : parseInt(formData.postalCode),
+            postalCode: parseInt(formData.postalCode),
             country: findCountryName(formData.country),
             email: formData.email,
-            phonePrefix: formData.phoneCode === undefined ? undefined : findPhoneCodeName(formData.phoneCode).toString(),
-            phone: formData.phone === undefined ? undefined : parseInt(formData.phone),
+            phonePrefix: findPhoneCodeName(formData.phoneCode).toString(),
+            phone: parseInt(formData.phone),
             insuranceNumber: formData.insuranceNumber === undefined ? undefined : parseInt(formData.insuranceNumber),
-            password1: formData.newPassword === undefined ? "" : formData.newPassword,
-            password2: formData.passwordCheck === undefined ? "" : formData.passwordCheck
+            password1: formData.newPassword === undefined ? undefined : formData.newPassword,
+            password2: formData.passwordCheck === undefined ? undefined : formData.passwordCheck
         }
         if (isEdit) {
+            // TODO: edit url
             await updateProfile('http://localhost:4000/personal-info', patient, navigate);
         } else {
             await completeRegistration('http://localhost:4000/register', patient, navigate);
@@ -162,31 +162,41 @@ export function UserDataFormPage({type, isEdit}: IForm) {
 
     };
 
-    // const registerDoctor = async (formData: IFormPerson) => {
-    //     const doctor: IDatabaseDoctor = {
-    //         firstname: formData.name,
-    //         surname: formData.surname,
-    //         degree: formData.degree,
-    //         birthdate: new Date(formData.birthdate),
-    //         street: formData.street,
-    //         buildingNumber: formData.streetNumber === undefined ? undefined :formData.streetNumber,
-    //         city: formData.city,
-    //         postalCode: formData.postalCode === undefined ? undefined : parseInt(formData.postalCode),
-    //         country: findCountryName(formData.country),
-    //         email: formData.email,
-    //         phonePrefix: formData.phoneCode === undefined ? undefined : findCountryCode(formData.phoneCode).toString(),
-    //         phone: formData.phone === undefined ? undefined : parseInt(formData.phone),
-    //         insuranceNumber: formData.insuranceNumber === undefined ? undefined : parseInt(formData.insuranceNumber),
-    //         // TODO: password should not be sent in plaintext
-    //         password1: formData.newPassword === undefined ? "" : formData.newPassword,
-    //         password2: formData.passwordCheck === undefined ? "" : formData.passwordCheck
-    //     }
-    //     await completeRegistration('http://localhost:4000/register', doctor);
-    // };
+    const storeDoctor = async (formData: IFormPerson, isEdit: boolean) => {
+        const doctor: IDatDoctorProfile = {
+            firstname: formData.name,
+            surname: formData.surname,
+            degree: formData.degree,
+            birthdate: formData.birthdate,
+            street: formData.street,
+            buildingNumber: formData.streetNumber,
+            city: formData.city,
+            postalCode: parseInt(formData.postalCode),
+            country: findCountryName(formData.country),
+            email: formData.email,
+            phonePrefix: findPhoneCodeName(formData.phoneCode).toString(),
+            phone: parseInt(formData.phone),
+            insuranceNumber: formData.insuranceNumber === undefined ? undefined : parseInt(formData.insuranceNumber),
+            password1: formData.newPassword === undefined ? undefined : formData.newPassword,
+            password2: formData.passwordCheck === undefined ? undefined : formData.passwordCheck,
+            specialization: formData.specialization === undefined ? " TYPE ERROR" : findSpecializationName(formData.specialization),
+            actuality: formData.status === undefined ? " TYPE ERROR" : formData.status,
+            workStreet: formData.doctorStreet === undefined ? " TYPE ERROR" : formData.doctorStreet,
+            workBuildingNumber: formData.doctorStreetNumber === undefined ? " TYPE ERROR" : formData.doctorStreetNumber,
+            workCity: formData.doctorCity === undefined ? " TYPE ERROR" : formData.doctorCity,
+            workPostalCode: formData.doctorPostalCode === undefined ? -1 : parseInt(formData.doctorPostalCode),
+            workCountry: formData.doctorCountry === undefined ? " TYPE ERROR" : findCountryName(formData.doctorCountry),
+        }
+        if (isEdit) {
+            // TODO: edit url
+            await updateProfile('http://localhost:4000/personal-info', doctor, navigate);
+        } else {
+            await completeRegistration('http://localhost:4000/signup-doctor', doctor, navigate);
+        }
+    };
 
     // @ts-ignore
     const onSubmit = (formData: IFormPerson) => {
-        // TODO: store data to database, should depend on form type: save as new OR update
         console.log("NAME:" + formData.name)
         console.log(formData)
         switch (type) {
@@ -194,13 +204,13 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                 storePatient(formData, isEdit);
                 break;
             case DataFormType.Doctor:
-                storePatient(formData, isEdit);
+                storeDoctor(formData, isEdit);
                 break;
             default:
+                // TODO: change to reservation based on logged information
                 storePatient(formData, isEdit);
                 break;
         }
-
     }
 
     let copiedCountries = COUNTRIES.map((country) => country.label)
@@ -286,7 +296,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                 <FormTextField isEdit={isEdit} name={'postalCode'} label={'PSČ'}
                                                required={type != DataFormType.Reservation}
                                                fullWidth
-                                               validation={validateNumbers}/>
+                                               type={"number"}/>
                             </Grid>
                             <Grid item xs={12}>
                                 <FormTextField isEdit={isEdit} name={'city'} label={'Město'}
@@ -315,12 +325,13 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <FormTextField isEdit={isEdit} name={'phone'} label={'Telefon'} required fullWidth
-                                               validation={validateNumbers}/>
+                                <FormTextField isEdit={isEdit} name={'phone'} label={'Telefon'}
+                                               required={type != DataFormType.Reservation} fullWidth
+                                               type={"number"}/>
                             </Grid>
                             <Grid item xs={12}>
                                 <FormTextField isEdit={isEdit} name={'insuranceNumber'} label={'Číslo pojišťovny'}
-                                               validation={validateNumbers}/>
+                                               type={"number"}/>
                             </Grid>
 
                             {type == DataFormType.Doctor &&
@@ -344,17 +355,17 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <FormTextField isEdit={isEdit} name={'doctorStreet'} label={'Ulice'} fullWidth
-                                                       required/>
+                                                       />
                                     </Grid>
                                     <Grid item xs={6}>
                                         <FormTextField isEdit={isEdit} name={'doctorStreetNumber'}
-                                                       label={'Číslo popisné'}
+                                                       label={'Číslo popisné'} required
                                                        fullWidth/>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <FormTextField isEdit={isEdit} name={'doctorPostalCode'} label={'PSČ'}
                                                        fullWidth required
-                                                       validation={validateNumbers}/>
+                                                       type={"number"}/>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <FormTextField isEdit={isEdit} name={'doctorCity'} label={'Město'}
@@ -409,12 +420,12 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                     {isEdit ?
                                         <>
                                             <Button variant='contained' type={'submit'} color={'primary'}
-                                                    >{"Uložit změny"}</Button>
+                                            >{"Uložit změny"}</Button>
                                             <Button variant='contained' color={'primary'}
                                             >{"Zrušit změny"}</Button>
                                         </>
                                         : <Button variant='contained' type={'submit'} color={'primary'}
-                                                  >{"Registrovat se"}</Button>}
+                                        >{"Registrovat se"}</Button>}
                                 </Stack>
                             </Grid>
 

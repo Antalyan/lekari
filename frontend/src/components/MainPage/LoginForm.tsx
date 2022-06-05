@@ -28,7 +28,7 @@ export function LoginForm() {
                             firstName: response.data.user.firstname,
                             surname: response.data.user.surname,
                             // TODO: set isDoctor
-                            isDoctor: false,
+                            isDoctor: true,
                             token: response.data.token
                         })
                     }

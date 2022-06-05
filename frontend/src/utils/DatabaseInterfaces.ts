@@ -1,4 +1,4 @@
-export interface IDatabaseDoctor {
+export interface IDatBasicDoctor {
     name: string,
     specialization: string,
     location: string,
@@ -6,60 +6,56 @@ export interface IDatabaseDoctor {
     profile_picture: string
 }
 
-export interface IDatabasePatient {
+export interface IDatPatientProfile {
     firstname: string,
     surname: string,
     degree?: string,
-    birthdate: Date,
-    street: string,
-    buildingNumber?: string,
-    city: string,
-    postalCode?: number,
-    country: string,
+    birthdate: string,
     email: string,
-    phonePrefix?: string,
-    phone?: number,
+    phonePrefix: string,
+    phone: number,
     insuranceNumber?: number,
-    password1: string,
-    password2: string
+    country: string,
+    city: string,
+    postalCode: number,
+    street?: string,
+    buildingNumber: string,
+    password1?: string,
+    password2?: string
     // oldPassword?: string,
     // newPassword?: string,
     // passwordCheck?: string,
     // profilePicture: string,
-    // specialization: string,
-    // status?: string,
-    // doctorStreet?: string,
-    // doctorStreetNumber?: number,
-    // doctorCity?: string,
-    // doctorPostalCode?: number,
-    // doctorCountry?: string,
 }
 
 
-export interface IDatabaseDoctor {
+export interface IDatDoctorProfile {
     firstname: string,
     surname: string,
     degree?: string,
-    birthdate: Date,
-    street: string,
-    buildingNumber?: string,
-    city: string,
-    postalCode?: number,
-    country: string,
+    birthdate: string,
     email: string,
-    phonePrefix?: string,
-    phone?: number,
+    phonePrefix: string,
+    phone: number,
     insuranceNumber?: number,
-    password1: string,
-    password2: string
-    profilePicture: string,
+    country: string,
+    city: string,
+    postalCode: number,
+    street?: string,
+    buildingNumber: string,
+    password1?: string,
+    password2?: string
+    // oldPassword?: string,
+    // newPassword?: string,
+    // passwordCheck?: string,
+    // profilePicture: string,
     specialization: string,
-    status?: string,
-    doctorStreet?: string,
-    doctorStreetNumber?: number,
-    doctorCity?: string,
-    doctorPostalCode?: number,
-    doctorCountry?: string,
+    actuality?: string,
+    workStreet?: string,
+    workBuildingNumber?: string,
+    workCity: string,
+    workPostalCode: number,
+    workCountry: string,
 }
 
 

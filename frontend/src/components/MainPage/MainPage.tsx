@@ -10,7 +10,7 @@ import {DoctorCard} from "../DoctorDetail/DoctorCard";
 import {Footer} from "../Footer";
 import useSWR from 'swr';
 import fetcher from "../../utils/fetcher";
-import {IDatabaseDoctor} from "../../utils/DatabaseInterfaces";
+import {IDatBasicDoctor} from "../../utils/DatabaseInterfaces";
 import {useEffect, useState} from "react";
 
 export function MainPage() {
@@ -53,7 +53,7 @@ export function MainPage() {
     if (data) console.log(data)
 
     function convertDoctors() {
-        return data.data.map((doctor: IDatabaseDoctor) => {
+        return data.data.map((doctor: IDatBasicDoctor) => {
             return {
                 // TODO: fix name and adjust interface correspondingly (currently nested)
                 name: doctor.name,
