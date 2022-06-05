@@ -16,6 +16,7 @@ model Person {
   email           String        @unique
   phonePrefix     String
   phone           Int
+  deleted Boolean @default(false)
   insuranceNumber Int?
   addressId       Int        @unique
   address         Address       @relation(fields: [addressId], references: [id])
@@ -73,6 +74,7 @@ model Doctor {
   personId               Int                   @unique
   person                 Person                   @relation(fields: [personId], references: [id])
   profilePicture         String?
+  deleted Boolean @default(false)
   //
   email                  String?
   phone                  String?
@@ -82,7 +84,7 @@ model Doctor {
   references             Review[]
   languages              DoctorLanguage[]
   openingHours           ReservationHours[]
-  openingHoursOrdination OpeningHoursOrdination[]
+  openingHoursOrdination OpeningHours[]
 }
 
 model Review {
@@ -115,7 +117,7 @@ model ReservationHours {
   @@unique([doctorId, day, fromDate])
 }
 
-model OpeningHoursOrdination {
+model OpeningHours {
   doctorId Int
   doctor   Doctor @relation(fields: [doctorId], references: [id])
   day      String

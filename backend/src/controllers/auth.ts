@@ -97,7 +97,8 @@ const login = async (req: Request, res: Response) => {
   try {
     const person = await prisma.person.findFirst({
       where: {
-        email: email
+        email: email,
+        deleted: false,
       },
       include: {
         doctor: true,
@@ -129,7 +130,7 @@ const login = async (req: Request, res: Response) => {
                     firstName: person.firstname,
                     surname: person.surname,
                     token: token,
-                    isDoctor: (person.doctor !== null)
+                    isDoctor: (person.doctor !== null && !person.doctor.deleted)
                   }
                 });
             }

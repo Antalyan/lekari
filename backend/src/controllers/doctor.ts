@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import prisma from '../client';
 import { number, object, string, ValidationError } from 'yup';
 import personSchema from './schemas/personSchema';
+import { boolean } from 'yup/lib/locale';
 
 const bcryptjs = require('bcryptjs');
 
@@ -10,7 +11,7 @@ const doctorDetail = async (req: Request, res: Response) => {
 
   const doctor = await prisma.doctor.findUnique({
     where: {
-      id: id
+      id: id,
     },
     select: {
       person: {
@@ -18,8 +19,10 @@ const doctorDetail = async (req: Request, res: Response) => {
           firstname: true,
           surname: true,
           degree: true,
+          deleted: true,
         }
       },
+      deleted: true,
       specialization: true,
       email: true,
       phone: true,
@@ -60,7 +63,7 @@ const doctorDetail = async (req: Request, res: Response) => {
     }
   });
 
-  if (!doctor) {
+  if (!doctor || doctor.person.deleted || doctor.deleted) {
     return res.status(404)
       .send({
         status: 'error',
@@ -110,6 +113,7 @@ const doctorList = async (req: Request, res: Response) => {
         surname: {
           contains: surname as string || undefined
         },
+        deleted: false,
       },
       specialization: {
         contains: specialization as string || undefined
@@ -118,7 +122,8 @@ const doctorList = async (req: Request, res: Response) => {
         city: {
           contains: location as string || undefined
         },
-      }
+      },
+      deleted: false,
     },
     select: {
       id: true,
@@ -491,10 +496,39 @@ const signUp = async (req: Request, res: Response) => {
   }
 };
 
+const doctorDelete = async (req: Request, res: Response) => {
+  try{
+    const doctor = await prisma.doctor.updateMany({
+      where: {
+        person: {
+          email: res.locals.jwt.username
+        }
+      },
+      data: {
+        deleted: true,
+      }
+    });
+    return res.status(200)
+    .send({
+      status: 'success',
+      message: 'Doctor deleted.',
+    });
+  } catch(e) {
+    if (e instanceof Error) {
+      return res.status(400)
+        .send({
+          status: 'error',
+          message: e.message
+        });
+    }
+}
+}
+
 export default {
   doctorList,
   doctorDetail,
   doctorUpdate,
+  doctorDelete,
   doctorReservations,
   doctorSlots,
   postReview,

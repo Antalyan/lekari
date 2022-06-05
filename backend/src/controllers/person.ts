@@ -5,7 +5,11 @@ import personSchema from './schemas/personSchema';
 
 const personList = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const persons = await prisma.person.findMany({});
+    const persons = await prisma.person.findMany({
+      where:{
+        deleted:false,
+      }
+    });
     res.json(persons);
   } catch (error) {
     next(error);
@@ -15,7 +19,7 @@ const personList = async (req: Request, res: Response, next: NextFunction) => {
 const personDetail = async (req: Request, res: Response) => {
   const person = await prisma.person.findMany({
     where: {
-      email: res.locals.jwt.username
+      email: res.locals.jwt.username,
     },
     select: {
       firstname: true,
@@ -33,11 +37,12 @@ const personDetail = async (req: Request, res: Response) => {
           postalCode: true,
           street: true,
         }
-      }
+      },
+      deleted: true,
     }
   });
 
-  if (!person) {
+  if (!person || person[0].deleted) {
     return res.status(404)
       .send({
         status: 'error',
@@ -57,7 +62,8 @@ const personUpdate = async (req: Request, res: Response) => {
     const data = await personSchema.validate(req.body);
     const person = await prisma.person.updateMany({
       where: {
-        email: res.locals.jwt.username
+        email: res.locals.jwt.username,
+        deleted: false,
       },
       data: data
     });
@@ -90,7 +96,8 @@ const personUpdate = async (req: Request, res: Response) => {
 const personReservations = async (req: Request, res: Response) => {
   const reservations = await prisma.person.findMany({
     where: {
-      email: res.locals.jwt.username
+      email: res.locals.jwt.username,
+      deleted:false
     },
     select: {
       reservations: {
@@ -139,9 +146,36 @@ const notImplemented = async (req: Request, res: Response) => {
     });
 };
 
+const personDelete = async (req: Request, res: Response) => {
+  try{
+    const person = await prisma.person.updateMany({
+      where: {
+          email: res.locals.jwt.username
+      },
+      data: {
+        deleted: true,
+      }
+    });
+    return res.status(200)
+    .send({
+      status: 'success',
+      message: 'Person deleted.',
+    });
+  } catch(e) {
+    if (e instanceof Error) {
+      return res.status(400)
+        .send({
+          status: 'error',
+          message: e.message
+        });
+    }
+}
+}
+
 export default {
   personList,
   personDetail,
+  personDelete,
   personUpdate,
   personReservations,
   updateImage: notImplemented
