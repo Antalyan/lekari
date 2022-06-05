@@ -26,11 +26,10 @@ export function LoginForm() {
                     if (response.status === 200) {
                         setUser({
                             id: response.data.user.id,
-                            firstName: response.data.user.firstname,
+                            firstName: response.data.user.firstName,
                             surname: response.data.user.surname,
-                            // TODO: set isDoctor
-                            isDoctor: true,
-                            token: response.data.token
+                            isDoctor: response.data.user.isDoctor,
+                            token: response.data.user.token
                         })
                     }
                 }
