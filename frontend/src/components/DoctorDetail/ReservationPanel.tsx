@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useState} from "react";
 import Grid from "@mui/material/Grid";
-import {Box, Divider, FormControlLabel, FormGroup, Stack, Switch} from "@mui/material";
+import {Divider, FormControlLabel, FormGroup, Stack, Switch} from "@mui/material";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import {DatePickerElement, FormContainer, SelectElement, TextFieldElement} from "react-hook-form-mui";
@@ -13,10 +13,16 @@ import {INTERVALS, RESERVATION_TIMES} from "../../data/MockData";
 import {useParams} from "react-router-dom";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
-import {IReservationBasic, IReservationSlots} from "../../utils/Interfaces";
+import {IReservationSlots} from "../../utils/Interfaces";
 
 interface IReservationCreate {
     create: boolean
+}
+
+interface IReservationBasic {
+    reservationDate: Date,
+    reservationTime: string,
+    reservationNote?: string
 }
 
 function getReservationTimes(date?: Date) {

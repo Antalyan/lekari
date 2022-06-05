@@ -1,13 +1,14 @@
 import {FormContainer, TextFieldElement} from "react-hook-form-mui";
 import {Button, Grid} from "@mui/material";
 import {useForm} from "react-hook-form";
-import {useState} from "react";
-import {ILogin} from "../../utils/Interfaces";
 import {useRecoilState} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
-import {DOCTORS, REVIEWS} from "../../data/MockData";
 import axios from "axios";
-import {NavigateFunction} from "react-router-dom";
+
+interface ILogin {
+    email: string,
+    password: string
+}
 
 export function LoginForm() {
     const formContext = useForm<ILogin>();
@@ -25,11 +26,10 @@ export function LoginForm() {
                     if (response.status === 200) {
                         setUser({
                             id: response.data.user.id,
-                            firstName: response.data.user.firstname,
+                            firstName: response.data.user.firstName,
                             surname: response.data.user.surname,
-                            // TODO: set isDoctor
-                            isDoctor: true,
-                            token: response.data.token
+                            isDoctor: response.data.user.isDoctor,
+                            token: response.data.user.token
                         })
                     }
                 }

@@ -2,13 +2,13 @@ import * as React from "react";
 import Grid from "@mui/material/Grid";
 import {Stack} from "@mui/material";
 import Button from "@mui/material/Button";
-import {IBasicDoctor} from "../../utils/Interfaces";
+import {IDoctorCard} from "../../utils/Interfaces";
 import Typography from "@mui/material/Typography";
 import {LocationOn, Person, Warning} from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Profile from "../../images/mock_profile.jpg";
 
-export function DoctorCardLabels(props: { detailed: boolean, doctor: IBasicDoctor }) {
+export function DoctorCardLabels(props: { detailed: boolean, doctor: IDoctorCard }) {
     return <Stack direction="column" spacing={2} padding={2}>
         {!props.detailed && <Typography
             variant="h5"
@@ -36,7 +36,7 @@ export function DoctorCardLabels(props: { detailed: boolean, doctor: IBasicDocto
     </Stack>;
 }
 
-export function DoctorCard(props: { detailed: boolean, doctor: IBasicDoctor }) {
+export function DoctorCard(props: { detailed: boolean, doctor: IDoctorCard }) {
     return (
         // TODO change bgcolor if desired
         <Grid container rowSpacing={1}

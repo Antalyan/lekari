@@ -1,6 +1,4 @@
-import {DataFormType} from "../data/Constants";
-
-export interface IBasicDoctor {
+export interface IDoctorCard {
     id: number,
     name: string,
     specialization: string,
@@ -12,11 +10,6 @@ export interface IBasicDoctor {
 export interface IFilter {
     specialization: string,
     location: string,
-}
-
-export interface ILogin {
-    email: string,
-    password: string
 }
 
 export interface IFormPerson {
@@ -48,12 +41,6 @@ export interface IFormPerson {
     doctorCountry?: number,
 }
 
-export interface IContact {
-    email: string,
-    phone: string,
-    web: string
-}
-
 export interface IEditable {
     editable: boolean
 }
@@ -64,11 +51,6 @@ export interface IReview {
     rating: number,
     text: string,
     id?: number
-}
-
-export interface IForm {
-    type: DataFormType,
-    isEdit: boolean
 }
 
 export interface IGlobalProfileInfo {
@@ -82,31 +64,15 @@ export interface IGlobalProfileInfo {
 
 export interface IReservation {
     id?: number,
-    patientID: number,
-    doctorID: number,
-    patientName: string,
-    doctorName: string,
-    creationAt: Date,
-    visitDate: Date,
-    address: string,
+    patientName?: string,
+    doctorName?: string,
+    createTime: string,
+    createDate: string,
+    visitTimeFrom: string,
+    visitTimeTo: string,
+    visitDate: string,
+    doctorAddress?: string,
     note?: string
-}
-
-export interface IReservationBasic {
-    reservationDate: Date,
-    reservationTime: string,
-    reservationNote?: string
-}
-
-export interface IFormFieldProps {
-    isEdit: boolean,
-    name: string,
-    label?: string,
-    type?: string,
-    required?: boolean,
-    fullWidth?: boolean,
-    validation?: any
-    options?: any[] | undefined
 }
 
 export interface IReservationSlots {
@@ -129,8 +95,3 @@ export interface IReservationSlots {
     interval: number
 }
 
-export interface IDialogProps {
-    name: string,
-    title?: string,
-    text: string
-}

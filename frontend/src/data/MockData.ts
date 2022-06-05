@@ -1,6 +1,6 @@
-import {IBasicDoctor, IReservation, IReview} from "../utils/Interfaces";
+import {IDoctorCard, IReservation, IReview} from "../utils/Interfaces";
 
-export const DOCTORS: IBasicDoctor[] = [
+export const DOCTORS: IDoctorCard[] = [
     {
         "name": "MUDr. Adam Ananas",
         "specialization": "Neurolog",
@@ -43,29 +43,25 @@ export const REVIEWS: IReview[] = [
     }
 ]
 
-export const RESERVATIONS: IReservation[] = [
-    {
-        "id": 1269,
-        "patientID": 4,
-        "doctorID": 1,
-        "patientName": "Dáda Dloubavá",
-        "doctorName": "Mudr. Adam Ananas",
-        "creationAt": new Date("2020-01-31"),
-        "visitDate": new Date('December 17, 1995 03:24:00'),
-        "address": "Ovocná 65, Sadovice",
-        "note": "Chci se objednat s problémem s rovnováhou."
-    },
-    {
-        "id": 1269,
-        "patientID": 4,
-        "doctorID": 2,
-        "patientName": "Dáda Dloubavá",
-        "doctorName": "Beáta Boubelatá",
-        "creationAt": new Date("2020-01-01"),
-        "visitDate": new Date('December 17, 2050 03:08'),
-        "address": "Blábolivý Brod u Blátovic, Bláhová 55/6"
-    }
-]
+// export const RESERVATIONS: IReservation[] = [
+//     {
+//         "id": 1269,
+//         "patientName": "Dáda Dloubavá",
+//         "doctorName": "Mudr. Adam Ananas",
+//         "creationAt": new Date("2020-01-31"),
+//         "visitDate": new Date('December 17, 1995 03:24:00'),
+//         "doctorAddress": "Ovocná 65, Sadovice",
+//         "note": "Chci se objednat s problémem s rovnováhou."
+//     },
+//     {
+//         "id": 1269,
+//         "patientName": "Dáda Dloubavá",
+//         "doctorName": "Beáta Boubelatá",
+//         "creationAt": new Date("2020-01-01"),
+//         "visitDate": new Date('December 17, 2050 03:08'),
+//         "doctorAddress": "Blábolivý Brod u Blátovic, Bláhová 55/6"
+//     }
+// ]
 
 export const RESERVATION_TIMES = [{id: 1, title: "12:00"}, {id: 2, title: "12:30"}, {id: 3, title: "13:00"}, {
     id: 4,

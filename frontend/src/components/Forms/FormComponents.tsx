@@ -4,7 +4,17 @@ import {useState} from "react";
 import {IconButton, Stack} from "@mui/material";
 import {DatePickerElement, SelectElement, TextFieldElement} from "react-hook-form-mui";
 import EditIcon from "@mui/icons-material/Edit";
-import {IFormFieldProps} from "../../utils/Interfaces";
+
+interface IFormFieldProps {
+    isEdit: boolean,
+    name: string,
+    label?: string,
+    type?: string,
+    required?: boolean,
+    fullWidth?: boolean,
+    validation?: any
+    options?: any[] | undefined
+}
 
 export function FormTextField({
                                   isEdit,

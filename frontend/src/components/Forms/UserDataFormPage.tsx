@@ -1,20 +1,19 @@
 import {FormContainer, PasswordElement} from "react-hook-form-mui";
 import {Box, Button, Grid, IconButton, Stack, styled, Typography} from "@mui/material";
-import {useForm, useFormContext} from "react-hook-form";
+import {useFormContext} from "react-hook-form";
 import * as React from "react";
-import {IBasicDoctor, IEditable, IForm, IFormPerson} from "../../utils/Interfaces";
+import {IEditable, IFormPerson} from "../../utils/Interfaces";
 import {
     COUNTRIES,
-    findPhoneCodeName,
-    findCountryName,
     findCountryIndex,
-    findPhoneCodeIndex
+    findCountryName,
+    findPhoneCodeIndex,
+    findPhoneCodeName
 } from "../../data/Countries";
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import {DataFormType, validateNumbers} from "../../data/Constants";
+import {DataFormType} from "../../data/Constants";
 import {PhotoCamera} from "@mui/icons-material";
-import {specializations} from "../../data/MockData";
 import {FormDatePicker, FormSelect, FormTextField} from "./FormComponents";
 import Header from "../Header";
 import {Footer} from "../Footer";
@@ -23,10 +22,15 @@ import {userAtom} from "../../state/LoggedInAtom";
 import {DeleteProfileDialog} from "./DeleteProfileDialog";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import axios from 'axios';
-import {IDatBasicDoctor, IDatDoctorProfile, IDatPatientProfile} from "../../utils/DatabaseInterfaces";
+import {IDatDoctorProfile, IDatPatientProfile} from "../../utils/DatabaseInterfaces";
 import useSWR from "swr";
-import fetcher, {fetcherWithToken} from "../../utils/fetcher";
+import {fetcherWithToken} from "../../utils/fetcher";
 import {findSpecializationIndex, findSpecializationName, SPECIALIZATIONS} from "../../data/Specializations";
+
+interface IForm {
+    type: DataFormType,
+    isEdit: boolean
+}
 
 function getFormLabel(type: DataFormType, isEdit: boolean): string {
     if (isEdit) {
@@ -91,8 +95,7 @@ async function updateProfile(url: string, subject: any, navigate: NavigateFuncti
 
 export function UserDataFormPage({type, isEdit}: IForm) {
     const getDefaultValues = () => {
-        // TODO: dependent on type - doctor or patient
-        // TODO: database request
+        // TODO: check default attributes when API edit finished
         const dbperson: IDatPatientProfile | IDatDoctorProfile = data.data;
         return {
             name: dbperson.firstname,
@@ -162,6 +165,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
 
     };
 
+    // TODO: check storing address doctor attributes when API impl finished
     const storeDoctor = async (formData: IFormPerson, isEdit: boolean) => {
         const doctor: IDatDoctorProfile = {
             firstname: formData.name,

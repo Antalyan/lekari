@@ -1,11 +1,7 @@
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import Header from "../Header";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import Profile from "../../images/mock_profile.jpg";
-import {SearchPanel} from "../MainPage/SearchPanel";
-import {IBasicDoctor} from "../../utils/Interfaces";
 import {DoctorCard} from "./DoctorCard";
 import {Footer} from "../Footer";
 import {DOCTORS} from "../../data/MockData";
@@ -14,8 +10,6 @@ import {Rating, Tab, Tabs} from "@mui/material";
 import {InfoPanel} from "./InfoPanel";
 import {ReservationPanel} from "./ReservationPanel";
 import {ReviewPanel} from "./ReviewPanel";
-import {useRecoilValue} from "recoil";
-import {userAtom} from "../../state/LoggedInAtom";
 
 
 interface TabPanelProps {

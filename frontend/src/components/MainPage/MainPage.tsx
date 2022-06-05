@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Pills from "../../images/pills.png";
 import {SearchPanel} from "./SearchPanel";
-import {IBasicDoctor} from "../../utils/Interfaces";
+import {IDoctorCard} from "../../utils/Interfaces";
 import {DoctorCard} from "../DoctorDetail/DoctorCard";
 import {Footer} from "../Footer";
 import useSWR from 'swr';
@@ -55,16 +55,16 @@ export function MainPage() {
     function convertDoctors() {
         return data.data.map((doctor: IDatBasicDoctor) => {
             return {
-                // TODO: fix name and adjust interface correspondingly (currently nested)
-                name: doctor.name,
+                id: doctor.id,
+                name: (doctor.degree? doctor.degree + " " : "") + doctor.firstname + " " + doctor.surname,
                 specialization: doctor.specialization,
-                location: doctor.location,
+                location: doctor.city,
                 actuality: doctor.actuality,
             }
         });
     }
 
-    let doctors: IBasicDoctor[] = convertDoctors()
+    let doctors: IDoctorCard[] = convertDoctors()
 
     return <>
         <Header/>
@@ -148,7 +148,7 @@ export function MainPage() {
 
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}} margin={1}>
             {/*TODO: get doctors from database using SWR? */}
-            {doctors.map((doctor: IBasicDoctor, index) => (
+            {doctors.map((doctor: IDoctorCard, index) => (
                 <Grid item key={index} xs={12}>
                     <DoctorCard detailed={false} doctor={doctor}/>
                 </Grid>

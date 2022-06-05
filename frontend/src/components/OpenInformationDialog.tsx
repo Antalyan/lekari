@@ -1,6 +1,11 @@
 import * as React from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
-import {IDialogProps} from "../utils/Interfaces";
+
+interface IDialogProps {
+    name: string,
+    title?: string,
+    text: string
+}
 
 export function OpenInformationDialog({name, text, title}: IDialogProps) {
     const [open, setOpen] = React.useState(true);

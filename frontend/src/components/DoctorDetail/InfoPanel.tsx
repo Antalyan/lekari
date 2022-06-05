@@ -4,7 +4,6 @@ import Grid from "@mui/material/Grid";
 import {IconButton, Stack} from "@mui/material";
 import Button from "@mui/material/Button";
 import EditIcon from '@mui/icons-material/Edit';
-import {IEditable, IFormPerson} from "../../utils/Interfaces";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {FormContainer, MultiSelectElement, TextFieldElement} from "react-hook-form-mui";
@@ -12,7 +11,7 @@ import {useForm} from "react-hook-form";
 import {DAYS, LANGUAGES, validateNumbers, validateUrl} from "../../data/Constants";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
-import {useNavigate, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 
 function Opening() {
     // TODO: editability could be checked at backend on submit as well?
