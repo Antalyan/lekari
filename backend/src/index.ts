@@ -1,10 +1,10 @@
 import auth from './controllers/auth';
 import person from './controllers/person';
 import doctor from './controllers/doctor';
-import cors from 'cors';
 
 import extractJWT from './middleware/extractJWT';
 
+const cors = require('cors');
 const express = require('express');
 const api = express();
 
