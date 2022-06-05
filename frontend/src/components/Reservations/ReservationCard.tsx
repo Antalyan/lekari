@@ -8,6 +8,8 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import {DeleteReservationDialog} from "./DeleteReservationDialog";
 
+// TODO: Display reservation/create date and other details corresponding to IReservation
+
 export function ReservationCardLabels(props: { isPatient: boolean, reservation: IReservation }) {
     return <Stack direction="column" spacing={2} padding={2}>
         <Grid item xs={12}>
@@ -23,7 +25,7 @@ export function ReservationCardLabels(props: { isPatient: boolean, reservation: 
                             color={"text.secondary"}
                             display={"inline"}>
                     {/*TODO: fix date format*/}
-                    {props.reservation.creationAt.toDateString()}
+                    {/*{props.reservation.creationAt.toDateString()}*/}
                 </Typography>
             </Stack>
         </Grid>
@@ -31,13 +33,13 @@ export function ReservationCardLabels(props: { isPatient: boolean, reservation: 
             <AccessTimeIcon color={"info"}/>
             <Typography>
                 {/*TODO: fix date format*/}
-                {props.reservation.visitDate.toDateString()}
+                {/*{props.reservation.visitDate.toDateString()}*/}
             </Typography>
         </Stack>
         {props.isPatient && <Stack direction="row" spacing={1}>
             <LocationOn color={"info"}/>
             <Typography>
-                {props.reservation.address}
+                {props.reservation.doctorAddress}
             </Typography>
         </Stack>}
         {props.reservation.note != null && <Stack direction="row" spacing={1}>

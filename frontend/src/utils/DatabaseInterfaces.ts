@@ -1,10 +1,12 @@
 export interface IDatBasicDoctor {
     id: number,
-    name: string,
+    degree: string,
+    firstname: string,
+    surname: string,
     specialization: string,
-    location: string,
-    actuality: string,
-    profile_picture: string
+    city: string,
+    actuality?: string,
+    profile_picture?: string
 }
 
 export interface IDatPatientProfile {
@@ -57,6 +59,35 @@ export interface IDatDoctorProfile {
     workCity: string,
     workPostalCode: number,
     workCountry: string,
+}
+
+export interface IDatPersonReservation {
+    id: number,
+    doctorDegree?: string,
+    doctorFirstname: string,
+    doctorSurname: string,
+    visitTimeFrom: string,
+    visitTimeTo: string,
+    visitDate: string,
+    note?: string,
+    createTime: string,
+    createDate: string,
+    workStreet?: string,
+    workBuildingNumber: string,
+    workCity: string,
+}
+
+export interface IDatDoctorReservation {
+    id: number,
+    patientDegree?: string,
+    patientFirstname: string,
+    patientSurname: string,
+    visitTimeFrom: string,
+    visitTimeTo: string,
+    visitDate: string,
+    note?: string,
+    createTime: string,
+    createDate: string,
 }
 
 

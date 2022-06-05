@@ -64,13 +64,14 @@ export interface IGlobalProfileInfo {
 
 export interface IReservation {
     id?: number,
-    patientID: number,
-    doctorID: number,
-    patientName: string,
-    doctorName: string,
-    creationAt: Date,
-    visitDate: Date,
-    address: string,
+    patientName?: string,
+    doctorName?: string,
+    createTime: string,
+    createDate: string,
+    visitTimeFrom: string,
+    visitTimeTo: string,
+    visitDate: string,
+    doctorAddress?: string,
     note?: string
 }
 
