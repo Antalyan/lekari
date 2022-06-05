@@ -94,62 +94,80 @@ const login = async (req: Request, res: Response) => {
     password
   } = req.body;
 
-  const person = await prisma.person.findFirst({
-    where: {
-      email: email
-    },
-    include: {
-      doctor: true,
-    },
-  });
-  if (person) {
-    bcryptjs.compare(password, person.password, (error: any, result: any) => {
-      if (error) {
-        return res.status(401)
-          .json({
-            status: 'error',
-            data: {},
-            message: 'Password Mismatch'
-          });
-      } else if (result) {
-        signJWT(person, (_error, token) => {
-          if (_error) {
-            return res.status(401)
-              .json({
-                message: 'Unable to Sign JWT',
-                error: _error
-              });
-          } else if (token) {
-            return res.status(200)
-              .json({
-                message: 'Auth Successful',
-                token,
-                user: {
-                  id: person.id,
-                  firstName: person.firstname,
-                  surname: person.surname,
-                  token: token,
-                  isDoctor: (person.doctor !== null)
-                }
-              });
-          }
-        });
-      } else {
-        return res.status(600)
-          .json({
-            status: 'error',
-            data: {},
-            message: 'Bad password',
-          });
-      }
+  try {
+    const person = await prisma.person.findFirst({
+      where: {
+        email: email
+      },
+      include: {
+        doctor: true,
+      },
     });
-  } else {
-    return res.status(404)
-      .json({
-        status: 'error',
-        data: {},
-        message: 'User not found',
+    if (person) {
+      bcryptjs.compare(password, person.password, (error: any, result: any) => {
+        if (error) {
+          return res.status(401)
+            .json({
+              status: 'error',
+              data: {},
+              message: 'Bad credentials'
+            });
+        } else if (result) {
+          signJWT(person, (_error, token) => {
+            if (_error) {
+              return res.status(401)
+                .json({
+                  message: 'Unable to Sign JWT',
+                  error: _error
+                });
+            } else if (token) {
+              return res.status(200)
+                .json({
+                  message: 'Auth Successful',
+                  user: {
+                    id: person.id,
+                    firstName: person.firstname,
+                    surname: person.surname,
+                    token: token,
+                    isDoctor: (person.doctor !== null)
+                  }
+                });
+            }
+          });
+        } else {
+          return res.status(600)
+            .json({
+              status: 'error',
+              data: {},
+              message: 'Bad credentials',
+            });
+        }
       });
+    } else {
+      return res.status(404)
+        .json({
+          status: 'error',
+          data: {},
+          message: 'Bad credentials',
+        });
+    }
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      return res.status(400)
+        .send({
+          status: 'error',
+          data: e.errors,
+          message: e.message
+        });
+    }
+    if (e instanceof Error) {
+      return res.status(500)
+        .send({
+          status: 'error',
+          data: e.message,
+          message: 'Something went wrong'
+        });
+    }
   }
 };
 
