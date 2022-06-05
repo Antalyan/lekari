@@ -24,13 +24,12 @@ api.get('/', (req: any, res: { send: (arg0: { status: string; data: {}; message:
 
 api.get('/doctors', doctor.doctorList);
 api.get('/doctors/:id(\\d+)', doctor.doctorDetail);
-api.patch('/doctors/:id(\\d+)', doctor.doctorUpdate);
+// api.patch('/doctors/:id(\\d+)', doctor.doctorUpdate); // deprecated
 api.get('/doctor-reservations', extractJWT, doctor.doctorReservations);
 api.get('/doctors/:id(\\d+)/slots/:date', doctor.doctorSlots);
 
 api.post('/signup-doctor', doctor.signUp);
 api.post('/doctors/:id(\d+)/reference', doctor.postReview);
-api.post('/doctors/:doc_id(\d+)/reference/:ref_id(\d+)/comment', doctor.postComment);
 api.post('/doctors/:id(\d+)/reservations', doctor.createReservation);
 api.patch('/doctor-info', doctor.infoUpdate);
 api.delete('/doctor-info', extractJWT, doctor.doctorDelete);
@@ -40,8 +39,6 @@ api.get('/personal-info', extractJWT, person.personDetail);
 api.patch('/personal-info', extractJWT, person.personUpdate);
 api.get('/person-reservations', extractJWT, person.personReservations);
 api.delete('/personal-info', extractJWT, person.personDelete);
-
-api.post('/profile-image', person.updateImage);
 
 api.get('/validate', extractJWT, auth.validateToken);       // Undocumented
 api.post('/register', auth.register);

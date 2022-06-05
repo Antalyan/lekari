@@ -168,53 +168,6 @@ const doctorList = async (req: Request, res: Response) => {
   });
 };
 
-const doctorSchema = object({
-  specialization: string()
-    .matches(/(chirirg|psychytr|ortoped)/),
-  actuality: string(),
-  email: string(),
-  phone: string(),
-  description: string(),
-  link: string(),
-  profilePicture: string()
-});
-
-const doctorUpdate = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  try {
-    const data = await doctorSchema.validate(req.body);
-    const doctor = await prisma.doctor.updateMany({
-      where: {
-        id: id
-      },
-      data: data
-    });
-
-    if (!doctor) {
-      return res.status(404)
-        .send({
-          status: 'error',
-          data: {},
-          message: 'Person was not found'
-        });
-    }
-
-    return res.send({
-      status: 'sucess',
-      data: doctor
-    });
-  } catch (e) {
-    if (e instanceof ValidationError) {
-      return res.status(400)
-        .send({
-          status: 'error',
-          data: e.errors,
-          message: e.message
-        });
-    }
-  }
-};
-
 const doctorReservations = async (req: Request, res: Response) => {
   const reservations = await prisma.doctor.findMany({
     where: {
@@ -511,7 +464,6 @@ const doctorDelete = async (req: Request, res: Response) => {
 export default {
   doctorList,
   doctorDetail,
-  doctorUpdate,
   doctorDelete,
   doctorReservations,
   doctorSlots,
