@@ -73,11 +73,6 @@ const doctorDetail = async (req: Request, res: Response) => {
       status: 'success',
       data: doctor
     });
-
-  return res.send({
-    status: 'success',
-    data: doctor
-  });
 };
 
 const doctorList = async (req: Request, res: Response) => {
@@ -109,6 +104,7 @@ const doctorList = async (req: Request, res: Response) => {
         select: {
           firstname: true,
           surname: true,
+          degree: true,
         }
       },
       specialization: true,
@@ -132,7 +128,17 @@ const doctorList = async (req: Request, res: Response) => {
 
   return res.send({
     status: 'sucess',
-    data: doctors
+    data: doctors.map(doctor => {
+      return {
+        id: doctor.id,
+        degree: doctor.person.degree,
+        firstname: doctor.person.firstname,
+        surname: doctor.person.surname,
+        specialization: doctor.specialization,
+        city: doctor.address.city,
+        actuality: doctor.actuality
+      };
+    })
   });
 };
 
