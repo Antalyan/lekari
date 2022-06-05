@@ -4,8 +4,8 @@ import * as React from "react";
 import {IFilter} from "../../utils/Interfaces";
 import {AutoSelect} from "./AutoSelect";
 import {cities, specializations} from "../../data/MockData";
-import {SPECIALIZATIONS} from "../../data/Constants";
 import {IPanelSetter} from "./SearchPanel";
+import {SPECIALIZATIONS} from "../../data/Specializations";
 
 export function FilterMenu({filter, setFilter}: IPanelSetter) {
     const {handleSubmit, control} = useForm<IFilter>();
