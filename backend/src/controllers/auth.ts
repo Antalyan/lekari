@@ -94,13 +94,16 @@ const login = async (req: Request, res: Response) => {
     password
   } = req.body;
 
-  const person = await prisma.person.findMany({
+  const person = await prisma.person.findFirst({
     where: {
       email: email
-    }
+    },
+    include: {
+      doctor: true,
+    },
   });
   if (person) {
-    bcryptjs.compare(password, person[0].password, (error: any, result: any) => {
+    bcryptjs.compare(password, person.password, (error: any, result: any) => {
       if (error) {
         return res.status(401)
           .json({
@@ -109,7 +112,7 @@ const login = async (req: Request, res: Response) => {
             message: 'Password Mismatch'
           });
       } else if (result) {
-        signJWT(person[0], (_error, token) => {
+        signJWT(person, (_error, token) => {
           if (_error) {
             return res.status(401)
               .json({
@@ -121,7 +124,13 @@ const login = async (req: Request, res: Response) => {
               .json({
                 message: 'Auth Successful',
                 token,
-                user: person[0]
+                user: {
+                  id: person.id,
+                  firstName: person.firstname,
+                  surname: person.surname,
+                  token: token,
+                  isDoctor: (person.doctor !== null)
+                }
               });
           }
         });

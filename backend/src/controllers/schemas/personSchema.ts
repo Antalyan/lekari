@@ -27,6 +27,8 @@ const personSchema = object({
     .required(),
   password1: string()
     .required(),
+  password2: string()
+    .required(),
 });
 
 export default personSchema;
