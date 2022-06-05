@@ -91,8 +91,7 @@ async function updateProfile(url: string, subject: any, navigate: NavigateFuncti
 
 export function UserDataFormPage({type, isEdit}: IForm) {
     const getDefaultValues = () => {
-        // TODO: dependent on type - doctor or patient
-        // TODO: database request
+        // TODO: check default attributes when API edit finished
         const dbperson: IDatPatientProfile | IDatDoctorProfile = data.data;
         return {
             name: dbperson.firstname,
@@ -162,6 +161,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
 
     };
 
+    // TODO: check storing address doctor attributes when API impl finished
     const storeDoctor = async (formData: IFormPerson, isEdit: boolean) => {
         const doctor: IDatDoctorProfile = {
             firstname: formData.name,
