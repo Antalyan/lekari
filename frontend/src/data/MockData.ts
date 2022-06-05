@@ -1,6 +1,6 @@
-import {IBasicDoctor, IReservation, IReview} from "../utils/Interfaces";
+import {IDoctorCard, IReservation, IReview} from "../utils/Interfaces";
 
-export const DOCTORS: IBasicDoctor[] = [
+export const DOCTORS: IDoctorCard[] = [
     {
         "name": "MUDr. Adam Ananas",
         "specialization": "Neurolog",

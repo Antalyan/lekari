@@ -1,4 +1,5 @@
 export interface IDatBasicDoctor {
+    id: number,
     name: string,
     specialization: string,
     location: string,

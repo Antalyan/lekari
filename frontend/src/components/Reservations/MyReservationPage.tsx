@@ -1,16 +1,33 @@
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Pills from "../../images/pills.jpg";
-import {IBasicDoctor, IReservation} from "../../utils/Interfaces";
-import {DoctorCard} from "../DoctorDetail/DoctorCard";
-import {DOCTORS, RESERVATIONS} from "../../data/MockData";
+import {IReservation} from "../../utils/Interfaces";
+import {RESERVATIONS} from "../../data/MockData";
 import Header from "../Header";
 import {Footer} from "../Footer";
 import {ReservationCard} from "./ReservationCard";
+import useSWR from "swr";
+import {fetcherWithToken} from "../../utils/fetcher";
+import {useRecoilValue} from "recoil";
+import {userAtom} from "../../state/LoggedInAtom";
 
 export function MyReservationPage(props: { isPatient: boolean }) {
+    const user = useRecoilValue(userAtom)
+    const {data, error} = useSWR( ['http://localhost:4000/person-reservations', user.token], fetcherWithToken);
+    if (error) console.log(error.message)
+    if (!data) return <div>Loading...</div>;
+    if (data) console.log(data)
+
+    // const reservations = data.data.map((reservation: IReservationBasic) => {
+    //     return {
+    //         // TODO: fix name and adjust interface correspondingly (currently nested)
+    //         name: doctor.name,
+    //         specialization: doctor.specialization,
+    //         location: doctor.location,
+    //         actuality: doctor.actuality,
+    //     }
+    // });
+
     return <>
         <Header/>
 

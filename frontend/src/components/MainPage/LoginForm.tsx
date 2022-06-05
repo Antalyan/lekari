@@ -1,13 +1,14 @@
 import {FormContainer, TextFieldElement} from "react-hook-form-mui";
 import {Button, Grid} from "@mui/material";
 import {useForm} from "react-hook-form";
-import {useState} from "react";
-import {ILogin} from "../../utils/Interfaces";
 import {useRecoilState} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
-import {DOCTORS, REVIEWS} from "../../data/MockData";
 import axios from "axios";
-import {NavigateFunction} from "react-router-dom";
+
+interface ILogin {
+    email: string,
+    password: string
+}
 
 export function LoginForm() {
     const formContext = useForm<ILogin>();

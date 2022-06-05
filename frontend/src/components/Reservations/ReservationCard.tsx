@@ -1,14 +1,11 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import {Divider, Stack} from "@mui/material";
-import Button from "@mui/material/Button";
-import {IBasicDoctor, IReservation} from "../../utils/Interfaces";
+import {IReservation} from "../../utils/Interfaces";
 import Typography from "@mui/material/Typography";
-import {LocationOn, Person, Warning} from "@mui/icons-material";
+import {LocationOn} from "@mui/icons-material";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import Box from "@mui/material/Box";
-import Profile from "../../images/mock_profile.jpg";
 import {DeleteReservationDialog} from "./DeleteReservationDialog";
 
 export function ReservationCardLabels(props: { isPatient: boolean, reservation: IReservation }) {
