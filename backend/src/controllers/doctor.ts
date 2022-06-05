@@ -36,6 +36,7 @@ const doctorDetail = async (req: Request, res: Response) => {
           city: true,
           postalCode: true,
           street: true,
+          buildingNumber: true,
         }
       },
       profilePicture: true,
@@ -71,7 +72,28 @@ const doctorDetail = async (req: Request, res: Response) => {
   return res.status(200)
     .json({
       status: 'success',
-      data: doctor
+      data: {
+        degree: doctor.person.degree,
+        firstname: doctor.person.firstname,
+        surname: doctor.person.surname,
+        specialization: doctor.specialization,
+        workEmail: doctor.email,
+        workPhone: doctor.phone,
+        description: doctor.description,
+        link: doctor.link,
+        languages: doctor.languages.map(language => {
+          return language.language;
+        }),
+        workCountry: doctor.address.country,
+        workCity: doctor.address.city,
+        workPostalCode: doctor.address.postalCode,
+        workStreet: doctor.address.street,
+        workBuildingNumber: doctor.address.buildingNumber,
+        profilePicture: doctor.profilePicture,
+        actuality: doctor.actuality,
+        reservationHours: doctor.openingHours,
+        references: doctor.references
+      }
     });
 };
 

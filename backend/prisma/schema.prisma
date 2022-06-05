@@ -109,7 +109,7 @@ model ReservationHours {
   day      String // TODO: enum
   fromTime DateTime
   toTime   DateTime
-  fromDate DateTime @default(now()) // TODO: in diagram it is time
+  fromDate DateTime @default(now())
   interval Int      @default(20)
 
   @@unique([doctorId, day, fromDate])
