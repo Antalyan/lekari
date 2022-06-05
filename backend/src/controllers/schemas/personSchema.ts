@@ -1,6 +1,6 @@
 import { date, number, object, string } from 'yup';
 
-const personSchema = object({
+export const personSchema = object({
   firstname: string()
     .required(),
   surname: string()
@@ -25,10 +25,13 @@ const personSchema = object({
   street: string(),
   buildingNumber: string()
     .required(),
+});
+
+const passwordSchema = object({
   password1: string()
     .required(),
   password2: string()
     .required(),
 });
 
-export default personSchema;
+export const personRegistrationSchema = personSchema.shape(passwordSchema.fields);

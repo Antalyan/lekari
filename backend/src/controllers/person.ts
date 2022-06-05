@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import { ValidationError } from 'yup';
 import prisma from '../client';
-import personSchema from './schemas/personSchema';
+import { personRegistrationSchema } from './schemas/personSchema';
 
 const personList = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const persons = await prisma.person.findMany({
-      where:{
-        deleted:false,
+      where: {
+        deleted: false,
       }
     });
     res.json(persons);
@@ -59,7 +59,7 @@ const personDetail = async (req: Request, res: Response) => {
 
 const personUpdate = async (req: Request, res: Response) => {
   try {
-    const data = await personSchema.validate(req.body);
+    const data = await personRegistrationSchema.validate(req.body);
     const person = await prisma.person.updateMany({
       where: {
         email: res.locals.jwt.username,
@@ -97,7 +97,7 @@ const personReservations = async (req: Request, res: Response) => {
   const reservations = await prisma.person.findMany({
     where: {
       email: res.locals.jwt.username,
-      deleted:false
+      deleted: false
     },
     select: {
       reservations: {
@@ -138,30 +138,22 @@ const personReservations = async (req: Request, res: Response) => {
   });
 };
 
-const notImplemented = async (req: Request, res: Response) => {
-  return res.status(501)
-    .send({
-      status: 'error',
-      message: 'Not implemented yet',
-    });
-};
-
 const personDelete = async (req: Request, res: Response) => {
-  try{
+  try {
     const person = await prisma.person.updateMany({
       where: {
-          email: res.locals.jwt.username
+        email: res.locals.jwt.username
       },
       data: {
         deleted: true,
       }
     });
     return res.status(200)
-    .send({
-      status: 'success',
-      message: 'Person deleted.',
-    });
-  } catch(e) {
+      .send({
+        status: 'success',
+        message: 'Person deleted.',
+      });
+  } catch (e) {
     if (e instanceof Error) {
       return res.status(400)
         .send({
@@ -169,14 +161,13 @@ const personDelete = async (req: Request, res: Response) => {
           message: e.message
         });
     }
-}
-}
+  }
+};
 
 export default {
   personList,
   personDetail,
   personDelete,
   personUpdate,
-  personReservations,
-  updateImage: notImplemented
+  personReservations
 };

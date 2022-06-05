@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import signJWT from '../functions/signJWT';
 import { ValidationError } from 'yup';
 import prisma from '../client';
-import personSchema from './schemas/personSchema';
+import { personRegistrationSchema } from './schemas/personSchema';
 
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -30,7 +30,7 @@ const register = async (req: Request, res: Response) => {
       });
   }
   try {
-    const data = await personSchema.validate(req.body);
+    const data = await personRegistrationSchema.validate(req.body);
     const hash = await bcryptjs.hash(password1, 10);
     const person = await prisma.person.create({
       data: {

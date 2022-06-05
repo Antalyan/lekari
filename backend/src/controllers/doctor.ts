@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '../client';
 import { number, object, string, ValidationError } from 'yup';
-import personSchema from './schemas/personSchema';
-import { boolean } from 'yup/lib/locale';
+import doctorRegistrationSchema from './schemas/doctorSchema';
 
 const bcryptjs = require('bcryptjs');
 
@@ -393,21 +392,6 @@ const postReview = async (req: Request, res: Response) => {
   }
 };
 
-const regDoctorSchema = personSchema.shape({
-  specialization: string()
-    .required(),
-  actuality: string(),
-  workCountry: string()
-    .required(),
-  workCity: string()
-    .required(),
-  workPostalCode: number()
-    .required(),
-  workStreet: string(),
-  workBuildingNumber: string()
-    .required(),
-});
-
 const signUp = async (req: Request, res: Response) => {
   let {
     password1,
@@ -423,7 +407,7 @@ const signUp = async (req: Request, res: Response) => {
       });
   }
   try {
-    const data = await regDoctorSchema.validate(req.body);
+    const data = await doctorRegistrationSchema.validate(req.body);
     const hash = await bcryptjs.hash(password1, 10);
     const person = await prisma.person.create({
       data: {
@@ -497,7 +481,7 @@ const signUp = async (req: Request, res: Response) => {
 };
 
 const doctorDelete = async (req: Request, res: Response) => {
-  try{
+  try {
     const doctor = await prisma.doctor.updateMany({
       where: {
         person: {
@@ -509,11 +493,11 @@ const doctorDelete = async (req: Request, res: Response) => {
       }
     });
     return res.status(200)
-    .send({
-      status: 'success',
-      message: 'Doctor deleted.',
-    });
-  } catch(e) {
+      .send({
+        status: 'success',
+        message: 'Doctor deleted.',
+      });
+  } catch (e) {
     if (e instanceof Error) {
       return res.status(400)
         .send({
@@ -521,8 +505,8 @@ const doctorDelete = async (req: Request, res: Response) => {
           message: e.message
         });
     }
-}
-}
+  }
+};
 
 export default {
   doctorList,
@@ -534,6 +518,5 @@ export default {
   postReview,
   signUp,
   createReservation: notImplemented,
-  postComment: notImplemented,
   infoUpdate: notImplemented
 };
