@@ -55,10 +55,10 @@ export function MainPage() {
     function convertDoctors() {
         return data.data.map((doctor: IDatBasicDoctor) => {
             return {
-                // TODO: fix name and adjust interface correspondingly (currently nested)
-                name: doctor.name,
+                id: doctor.id,
+                name: (doctor.degree? doctor.degree + " " : "") + doctor.firstname + " " + doctor.surname,
                 specialization: doctor.specialization,
-                location: doctor.location,
+                location: doctor.city,
                 actuality: doctor.actuality,
             }
         });
