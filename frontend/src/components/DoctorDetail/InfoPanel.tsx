@@ -12,7 +12,9 @@ import {DAYS, LANGUAGES, validateNumbers, validateUrl} from "../../data/Constant
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {useParams} from "react-router-dom";
-import {IDoctorDetailInfo} from "../../utils/Interfaces";
+import {IDoctorDetailInfo, IFormPerson} from "../../utils/Interfaces";
+import {IDatDoctorDetail, IDatDoctorInfo, IDatPersonReservation} from "../../utils/DatabaseInterfaces";
+import axios from "axios";
 
 function Opening() {
     // TODO: editability could be checked at backend on submit as well?
@@ -154,17 +156,46 @@ function Description() {
 }
 
 export function InfoPanel(info: IDoctorDetailInfo) {
-    const formContext = useForm<string[]>();
-    const onSubmit =(formData: string[]) => {
-        // TODO: send data to database on this click and show confirmation?
+
+    const storeInfo = async (formData: IDoctorDetailInfo) => {
+        const detail: IDatDoctorInfo = {
+            description: formData.description,
+            languages: formData.languages,
+            link: formData.web,
+            openingHours: [formData.openingHours0, formData.openingHours1, formData.openingHours2, formData.openingHours3,
+                formData.openingHours4, formData.openingHours5, formData.openingHours6],
+            workEmail: formData.email,
+            workPhone: formData.phone ? parseInt(formData.phone) : undefined,
+        }
+
+        // TODO: check and update request, update url
+        const url = "";
+        await axios.put(url, {
+            detail,
+            headers: {
+                'Authorization': `Bearer ${user.token}`
+            }})
+            .then(response => {
+                console.log(response);
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("Aktualizace selhala!\n\n" + error.response.data.message)
+            });
+    }
+
+    const onSubmit = (formData: IDoctorDetailInfo) => {
+        // TODO: send data to database on this click
         console.log(formData);
+        storeInfo(formData);
     };
 
     const user = useRecoilValue(userAtom)
     const {id} = useParams();
 
+    // TODO: fix reset (removing context removed reset)
     const onReset = () => {
-        formContext.reset();
+        // formContext.reset();
     }
 
     // @ts-ignore

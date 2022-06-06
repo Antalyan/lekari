@@ -118,5 +118,14 @@ export interface IDatDoctorDetail {
     reviews: IDatReview[]
 }
 
+export interface IDatDoctorInfo {
+    workEmail?: string,
+    workPhone?: number,
+    description?: string,
+    link?: string,
+    languages: string[]
+    openingHours: (string | undefined)[],
+}
+
 
 
