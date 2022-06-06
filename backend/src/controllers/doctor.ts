@@ -101,7 +101,7 @@ const doctorDetail = async (req: Request, res: Response) => {
       rate: review.rate / 2,
       comment: review.comment,
       author: review.author,
-      creatDate: review.created.toUTCString(),
+      creatDate: review.created.toISOString().split('T')[0],
       createTime: review.created.toLocaleTimeString()
     }
   })
@@ -136,7 +136,7 @@ const doctorDetail = async (req: Request, res: Response) => {
         profilePicture: doctor.profilePicture,
         actuality: doctor.actuality,
         openingHours: opening,
-        rateAverage: reviewsRatesSum/doctor.references.length,
+        rateAverage: Math.round((reviewsRatesSum/doctor.references.length)*2)/2,
         reviews: reviews
       }
     });
@@ -532,7 +532,6 @@ const reviewSchema = object({
     .integer()
     .required(),
   comment: string()
-    .required()
 });
 
 const postReview = async (req: Request, res: Response) => {
@@ -702,10 +701,35 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
   try {
     const doc_id: number = parseInt(req.params.id);
     const data = await personTmpSchema.validate(req.body);
-    let fromDate = new Date(data.date);
-    fromDate.setMinutes(fromDate.getMinutes() + (data.interval*data.slotIndex));
-    let toDate = new Date(fromDate)
-    toDate.setMinutes(fromDate.getMinutes() + data.interval)
+    const day = new Date(data.date).getDay()
+    const today = new Date()
+    const reservationHours = await prisma.reservationHours.findFirst({
+      where: {
+        doctorId: doc_id,
+        day: day,
+        fromDate: {
+          lte: today
+        }
+      },
+      select: {
+        fromTime: true,
+        toTime: true,
+        interval: true,
+      }
+    })
+
+    if(!reservationHours){
+      return res.status(500)
+        .send({
+          status: 'error',
+          message: "Can't make reservation for this day.",
+        });
+    }
+    let fromTime = new Date(reservationHours.fromTime);
+
+    fromTime.setMinutes(fromTime.getMinutes() + (reservationHours.interval*data.slotIndex));
+    let toDate = new Date(reservationHours.fromTime)
+    toDate.setMinutes(fromTime.getMinutes() + reservationHours.interval)
     let reservation = null;
     if(data.country && data.city && data.postalCode && data.buildingNumber){
       reservation = await prisma.reservation.create({
@@ -732,7 +756,7 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
               }
             }
           },
-          fromTime: fromDate,
+          fromTime: fromTime,
           toTime: toDate,
           personComment: data.comment,
         }
@@ -753,7 +777,7 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
               phone: data.phone
             }
           },
-          fromTime: fromDate,
+          fromTime: fromTime,
           toTime: toDate,
           personComment: data.comment,
         }
