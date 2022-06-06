@@ -101,7 +101,11 @@ const personReservations = async (req: Request, res: Response) => {
     },
     select: {
       reservations: {
+        orderBy: {
+          fromTime: "asc"
+        },
         select: {
+          id: true,
           doctor: {
             select: {
               person: {
@@ -111,11 +115,19 @@ const personReservations = async (req: Request, res: Response) => {
                   degree: true,
                 }
               },
+              address:{
+                select: {
+                  city: true,
+                  street: true,
+                  buildingNumber: true,
+                }
+              },
               specialization: true,
               email: true,
             }
           },
-          from: true,
+          fromTime: true,
+          toTime: true,
           personComment: true,
           created: true
         }
@@ -123,7 +135,7 @@ const personReservations = async (req: Request, res: Response) => {
     }
   });
 
-  if (!reservations) {
+  if (!reservations || reservations.length == 0) {
     return res.status(404)
       .send({
         status: 'error',
@@ -132,9 +144,29 @@ const personReservations = async (req: Request, res: Response) => {
       });
   }
 
+  let data = (reservations[0]).reservations.map(
+    function(reservation, index){
+      return {
+        id: reservation.id,
+        doctorDegree: reservation.doctor.person.degree,
+        doctorFirstname: reservation.doctor.person.firstname,
+        doctorSurname: reservation.doctor.person.surname,
+        visitTimeFrom: reservation.fromTime,
+        visitTimeTo: reservation.toTime,
+        visitDate: reservation.fromTime.toUTCString(),
+        note: reservation.personComment,
+        createTime: reservation.created.toLocaleTimeString(),
+        createDate: reservation.created.toUTCString(),
+        workStreet:  reservation.doctor.address.street,
+        workBuildingNumber: reservation.doctor.address.buildingNumber,
+        workCity: reservation.doctor.address.city,
+      }
+    }
+  )
+
   return res.send({
     status: 'sucess',
-    data: reservations[0],
+    data: {reservations: data}
   });
 };
 

@@ -60,7 +60,8 @@ model Reservation {
   personTmp     PersonTmp? @relation(fields: [personTmpId], references: [id])
   doctorId      Int
   doctor        Doctor     @relation(fields: [doctorId], references: [id])
-  from          DateTime
+  fromTime          DateTime
+  toTime DateTime
   personComment String?
   created       DateTime   @default(now())
 }

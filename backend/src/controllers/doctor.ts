@@ -110,6 +110,16 @@ const doctorList = async (req: Request, res: Response) => {
   } = req.query;
 
   const doctors = await prisma.doctor.findMany({
+    orderBy: [
+      {
+        specialization: 'asc',
+      },
+      {
+        person:{
+          surname: 'asc',
+        }
+      },
+    ],
     where: {
       person: {
         surname: {
@@ -180,7 +190,11 @@ const doctorReservations = async (req: Request, res: Response) => {
     },
     select: {
       reservations: {
+        orderBy: {
+          fromTime: "asc"
+        },
         select: {
+          id: true,
           person: {
             select: {
               firstname: true,
@@ -190,7 +204,17 @@ const doctorReservations = async (req: Request, res: Response) => {
               phone: true
             }
           },
-          from: true,
+          personTmp: {
+            select:{
+              firstname: true,
+              surname: true,
+              degree: true,
+              email: true,
+              phone: true
+            }
+          },
+          fromTime: true,
+          toTime: true,
           personComment: true,
           created: true
         }
@@ -198,18 +222,50 @@ const doctorReservations = async (req: Request, res: Response) => {
     }
   });
 
-  if (!reservations) {
+  if (!reservations || reservations.length == 0) {
     return res.status(404)
       .send({
         status: 'error',
         data: {},
-        message: 'Person was not found'
+        message: 'Doctor was not found'
       });
   }
 
+  let data = (reservations[0]).reservations.map(
+    function(reservation, index){
+      if(reservation.person){
+        return {
+          id: reservation.id,
+          personDegree: reservation.person.degree,
+          personFirstname: reservation.person.firstname,
+          personSurname: reservation.person.surname,
+          visitTimeFrom: reservation.fromTime,
+          visitTimeTo: reservation.toTime,
+          visitDate: reservation.fromTime.toUTCString(),
+          note: reservation.personComment,
+          createTime: reservation.created.toLocaleTimeString(),
+          createDate: reservation.created.toUTCString(),
+        }
+      } else if (reservation.personTmp){
+        return {
+          id: reservation.id,
+          personDegree: reservation.personTmp.degree,
+          personFirstname: reservation.personTmp.firstname,
+          personSurname: reservation.personTmp.surname,
+          visitTimeFrom: reservation.fromTime,
+          visitTimeTo: reservation.toTime,
+          visitDate: reservation.fromTime.toUTCString(),
+          note: reservation.personComment,
+          createTime: reservation.created.toLocaleTimeString(),
+          createDate: reservation.created.toUTCString(),
+        }
+      }
+    }
+  )
+
   return res.send({
     status: 'sucess',
-    data: reservations[0],
+    data: {reservations: data},
   });
 };
 
@@ -244,13 +300,13 @@ const doctorSlots = async (req: Request, res: Response) => {
   const reservations = await prisma.reservation.findMany({
     where: {
       doctorId: id,
-      from: {
+      fromTime: {
         gte: date,
         lt: tomorrow,
       }
     },
     select: {
-      from: true
+      fromTime: true
     }
   });
 
@@ -272,7 +328,7 @@ const doctorSlots = async (req: Request, res: Response) => {
     lastTime.setMinutes(lastTime.getMinutes() + openingHours[0].interval);
   }
 
-  const reservationsTimes = reservations.map((item: { from: any; }) => item.from.toLocaleString());
+  const reservationsTimes = reservations.map((item: { fromTime: any; }) => item.fromTime.toLocaleString());
   let timeSlots = allTimeSlots.filter(function (el) {
     return !reservationsTimes.includes(el.toLocaleString());
   });
@@ -469,8 +525,10 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
   try {
     const doc_id: number = parseInt(req.params.id);
     const data = await personTmpSchema.validate(req.body);
-    let date = new Date(data.date);
-    date.setMinutes(date.getMinutes() + (data.interval*data.slotIndex));
+    let fromDate = new Date(data.date);
+    fromDate.setMinutes(fromDate.getMinutes() + (data.interval*data.slotIndex));
+    let toDate = new Date(fromDate)
+    toDate.setMinutes(fromDate.getMinutes() + data.interval)
     let reservation = null;
     if(data.country && data.city && data.postalCode && data.buildingNumber){
       reservation = await prisma.reservation.create({
@@ -497,7 +555,8 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
               }
             }
           },
-          from: date,
+          fromTime: fromDate,
+          toTime: toDate,
           personComment: data.comment,
         }
       });
@@ -517,7 +576,8 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
               phone: data.phone
             }
           },
-          from: date,
+          fromTime: fromDate,
+          toTime: toDate,
           personComment: data.comment,
         }
       });
@@ -562,6 +622,8 @@ const createReservationRegistered = async (req: Request, res: Response) => {
     const doc_id: number = parseInt(req.params.id);
     const data = await reservationSchema.validate(req.body);
     let fromTime = new Date(new Date(data.date).getTime() + (data.interval*data.slotIndex*60000));
+    let toTime = new Date(fromTime)
+    toTime.setMinutes(fromTime.getMinutes() + data.interval)
 
     const person = await prisma.person.findFirst({
       where: {
@@ -572,7 +634,8 @@ const createReservationRegistered = async (req: Request, res: Response) => {
       data: {
         doctor: { connect: { id: doc_id }},
         person: { connect: { id: person.id}},
-        from: fromTime,
+        fromTime: fromTime,
+        toTime: toTime,
         personComment: data.comment,
       }
     });
