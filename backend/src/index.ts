@@ -23,18 +23,17 @@ api.get('/', (req: any, res: { send: (arg0: { status: string; data: {}; message:
  */
 
 api.get('/doctors', doctor.doctorList);
-api.get('/doctors-locations', doctor.locationList)
+api.get('/doctors-locations', doctor.locationList);
 api.get('/doctors/:id(\\d+)', doctor.doctorDetail);
 api.get('/doctor-reservations', extractJWT, doctor.doctorReservations);
 api.get('/doctors/:id(\\d+)/slots/:date', doctor.doctorSlots);
 
 api.post('/signup-doctor', doctor.signUp);
 api.post('/doctors/:id(\\d+)/review', doctor.postReview);
-api.get('/doctor-info', extractJWT, doctor.doctorInfoAll);
 api.patch('/doctor-info', doctor.infoUpdate);
 api.delete('/doctor-info', extractJWT, doctor.doctorDelete);
-api.post('/doctor/:id(\\d+)/reservations-registered', extractJWT, doctor.createReservationRegistered)
-api.post('/doctor/:id(\\d+)/reservations-nonregistered', doctor.createReservationNonregistered)
+api.post('/doctor/:id(\\d+)/reservations-registered', extractJWT, doctor.createReservationRegistered);
+api.post('/doctor/:id(\\d+)/reservations-nonregistered', doctor.createReservationNonregistered);
 
 api.get('/persons', person.personList);                     // Undocumented
 api.get('/personal-info', extractJWT, person.personDetail);
