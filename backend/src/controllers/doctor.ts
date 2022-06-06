@@ -231,6 +231,8 @@ const doctorInfoAll = async (req: Request, res: Response) => {
     }
   })
 
+  let reviewsRatesSum = doctor.references.reduce((a, b) => a + b.rate, 0);
+
   let opening =  new Array<String>(7);
   doctor.openingHours.slice().reverse().forEach(function(x) {
     opening[x.day] = x.opening;
@@ -266,6 +268,7 @@ const doctorInfoAll = async (req: Request, res: Response) => {
         profilePicture: doctor.profilePicture,
         actuality: doctor.actuality,
         openingHours: opening,
+        rateAverage: reviewsRatesSum/doctor.references.length,
         reviews: reviews,
         reservationHours: doctor.reservationHours,
       }
@@ -409,12 +412,12 @@ const doctorReservations = async (req: Request, res: Response) => {
           personDegree: reservation.person.degree,
           personFirstname: reservation.person.firstname,
           personSurname: reservation.person.surname,
-          visitTimeFrom: reservation.fromTime,
-          visitTimeTo: reservation.toTime,
-          visitDate: reservation.fromTime.toUTCString(),
+          visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
+          visitTimeTo: reservation.toTime.toLocaleTimeString(),
+          visitDate: reservation.fromTime.toISOString().split('T')[0],
           note: reservation.personComment,
           createTime: reservation.created.toLocaleTimeString(),
-          createDate: reservation.created.toUTCString(),
+          createDate: reservation.created.toISOString().split('T')[0],
         }
       } else if (reservation.personTmp){
         return {
@@ -422,9 +425,9 @@ const doctorReservations = async (req: Request, res: Response) => {
           personDegree: reservation.personTmp.degree,
           personFirstname: reservation.personTmp.firstname,
           personSurname: reservation.personTmp.surname,
-          visitTimeFrom: reservation.fromTime,
-          visitTimeTo: reservation.toTime,
-          visitDate: reservation.fromTime.toUTCString(),
+          visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
+          visitTimeTo: reservation.toTime.toLocaleTimeString(),
+          visitDate: reservation.fromTime.getDate(),
           note: reservation.personComment,
           createTime: reservation.created.toLocaleTimeString(),
           createDate: reservation.created.toUTCString(),
