@@ -69,12 +69,10 @@ const doctorDetail = async (req: Request, res: Response) => {
       },
       profilePicture: true,
       actuality: true,
-      reservationHours: {
+      openingHours: {
         select: {
           day: true,
-          fromTime: true,
-          toTime: true,
-          fromDate: true,
+          opening: true,
         }
       },
       references: {
@@ -96,6 +94,16 @@ const doctorDetail = async (req: Request, res: Response) => {
         message: 'Person was not found'
       });
   }
+
+  let reviews = doctor.references.map(function(review, index){
+    return {
+      rate: review.rate / 2,
+      comment: review.comment,
+      author: review.author,
+      creatDate: review.created.toUTCString(),
+      createTime: review.created.toLocaleTimeString()
+    }
+  })
 
   return res.status(200)
     .json({
@@ -119,8 +127,126 @@ const doctorDetail = async (req: Request, res: Response) => {
         workBuildingNumber: doctor.address.buildingNumber,
         profilePicture: doctor.profilePicture,
         actuality: doctor.actuality,
+        openingHours: doctor.openingHours,
+        reviews: reviews
+      }
+    });
+};
+
+const doctorInfoAll = async (req: Request, res: Response) => {
+  const doctor = await prisma.doctor.findFirst({
+    where: {
+      person: {
+        email: res.locals.jwt.username
+      }
+    },
+    select: {
+      person: {
+        select: {
+          firstname: true,
+          surname: true,
+          degree: true,
+          deleted: true,
+        }
+      },
+      deleted: true,
+      specialization: true,
+      email: true,
+      phone: true,
+      description: true,
+      link: true,
+      languages: {
+        select: {
+          language: true
+        }
+      },
+      address: {
+        select: {
+          country: true,
+          city: true,
+          postalCode: true,
+          street: true,
+          buildingNumber: true,
+        }
+      },
+      profilePicture: true,
+      actuality: true,
+      openingHours: {
+        select: {
+          day: true,
+          opening: true,
+        }
+      },
+      references: {
+        select: {
+          rate: true,
+          comment: true,
+          author: true,
+          created: true,
+        }
+      },
+      reservationHours: {
+        select: {
+          day: true,
+          fromTime: true,
+          toTime: true,
+          interval: true,
+          fromDate: true,
+        }
+      },
+    }
+  });
+
+  if (!doctor || doctor.person.deleted || doctor.deleted) {
+    return res.status(404)
+      .send({
+        status: 'error',
+        data: {},
+        message: 'Person was not found'
+      });
+  }
+
+  let reviews = doctor.references.map(function(review, index){
+    return {
+      rate: review.rate / 2,
+      comment: review.comment,
+      author: review.author,
+      creatDate: review.created.toUTCString(),
+      createTime: review.created.toLocaleTimeString()
+    }
+  })
+
+  return res.status(200)
+    .json({
+      status: 'success',
+      data: {
+        degree: doctor.person.degree,
+        firstname: doctor.person.firstname,
+        surname: doctor.person.surname,
+        specialization: doctor.specialization,
+        workEmail: doctor.email,
+        workPhone: doctor.phone,
+        description: doctor.description,
+        link: doctor.link,
+        languages: doctor.languages.map(language => {
+          return language.language;
+        }),
+        country: doctor.address.country,
+        city: doctor.address.city,
+        postalCode: doctor.address.postalCode,
+        street: doctor.address.street,
+        buildingNumber: doctor.address.buildingNumber,
+        workCountry: doctor.address.country,
+        workCity: doctor.address.city,
+        workPostalCode: doctor.address.postalCode,
+        workStreet: doctor.address.street,
+        workBuildingNumber: doctor.address.buildingNumber,
+        profilePicture: doctor.profilePicture,
+        actuality: doctor.actuality,
+        openingHours: doctor.openingHours,
+        reviews: reviews,
         reservationHours: doctor.reservationHours,
-        references: doctor.references
+
       }
     });
 };
@@ -700,6 +826,7 @@ const createReservationRegistered = async (req: Request, res: Response) => {
 
 export default {
   locationList,
+  doctorInfoAll,
   doctorList,
   doctorDetail,
   doctorDelete,

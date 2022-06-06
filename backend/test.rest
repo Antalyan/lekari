@@ -45,7 +45,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkY
 ###
 
 GET http://localhost:4000/person-reservations
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1Mzg2NDA4MCwiZXhwIjozMzA4MDg4MTYwLCJpc3MiOiJjb29sSXNzdWVyIn0.cqmFFpbjl0G4J-3ijRUrcno9WWVFqZxUKMc1DdLHg5U
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AY2lidWxlLmNvbSIsImlhdCI6MTY1NDUwMzM5MiwiZXhwIjozMzA5MzY2Nzg0LCJpc3MiOiJjb29sSXNzdWVyIn0.HeTamCA3Un7IkYeK-mBJ9POERx-KetMQk5Pis0K7PR8
 
 ###
 
@@ -66,6 +66,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkY
 
 DELETE http://localhost:4000/doctor-info
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1NDQ2NTM3MiwiZXhwIjozMzA5MjkwNzQ0LCJpc3MiOiJjb29sSXNzdWVyIn0.I5QPfvyd7fCJ87TkEyl2AWjAul7-9THQfDGO38Sc1Hk
+
+###
+
+GET http://localhost:4000/doctor-info
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AY2lidWxlLmNvbSIsImlhdCI6MTY1NDUwODA5MywiZXhwIjozMzA5Mzc2MTg2LCJpc3MiOiJjb29sSXNzdWVyIn0.y4sdfD6fEBupZLHF-yhbeiv7J_80qq0gM_ByPxB1j30
 
 ###
 
@@ -119,6 +124,17 @@ Content-Type: application/json
   "comment": "Operace zubu."
 }
 
+
+###
+
+POST http://localhost:4000/doctors/1/review
+Content-Type: application/json
+
+{
+  "comment": "To je vražda napsala",
+  "rate": 5,
+  "author": "Já"
+}
 
 ###
 

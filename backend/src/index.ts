@@ -29,7 +29,8 @@ api.get('/doctor-reservations', extractJWT, doctor.doctorReservations);
 api.get('/doctors/:id(\\d+)/slots/:date', doctor.doctorSlots);
 
 api.post('/signup-doctor', doctor.signUp);
-api.post('/doctors/:id(\d+)/reference', doctor.postReview);
+api.post('/doctors/:id(\\d+)/review', doctor.postReview);
+api.get('/doctor-info', extractJWT, doctor.doctorInfoAll);
 api.patch('/doctor-info', doctor.infoUpdate);
 api.delete('/doctor-info', extractJWT, doctor.doctorDelete);
 api.post('/doctor/:id(\\d+)/reservations-registered', extractJWT, doctor.createReservationRegistered)
