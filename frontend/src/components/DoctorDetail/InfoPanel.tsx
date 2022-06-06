@@ -192,9 +192,6 @@ export function InfoPanel(info: IDoctorDetailInfo) {
 
     const user = useRecoilValue(userAtom)
     const {id} = useParams();
-    const {reset, handleSubmit} = useForm<IDoctorDetailInfo>();
-
-    // TODO: fix reset (removing context removed reset)
 
     // @ts-ignore
     return (<FormContainer
@@ -211,7 +208,7 @@ export function InfoPanel(info: IDoctorDetailInfo) {
                         změny</Button>
                 </Grid>
                 <Grid container item xs={6} justifyContent={"center"}>
-                    <Button variant='contained' size={"large"} color={'primary'} onClick={() => reset()} >Zrušit
+                    <Button variant='contained' size={"large"} color={'primary'} onClick={() => window.location.reload()} >Zrušit
                         změny</Button>
                 </Grid>
             </Grid>}

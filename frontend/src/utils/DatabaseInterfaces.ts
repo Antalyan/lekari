@@ -94,7 +94,8 @@ export interface IDatReview {
     rate: number,
     comment?: string,
     author?: string,
-    created: string,
+    createDate?: string,
+    createTime?: string,
 }
 
 export interface IDatDoctorDetail {

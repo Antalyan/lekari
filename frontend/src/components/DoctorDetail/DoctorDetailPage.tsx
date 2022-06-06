@@ -12,8 +12,8 @@ import {ReservationPanel} from "./ReservationPanel";
 import {ReviewPanel} from "./ReviewPanel";
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
-import {IDatDoctorDetail, IDatPersonReservation} from "../../utils/DatabaseInterfaces";
-import {IDoctorCard, IDoctorDetailInfo} from "../../utils/Interfaces";
+import {IDatDoctorDetail, IDatPersonReservation, IDatReview} from "../../utils/DatabaseInterfaces";
+import {IDoctorCard, IDoctorDetailInfo, IReview, IReviewList} from "../../utils/Interfaces";
 
 
 interface TabPanelProps {
@@ -60,9 +60,9 @@ export function DoctorDetailPage() {
         navigate("/");
     }
 
-    const url =  'http://localhost:4000/doctors/' + id;
+    const url = 'http://localhost:4000/doctors/' + id;
     // TODO: return error or redirect if the user with this id does not exist
-    const { data, error } = useSWR(url, fetcher);
+    const {data, error} = useSWR(url, fetcher);
     if (error) console.log(error.message)
     if (!data) return <div>Loading...</div>;
     if (data) console.log(data)
@@ -98,6 +98,15 @@ export function DoctorDetailPage() {
         openingHours5: datDoctor.openingHours[5],
         openingHours6: datDoctor.openingHours[6],
     }
+    const reviews: IReview[] = datDoctor.reviews.map((datReview: IDatReview) => {
+        return {
+            author: datReview.author,
+            createDate: datReview.createDate,
+            createTime: datReview.createTime,
+            rating: datReview.rate,
+            text: datReview.comment,
+        }
+    });
 
     return <>
         <Header/>
@@ -106,13 +115,15 @@ export function DoctorDetailPage() {
              marginRight={{md: "auto"}}
              maxWidth={{md: 960}}>
             <DoctorCard detailed={true} doctor={doctor}/>
-            <Box margin={{xs: 1, md:3}}>
-                {doctor.rating != undefined && <Rating name="doctor-rating" value={doctor.rating} precision={0.5} readOnly
-                                                       sx={{color: "primary.main"}}/>}
+            <Box margin={{xs: 1, md: 3}}>
+                {doctor.rating != undefined &&
+                    <Rating name="doctor-rating" value={doctor.rating} precision={0.5} readOnly
+                            sx={{color: "primary.main"}}/>}
             </Box>
 
             <Box>
-                <Tabs value={tabValues} onChange={handleChange} aria-label="doctor-detail-tabs" centered variant="fullWidth">
+                <Tabs value={tabValues} onChange={handleChange} aria-label="doctor-detail-tabs" centered
+                      variant="fullWidth">
                     <Tab label="INFO" {...a11yProps(0)} />
                     <Tab label="OBJEDNÁNÍ" {...a11yProps(1)} />
                     <Tab label="RECENZE" {...a11yProps(2)} />
@@ -124,7 +135,7 @@ export function DoctorDetailPage() {
                     <ReservationPanel/>
                 </TabPanel>
                 <TabPanel value={tabValues} index={2}>
-                    <ReviewPanel/>
+                    <ReviewPanel reviews={reviews}/>
                 </TabPanel>
             </Box>
         </Box>

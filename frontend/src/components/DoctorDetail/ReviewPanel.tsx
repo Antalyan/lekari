@@ -1,28 +1,48 @@
-import {IReview} from "../../utils/Interfaces";
+import {IDoctorDetailInfo, IReview, IReviewList} from "../../utils/Interfaces";
 import {Divider, Grid, Rating, Stack, Typography} from "@mui/material";
 import * as React from "react";
-import {REVIEWS} from "../../data/MockData";
 import {FormContainer, TextFieldElement} from "react-hook-form-mui";
 import {useForm} from "react-hook-form";
 import Button from "@mui/material/Button";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {useParams} from "react-router-dom";
+import {IDatDoctorInfo, IDatReview} from "../../utils/DatabaseInterfaces";
+import axios from "axios";
 
 function ReviewCreate() {
     const formContext = useForm<IReview>();
-    const {handleSubmit} = formContext;
+    const {id} = useParams();
 
-    const onSubmit = handleSubmit((formData: IReview) => {
-        // TODO: save to db
-        console.log(formData)
-    })
+    const storeInfo = async (formData: IReview) => {
+        const review: IDatReview = {
+            author: formData.author,
+            comment: formData.text,
+            rate: formData.rating
+        }
+
+        // TODO: check and update request
+        const url = `http://localhost:4000/doctors/${id}/review`
+        await axios.post(url, review)
+            .then(response => {
+                console.log(response);
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("Zápis recenze selhal!\n\n" + error.response.data.message)
+            });
+    }
+
+    const onSubmit = (formData: IReview) => {
+        console.log(formData);
+        storeInfo(formData);
+    };
 
     return (<>
         {/*@ts-ignore*/}
         <FormContainer
             formContext={formContext}
-            handleSubmit={onSubmit}>
+            onSuccess={onSubmit}>
             <Stack spacing={3} marginLeft={1}>
                 <Typography variant="h6"
                             color={"primary.main"}
@@ -33,7 +53,7 @@ function ReviewCreate() {
                         sx={{color: "primary.main"}}/>
                 <TextFieldElement name={"name"} label={"Autor"} size="medium"/>
                 <TextFieldElement name={"text"} label={"Text"} size="medium" multiline/>
-                <Grid container justifyContent={"center"}><Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>
+                <Grid container justifyContent={"center"}><Button variant='contained' type={'submit'} color={'primary'}>
                     Odeslat recenzi
                 </Button>
                 </Grid>
@@ -42,7 +62,7 @@ function ReviewCreate() {
     </>)
 }
 
-function ReviewCard({name, date, rating, text, id}: IReview) {
+function ReviewCard({author, createDate, createTime, rating, text, id}: IReview) {
     return <>
         <Divider/>
         <Grid container justifyContent={"space-between"} spacing={1}>
@@ -51,12 +71,13 @@ function ReviewCard({name, date, rating, text, id}: IReview) {
                     <Typography variant="h6"
                                 color={"primary.main"}
                                 display={"inline"}>
-                        {name}
+                        {author}
                     </Typography>
                     <Typography variant="subtitle2"
                                 color={"text.secondary"}
                                 display={"inline"}>
-                        {date.toDateString()}
+                        {/*TODO: put under each other*/}
+                        {createDate + ", " + createTime}
                     </Typography>
                 </Stack>
             </Grid>
@@ -75,12 +96,12 @@ function ReviewCard({name, date, rating, text, id}: IReview) {
     </>
 }
 
-export function ReviewPanel() {
+export function ReviewPanel({reviews}: IReviewList) {
     const user = useRecoilValue(userAtom)
     const {id} = useParams();
     return <Stack spacing={4}>
         {user.id != id  && <ReviewCreate/>}
-        {/*TODO: replace review with database request, sorted by date*/}
-        {REVIEWS.map((review) => <ReviewCard {...review}/>)}
+        {/*TODO: check sorted by date*/}
+        {reviews.map((review) => <ReviewCard {...review}/>)}
     </Stack>
 }

@@ -46,11 +46,16 @@ export interface IEditable {
 }
 
 export interface IReview {
-    name?: string,
-    date: Date,
+    author?: string,
+    createDate?: string,
+    createTime?: string,
     rating: number,
-    text: string,
+    text?: string,
     id?: number
+}
+
+export interface IReviewList {
+    reviews: IReview[]
 }
 
 export interface IGlobalProfileInfo {
