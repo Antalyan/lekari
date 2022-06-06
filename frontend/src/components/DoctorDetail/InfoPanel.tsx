@@ -12,6 +12,7 @@ import {DAYS, LANGUAGES, validateNumbers, validateUrl} from "../../data/Constant
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {useParams} from "react-router-dom";
+import {IDoctorDetailInfo} from "../../utils/Interfaces";
 
 function Opening() {
     // TODO: editability could be checked at backend on submit as well?
@@ -38,7 +39,7 @@ function Opening() {
                 {DAYS.map((day, index) => {
                     return <Stack direction={"row"} spacing={2} key={index}>
                         <Typography width={60} display="inline">{day + ":"}</Typography>
-                        <TextFieldElement name={"opening" + index} size="small"
+                        <TextFieldElement name={"openingHours" + (index)} size="small"
                                           disabled={!editingState} variant={editingState ? "outlined" : "standard"}
                                           InputProps={{
                                               disableUnderline: !editingState,
@@ -152,13 +153,12 @@ function Description() {
         </>)
 }
 
-export function InfoPanel() {
+export function InfoPanel(info: IDoctorDetailInfo) {
     const formContext = useForm<string[]>();
-    const {handleSubmit} = formContext;
-    const onSubmit = handleSubmit((formData: string[]) => {
+    const onSubmit =(formData: string[]) => {
         // TODO: send data to database on this click and show confirmation?
         console.log(formData);
-    });
+    };
 
     const user = useRecoilValue(userAtom)
     const {id} = useParams();
@@ -166,10 +166,11 @@ export function InfoPanel() {
     const onReset = () => {
         formContext.reset();
     }
+
     // @ts-ignore
     return (<FormContainer
-        formContext={formContext}
-        handleSubmit={onSubmit}>
+        defaultValues={info}
+        onSuccess={onSubmit}>
         <Stack spacing={2}>
             <Opening/>
             <Contact/>
@@ -177,7 +178,7 @@ export function InfoPanel() {
             <Description/>
             {user.id == id && <Grid container>
                 <Grid container item xs={6} justifyContent={"center"}>
-                    <Button variant='contained' size={"large"} type={'submit'} color={'primary'} onSubmit={onSubmit}>Uložit
+                    <Button variant='contained' size={"large"} type={'submit'} color={'primary'}>Uložit
                         změny</Button>
                 </Grid>
                 <Grid container item xs={6} justifyContent={"center"}>

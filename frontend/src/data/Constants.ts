@@ -10,7 +10,7 @@ export enum DataFormType {
 
 export const RESERVATION_INTERVAL_BOUNDS: number[] = [4, 20]
 
-export const validateNumbers = {pattern: {value:/^d+$|^$/, message: "Input must be only numeric"}}
+export const validateNumbers = {pattern: {value:/^\d+$|^$/, message: "Input must be only numeric"}}
 export const validateUrl = {
     pattern: {
         value: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$/,

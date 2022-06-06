@@ -429,6 +429,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                         <>
                                             <Button variant='contained' type={'submit'} color={'primary'}
                                             >{"Uložit změny"}</Button>
+                                            {/*TODO: Zrušit změny*/}
                                             <Button variant='contained' color={'primary'}
                                             >{"Zrušit změny"}</Button>
                                         </>

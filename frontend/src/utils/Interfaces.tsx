@@ -95,11 +95,19 @@ export interface IReservationSlots {
     interval: number
 }
 
-export interface IContact {
+export interface IDoctorDetailInfo {
     email?: string,
     phone?: string,
     web?: string
+    languages: string[]
+    description?: string
+    openingHours0?: string,
+    openingHours1?: string,
+    openingHours2?: string,
+    openingHours3?: string,
+    openingHours4?: string,
+    openingHours5?: string,
+    openingHours6?: string,
 }
-
 
 

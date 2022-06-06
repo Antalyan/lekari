@@ -90,11 +90,6 @@ export interface IDatDoctorReservation {
     createDate: string,
 }
 
-export interface IDatOpening {
-    day: string,
-    opening: string
-}
-
 export interface IDatReview {
     rate: number,
     comment?: string,
@@ -119,7 +114,7 @@ export interface IDatDoctorDetail {
     workStreet?: string,
     workBuildingNumber: string,
     profilePicture?: string
-    openingHours: IDatOpening[],
+    openingHours: string[],
     reviews: IDatReview[]
 }
 

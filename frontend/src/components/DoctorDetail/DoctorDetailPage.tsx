@@ -13,7 +13,7 @@ import {ReviewPanel} from "./ReviewPanel";
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
 import {IDatDoctorDetail, IDatPersonReservation} from "../../utils/DatabaseInterfaces";
-import {IDoctorCard} from "../../utils/Interfaces";
+import {IDoctorCard, IDoctorDetailInfo} from "../../utils/Interfaces";
 
 
 interface TabPanelProps {
@@ -84,6 +84,20 @@ export function DoctorDetailPage() {
         rating: 0,
         specialization: datDoctor.specialization
     }
+    const info: IDoctorDetailInfo = {
+        email: datDoctor.workEmail,
+        phone: datDoctor.workPhone ? datDoctor.workPhone.toString() : undefined,
+        web: datDoctor.link,
+        languages: datDoctor.languages,
+        description: datDoctor.description,
+        openingHours0: datDoctor.openingHours[0],
+        openingHours1: datDoctor.openingHours[1],
+        openingHours2: datDoctor.openingHours[2],
+        openingHours3: datDoctor.openingHours[3],
+        openingHours4: datDoctor.openingHours[4],
+        openingHours5: datDoctor.openingHours[5],
+        openingHours6: datDoctor.openingHours[6],
+    }
 
     return <>
         <Header/>
@@ -104,7 +118,7 @@ export function DoctorDetailPage() {
                     <Tab label="RECENZE" {...a11yProps(2)} />
                 </Tabs>
                 <TabPanel value={tabValues} index={0}>
-                    <InfoPanel/>
+                    <InfoPanel {...info}/>
                 </TabPanel>
                 <TabPanel value={tabValues} index={1}>
                     <ReservationPanel/>
