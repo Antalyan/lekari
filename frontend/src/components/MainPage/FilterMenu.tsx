@@ -3,13 +3,10 @@ import {useForm} from "react-hook-form";
 import * as React from "react";
 import {IFilter} from "../../utils/Interfaces";
 import {AutoSelect} from "./AutoSelect";
-import {cities, specializations} from "../../data/MockData";
 import {IPanelSetter} from "./SearchPanel";
 import {SPECIALIZATIONS} from "../../data/Specializations";
-import {useRecoilValue} from "recoil";
-import {userAtom} from "../../state/LoggedInAtom";
 import useSWR from "swr";
-import {fetcher, fetcherWithToken} from "../../utils/fetcher";
+import {fetcher} from "../../utils/fetcher";
 
 export function FilterMenu({filter, setFilter}: IPanelSetter) {
     const {handleSubmit, control} = useForm<IFilter>();
