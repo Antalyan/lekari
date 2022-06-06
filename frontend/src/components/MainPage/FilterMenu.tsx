@@ -3,23 +3,28 @@ import {useForm} from "react-hook-form";
 import * as React from "react";
 import {IFilter} from "../../utils/Interfaces";
 import {AutoSelect} from "./AutoSelect";
-import {cities, specializations} from "../../data/MockData";
 import {IPanelSetter} from "./SearchPanel";
 import {SPECIALIZATIONS} from "../../data/Specializations";
+import useSWR from "swr";
+import {fetcher} from "../../utils/fetcher";
 
 export function FilterMenu({filter, setFilter}: IPanelSetter) {
     const {handleSubmit, control} = useForm<IFilter>();
     const onSubmit = (data: IFilter) => {
-        /*TODO Handle data: send to database and retrieve updated doctors */
-        /*Doctors will probably need to be connected with MainPage via a state */
-        console.log(data)
-
+        console.log(data);
         setFilter({
             specialization: data.specialization,
             location: data.location,
             search: filter.search
         });
     }
+
+    const url = 'http://localhost:4000/doctors-locations'
+    const {data, error} = useSWR( url, fetcher);
+    if (error) console.log(error.message)
+    if (!data) return <div>Loading...</div>;
+    if (data) console.log(data)
+    const cities: String[] = data.data;
 
     return (
         <>

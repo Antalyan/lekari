@@ -147,7 +147,6 @@ export function MainPage() {
         </Grid>
 
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}} margin={1}>
-            {/*TODO: get doctors from database using SWR? */}
             {doctors.map((doctor: IDoctorCard, index) => (
                 <Grid item key={index} xs={12}>
                     <DoctorCard detailed={false} doctor={doctor}/>

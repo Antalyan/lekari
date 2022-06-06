@@ -79,9 +79,9 @@ export interface IDatPersonReservation {
 
 export interface IDatDoctorReservation {
     id: number,
-    patientDegree?: string,
-    patientFirstname: string,
-    patientSurname: string,
+    personDegree?: string,
+    personFirstname: string,
+    personSurname: string,
     visitTimeFrom: string,
     visitTimeTo: string,
     visitDate: string,

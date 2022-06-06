@@ -21,17 +21,17 @@ export function MyReservationPage(props: { isPatient: boolean }) {
 
     const getAddress = (reservation: IDatPersonReservation): string => {
         if (reservation.workStreet != undefined) {
-            return reservation.workStreet + " " + reservation.workBuildingNumber + "," + reservation.workCity
+            return reservation.workStreet + " " + reservation.workBuildingNumber + ", " + reservation.workCity
         }
         return reservation.workCity + " " + reservation.workBuildingNumber
     }
 
-    // TODO: check after impelemnted!
     const reservations: IReservation[] = props.isPatient ?
         data.data.reservations.map((reservation: IDatPersonReservation): IReservation => {
             return {
                 id: reservation.id,
-                doctorName: reservation.doctorDegree + " " + reservation.doctorFirstname + " " + reservation.doctorSurname,
+                doctorName: (reservation.doctorDegree ? reservation.doctorDegree + " " : "")
+                    + reservation.doctorFirstname + " " + reservation.doctorSurname,
                 createDate: reservation.createDate,
                 createTime: reservation.createTime,
                 visitDate: reservation.visitDate,
@@ -43,7 +43,8 @@ export function MyReservationPage(props: { isPatient: boolean }) {
             data.data.reservations.map((reservation: IDatDoctorReservation): IReservation => {
                 return {
                     id: reservation.id,
-                    doctorName: reservation.patientDegree + " " + reservation.patientFirstname + " " + reservation.patientSurname,
+                    patientName: (reservation.personDegree ? reservation.personDegree + " " : "")
+                        + reservation.personFirstname + " " + reservation.personSurname,
                     createDate: reservation.createDate,
                     createTime: reservation.createTime,
                     visitDate: reservation.visitDate,
@@ -69,10 +70,6 @@ export function MyReservationPage(props: { isPatient: boolean }) {
         <Grid container rowSpacing={1} columnSpacing={{xs: 1}} marginLeft={{md: "auto"}}
               marginRight={{md: "auto"}}
               maxWidth={{md: 960}}>
-            {/*TODO: check whether this is the correct index*/}
-            {/*TODO: display one reservation of the currently logged person (database request)*/}
-            {/*TODO: order by date*/}
-            {/*TODO: show only reservations that did not happen yet*/}
             {reservations.map((reservation: IReservation) => (
                 <Grid item key={reservation.id} xs={12}>
                     <ReservationCard isPatient={props.isPatient} reservation={reservation}/>
