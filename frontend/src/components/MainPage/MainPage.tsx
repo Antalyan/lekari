@@ -12,6 +12,7 @@ import useSWR from 'swr';
 import fetcher from "../../utils/fetcher";
 import {IDatBasicDoctor} from "../../utils/DatabaseInterfaces";
 import {useEffect, useState} from "react";
+import {createTheme} from "@mui/material/styles";
 
 export function MainPage() {
     const [dataFilter, setDataFilter] = useState<{specialization?: string, location?: string, search?: string}>({
@@ -65,94 +66,100 @@ export function MainPage() {
     }
 
     let doctors: IDoctorCard[] = convertDoctors()
-
+    const theme = createTheme();
     return <>
         <Header/>
-        <Grid container rowSpacing={0} columnSpacing={{xs: 1}} marginLeft={{md: "auto"}}
-              marginRight={{md: "auto"}} maxWidth={{md: 960}}>
-            <Grid item xs={6} md={8}>
-                <Box display={{xs: "block", md: "none"}}>
-                    <Typography sx={{m: 2}}
-                                component="h2"
-                                variant="h3"
-                                align="left"
-                                color="text.primary"
-                                gutterBottom
-                                fontWeight="bold"
-                    >
-                        Hledáte<Box color="primary.main">nejlepšího<br/>lékaře?</Box>
-                    </Typography>
-                </Box>
-                <Box display={{xs: "none", md: "block"}}>
-                    <Typography sx={{m: 2}}
-                                component="h2"
-                                variant="h3"
-                                align="left"
-                                color="text.primary"
-                                gutterBottom
-                                fontWeight="bold"
-                    >
-                        Hledáte<Box display="inline" color="primary.main"> nejlepšího lékaře?</Box>
-                    </Typography>
-                    <Typography sx={{m: 2}}
-                                align="left"
-                                paddingTop={2}
-                                color="text.secondary"
-                                gutterBottom
-                    >
-                        Využijte portál <strong><Box display="inline" color="primary.main">Luďkovi lékaři </Box></strong>
-                        k nalezení nejlepšího lékaře na Váš problém a rovnou se k němu objednejte!
-                    </Typography>
-                </Box>
-            </Grid>
-            <Grid item xs={6} md={4}>
-                <Box display="flex" height={{xs:"10rem", md:"13rem"}}
-                    // TODO: adjust box color?
-                    // bgcolor="lightgreen"
-                     alignItems="right"
-                     margin={0}
-                     justifyContent="right">
-                    <img src={Pills} alt='Pills' height="100%"/>
-                </Box>
-            </Grid>
-            <Grid item xs={12}>
-                <Box display={{xs: "block", md: "none"}}>
-                <Typography sx={{m: 2}}
-                            align="left"
-                            color="text.secondary"
-                            gutterBottom
-                >
-                    Využijte portál <strong><Box display="inline" color="primary.main">Luďkovi lékaři </Box></strong>
-                    k nalezení nejlepšího lékaře na Váš problém a rovnou se k němu objednejte!
-                </Typography>
-                </Box>
-            </Grid>
-            <Grid item xs={12}>
-                <Typography sx={{m: 2}}
-                            component="h2"
-                            variant="h3"
-                            align="center"
-                            color="text.primary"
-                            gutterBottom
-                            fontWeight="bold"
-                >
-                    Seznam lékařů
-                </Typography>
-            </Grid>
-        </Grid>
-        <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
-            <Grid item xs={12}>
-                <SearchPanel filter={dataFilter} setFilter={setDataFilter}/>
-            </Grid>
-        </Grid>
-
-        <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}} margin={1}>
-            {doctors.map((doctor: IDoctorCard, index) => (
-                <Grid item key={index} xs={12}>
-                    <DoctorCard detailed={false} doctor={doctor}/>
+        <Box
+            sx={{
+                minHeight: `calc(100vh - ${theme.spacing(20)})`,
+            }}
+        >
+            <Grid container rowSpacing={0} columnSpacing={{xs: 1}} marginLeft={{md: "auto"}}
+                  marginRight={{md: "auto"}} maxWidth={{md: 960}}>
+                <Grid item xs={6} md={8}>
+                    <Box display={{xs: "block", md: "none"}}>
+                        <Typography sx={{m: 2}}
+                                    component="h2"
+                                    variant="h3"
+                                    align="left"
+                                    color="text.primary"
+                                    gutterBottom
+                                    fontWeight="bold"
+                        >
+                            Hledáte<Box color="primary.main">nejlepšího<br/>lékaře?</Box>
+                        </Typography>
+                    </Box>
+                    <Box display={{xs: "none", md: "block"}}>
+                        <Typography sx={{m: 2}}
+                                    component="h2"
+                                    variant="h3"
+                                    align="left"
+                                    color="text.primary"
+                                    gutterBottom
+                                    fontWeight="bold"
+                        >
+                            Hledáte<Box display="inline" color="primary.main"> nejlepšího lékaře?</Box>
+                        </Typography>
+                        <Typography sx={{m: 2}}
+                                    align="left"
+                                    paddingTop={2}
+                                    color="text.secondary"
+                                    gutterBottom
+                        >
+                            Využijte portál <strong><Box display="inline" color="primary.main">Luďkovi lékaři </Box></strong>
+                            k nalezení nejlepšího lékaře na Váš problém a rovnou se k němu objednejte!
+                        </Typography>
+                    </Box>
                 </Grid>
-            ))}
-        </Grid>
+                <Grid item xs={6} md={4}>
+                    <Box display="flex" height={{xs:"10rem", md:"13rem"}}
+                        // TODO: adjust box color?
+                        // bgcolor="lightgreen"
+                         alignItems="right"
+                         margin={0}
+                         justifyContent="right">
+                        <img src={Pills} alt='Pills' height="100%"/>
+                    </Box>
+                </Grid>
+                <Grid item xs={12}>
+                    <Box display={{xs: "block", md: "none"}}>
+                        <Typography sx={{m: 2}}
+                                    align="left"
+                                    color="text.secondary"
+                                    gutterBottom
+                        >
+                            Využijte portál <strong><Box display="inline" color="primary.main">Luďkovi lékaři </Box></strong>
+                            k nalezení nejlepšího lékaře na Váš problém a rovnou se k němu objednejte!
+                        </Typography>
+                    </Box>
+                </Grid>
+                <Grid item xs={12}>
+                    <Typography sx={{m: 2}}
+                                component="h2"
+                                variant="h3"
+                                align="center"
+                                color="text.primary"
+                                gutterBottom
+                                fontWeight="bold"
+                    >
+                        Seznam lékařů
+                    </Typography>
+                </Grid>
+            </Grid>
+            <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
+                <Grid item xs={12}>
+                    <SearchPanel filter={dataFilter} setFilter={setDataFilter}/>
+                </Grid>
+            </Grid>
+
+            <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}} margin={1}>
+                {doctors.map((doctor: IDoctorCard, index) => (
+                    <Grid item key={index} xs={12}>
+                        <DoctorCard detailed={false} doctor={doctor}/>
+                    </Grid>
+                ))}
+            </Grid>
+        </Box>
         <Footer/>
     </>
 }
