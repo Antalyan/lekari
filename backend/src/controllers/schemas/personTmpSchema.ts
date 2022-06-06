@@ -21,9 +21,9 @@ const personSchema = object({
   street: string(),
   buildingNumber: string(),
   date: string()
-  .required(),
+    .required(),
   slotIndex: number()
-  .required(),
+    .required(),
   comment: string()
 });
 
