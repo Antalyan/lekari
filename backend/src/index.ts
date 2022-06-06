@@ -48,4 +48,4 @@ api.put('/logout', auth.logout);
 /**
  * Start listening on connections
  */
-api.listen(process.env.PORT, () => console.log(`Example app listening on port ${process.env.PORT}`));
+api.listen(process.env.PORT, () => console.log(`Doctor app listening on port ${process.env.PORT}`));
