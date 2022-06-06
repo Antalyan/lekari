@@ -1,8 +1,10 @@
-import { date, number, object, string } from 'yup';
+import { number, object, string } from 'yup';
 
 const registrationSchema = object({
-  date: string().required(),
-  slotIndex: number().required(),
+  date: string()
+    .required(),
+  slotIndex: number()
+    .required(),
   comment: string()
 });
 
