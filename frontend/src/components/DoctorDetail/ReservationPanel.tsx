@@ -15,10 +15,6 @@ import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {IReservationSlots} from "../../utils/Interfaces";
 
-interface IReservationCreate {
-    create: boolean
-}
-
 interface IReservationBasic {
     reservationDate: Date,
     reservationTime: string,
@@ -45,15 +41,12 @@ function countIntervals(interval: number) {
     });
 }
 
-//create: TRUE is for new reservation, FALSE for free slot cancelling
-function ReservationDatePanel({create}: IReservationCreate) {
-    const {id} = useParams();
-
+function ReservationDatePanel() {
     const formContext = useForm<IReservationBasic>();
     const {handleSubmit} = formContext;
 
     const onSubmit = handleSubmit((formData: IReservationBasic) => {
-        // TODO: according to <create>, redirect to reservation form or store fake reservation (blocked timeslot by doctor)
+        // TODO: redirect to reservation form (unlogged) or create reservation (logged)
         console.log(formData)
     })
 
@@ -70,7 +63,7 @@ function ReservationDatePanel({create}: IReservationCreate) {
                         variant="h6"
                         color={"primary.main"}
                         display="inline"
-                    > {create ? "Vytvoření nové rezervace" : "Zrušení rezervačního slotu"}
+                    > {"Vytvoření nové rezervace"}
                     </Typography>
                     <DatePickerElement name={'reservationDate'} label={'Datum rezervace'} required
                         // @ts-ignore
@@ -79,13 +72,13 @@ function ReservationDatePanel({create}: IReservationCreate) {
                         <SelectElement name={'reservationTime'} label={'Čas rezervace'} required fullWidth
                                        options={getReservationTimes(dateState)}
                         />}
-                    {create && dateState != null &&
+                    {dateState != null &&
                         <TextFieldElement name={"reservationNote"} label={"Poznámka pro lékaře"} size="small"
                                           multiline/>}
-                    {/*TODO: change href for reservation creation or cancel based on <create> */}
+                    {/*TODO: change href for reservation creation  */}
                     {dateState != null && <Grid container justifyContent={"center"}>
                         <Button variant='contained' size={"large"} type={'submit'} color={'primary'} onSubmit={onSubmit}>
-                            {create ? "Vytvořit rezervaci" : "Zrušit rezervační slot"}
+                            {"Vytvořit rezervaci"}
                         </Button>
                     </Grid>}
                 </Stack>
@@ -189,8 +182,7 @@ export function ReservationPanel() {
         {user.id == id ?
             <>
                 <ReservationSlots/>
-                <ReservationDatePanel create={false}/>
             </> :
-            <ReservationDatePanel create={true}/>}
+            <ReservationDatePanel/>}
     </Stack>
 }
