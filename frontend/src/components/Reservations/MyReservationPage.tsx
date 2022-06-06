@@ -21,12 +21,11 @@ export function MyReservationPage(props: { isPatient: boolean }) {
 
     const getAddress = (reservation: IDatPersonReservation): string => {
         if (reservation.workStreet != undefined) {
-            return reservation.workStreet + " " + reservation.workBuildingNumber + "," + reservation.workCity
+            return reservation.workStreet + " " + reservation.workBuildingNumber + ", " + reservation.workCity
         }
         return reservation.workCity + " " + reservation.workBuildingNumber
     }
 
-    // TODO: check after impelemnted!
     const reservations: IReservation[] = props.isPatient ?
         data.data.reservations.map((reservation: IDatPersonReservation): IReservation => {
             return {
