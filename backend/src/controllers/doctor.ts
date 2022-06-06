@@ -97,13 +97,20 @@ const doctorDetail = async (req: Request, res: Response) => {
 
   let reviews = doctor.references.map(function(review, index){
     return {
-      rate: review.rate / 2,
+      rate: review.rate,
       comment: review.comment,
       author: review.author,
       creatDate: review.created.toUTCString(),
       createTime: review.created.toLocaleTimeString()
     }
   })
+
+  let reviewsRatesSum = doctor.references.reduce((a, b) => a + b.rate, 0);
+
+  let opening =  new Array<String>(7);
+  doctor.openingHours.slice().reverse().forEach(function(x) {
+    opening[x.day] = x.opening;
+  });
 
   return res.status(200)
     .json({
@@ -127,7 +134,8 @@ const doctorDetail = async (req: Request, res: Response) => {
         workBuildingNumber: doctor.address.buildingNumber,
         profilePicture: doctor.profilePicture,
         actuality: doctor.actuality,
-        openingHours: doctor.openingHours,
+        openingHours: opening,
+        rateAverage: reviewsRatesSum/doctor.references.length,
         reviews: reviews
       }
     });

@@ -121,7 +121,7 @@ model ReservationHours {
 model OpeningHours {
   doctorId Int
   doctor   Doctor @relation(fields: [doctorId], references: [id])
-  day      String
+  day      Int 
   opening  String
 
   @@unique([doctorId, day])
