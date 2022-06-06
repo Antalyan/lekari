@@ -40,7 +40,7 @@ GET http://localhost:4000/persons
 ###
 
 GET http://localhost:4000/personal-info
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1NDQ2NTQ2NSwiZXhwIjozMzA5MjkwOTMwLCJpc3MiOiJjb29sSXNzdWVyIn0.2FruxlKoRF2cIl6KTbWzrOaa01gpVDZ5c_2CziUnTE4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1NDQ5MzM4MiwiZXhwIjozMzA5MzQ2NzY0LCJpc3MiOiJjb29sSXNzdWVyIn0.yzeFajD_eKWWGwsUVBvlMbQIef41rO3YUPQsQ0nuw0Q
 
 ###
 
@@ -60,7 +60,7 @@ Content-Type: application/json
 ###
 
 DELETE http://localhost:4000/personal-info
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1NDQ2NTM3MiwiZXhwIjozMzA5MjkwNzQ0LCJpc3MiOiJjb29sSXNzdWVyIn0.I5QPfvyd7fCJ87TkEyl2AWjAul7-9THQfDGO38Sc1Hk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1NDQ5MzM4MiwiZXhwIjozMzA5MzQ2NzY0LCJpc3MiOiJjb29sSXNzdWVyIn0.yzeFajD_eKWWGwsUVBvlMbQIef41rO3YUPQsQ0nuw0Q
 
 ###
 
@@ -80,6 +80,38 @@ GET http://localhost:4000/doctor-reservations
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1Mzg0MzQ3OCwiZXhwIjozMzA4MDQ2OTU2LCJpc3MiOiJjb29sSXNzdWVyIn0.Rch3aNxTqIZYR4mbFBtk8JmvGeEo_i6K8vg-TWZmHno
 
 ###
+POST http://localhost:4000/doctor/1/reservations-registered
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1NDQ5MzM4MiwiZXhwIjozMzA5MzQ2NzY0LCJpc3MiOiJjb29sSXNzdWVyIn0.yzeFajD_eKWWGwsUVBvlMbQIef41rO3YUPQsQ0nuw0Q
+Content-Type: application/json
+
+{
+  "date": "2022-06-06T00:00:00",
+  "interval": 30,
+  "slotIndex": 5,
+  "comment": "Operace zubu."
+}
+
+
+###
+
+POST http://localhost:4000/doctor/1/reservations-nonregistered
+Content-Type: application/json
+
+{
+  "firstname":"Tomáš",
+  "surname": "Jedno",
+  "birthdate": "1998-03-05T00:00:00",
+  "email": "tomas@jedno.com",
+  "phonePrefix": "+420",
+  "phone": 666666666,
+  "date": "2022-06-06T00:00:00",
+  "interval": 30,
+  "slotIndex": 5,
+  "comment": "Operace zubu."
+}
+
+
+###
 
 DELETE http://localhost:4000/logout Content-Type: application/json
 
@@ -91,3 +123,10 @@ DELETE http://localhost:4000/logout Content-Type: application/json
 
 GET http://localhost:4000/doctors/1/slots/1970-01-01
 
+###
+
+GET http://localhost:4000/doctor/:id(\d+)/reservations-registered
+Content-Type: application/json
+
+
+###

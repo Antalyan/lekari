@@ -29,9 +29,10 @@ api.get('/doctors/:id(\\d+)/slots/:date', doctor.doctorSlots);
 
 api.post('/signup-doctor', doctor.signUp);
 api.post('/doctors/:id(\d+)/reference', doctor.postReview);
-api.post('/doctors/:id(\d+)/reservations', doctor.createReservation);
 api.patch('/doctor-info', doctor.infoUpdate);
 api.delete('/doctor-info', extractJWT, doctor.doctorDelete);
+api.post('/doctor/:id(\\d+)/reservations-registered', extractJWT, doctor.createReservationRegistered)
+api.post('/doctor/:id(\\d+)/reservations-nonregistered', doctor.createReservationNonregistered)
 
 api.get('/persons', person.personList);                     // Undocumented
 api.get('/personal-info', extractJWT, person.personDetail);

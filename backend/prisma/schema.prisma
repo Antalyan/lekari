@@ -31,7 +31,7 @@ model PersonTmp {
   firstname       String
   surname         String
   birthdate       DateTime
-  email           String?       @unique
+  email           String?       
   phonePrefix     String
   phone           Int
   insuranceNumber Int?
@@ -57,7 +57,7 @@ model Reservation {
   personId      Int?
   person        Person?    @relation(fields: [personId], references: [id])
   personTmpId   Int?
-  personTmp     PersonTmp? @relation(fields: [personId], references: [id])
+  personTmp     PersonTmp? @relation(fields: [personTmpId], references: [id])
   doctorId      Int
   doctor        Doctor     @relation(fields: [doctorId], references: [id])
   from          DateTime

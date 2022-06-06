@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import prisma from '../client';
 import { number, object, string, ValidationError } from 'yup';
 import doctorRegistrationSchema from './schemas/doctorSchema';
+import { boolean } from 'yup/lib/locale';
+import personTmpSchema from './schemas/personTmpSchema';
+import reservationSchema from './schemas/reservationSchema';
 
 const bcryptjs = require('bcryptjs');
 
@@ -266,7 +269,7 @@ const doctorSlots = async (req: Request, res: Response) => {
   let lastTime = new Date(dateFrom);
   for (let i = 0; i < (((time / 60) / openingHours[0].interval) / 1000); i++) {
     allTimeSlots.push(new Date(lastTime));
-    lastTime.setMinutes(lastTime.getMinutes() + 30);
+    lastTime.setMinutes(lastTime.getMinutes() + openingHours[0].interval);
   }
 
   const reservationsTimes = reservations.map((item: { from: any; }) => item.from.toLocaleString());
@@ -461,6 +464,154 @@ const doctorDelete = async (req: Request, res: Response) => {
   }
 };
 
+//TODO: nonvalid calculation of fromTime
+const createReservationNonregistered = async (req: Request, res: Response) => {
+  try {
+    const doc_id: number = parseInt(req.params.id);
+    const data = await personTmpSchema.validate(req.body);
+    let date = new Date(data.date);
+    date.setMinutes(date.getMinutes() + (data.interval*data.slotIndex));
+    let reservation = null;
+    if(data.country && data.city && data.postalCode && data.buildingNumber){
+      reservation = await prisma.reservation.create({
+        data: {
+          doctor: { connect: { id: doc_id }},
+          personTmp: {
+            create: {
+              firstname: data.firstname,
+              surname: data.surname,
+              degree: data.degree || null,
+              birthdate: data.birthdate,
+              email: data.email || null,
+              insuranceNumber: data.insuranceNumber || null,
+              phonePrefix: data.phonePrefix,
+              phone: data.phone,
+              address: {
+                create:{
+                  country: data.country,
+                  city: data.city,
+                  street: data.street || null,
+                  postalCode: data.postalCode,
+                  buildingNumber: data.buildingNumber,
+                }
+              }
+            }
+          },
+          from: date,
+          personComment: data.comment,
+        }
+      });
+    } else{
+      reservation = await prisma.reservation.create({
+        data: {
+          doctor: { connect: { id: doc_id }},
+          personTmp: {
+            create: {
+              firstname: data.firstname,
+              surname: data.surname,
+              degree: data.degree || null,
+              birthdate: data.birthdate,
+              email: data.email || null,
+              insuranceNumber: data.insuranceNumber || null,
+              phonePrefix: data.phonePrefix,
+              phone: data.phone
+            }
+          },
+          from: date,
+          personComment: data.comment,
+        }
+      });
+    }
+    if (reservation) {
+      return res.status(201)
+        .send({
+          status: 'success',
+          data: { id: reservation.id },
+          message: 'Reservation saved.'
+        });
+    } else {
+      return res.status(500)
+        .send({
+          status: 'error',
+          message: '',
+        });
+    }
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      return res.status(400)
+        .send({
+          status: 'error',
+          data: e.errors,
+          message: e.message
+        });
+    }
+    if (e instanceof Error) {
+      return res.status(500)
+        .send({
+          status: 'error',
+          data: e.message,
+          message: 'Something went wrong'
+        });
+    }
+  }
+}
+
+//TODO: nonvalid calculation of fromTime
+const createReservationRegistered = async (req: Request, res: Response) => {
+  try {
+    const doc_id: number = parseInt(req.params.id);
+    const data = await reservationSchema.validate(req.body);
+    let fromTime = new Date(new Date(data.date).getTime() + (data.interval*data.slotIndex*60000));
+
+    const person = await prisma.person.findFirst({
+      where: {
+        email: res.locals.jwt.username,
+      }});
+    if(person){
+    const reservation = await prisma.reservation.create({
+      data: {
+        doctor: { connect: { id: doc_id }},
+        person: { connect: { id: person.id}},
+        from: fromTime,
+        personComment: data.comment,
+      }
+    });
+    if (reservation) {
+      return res.status(201)
+        .send({
+          status: 'success',
+          data: { id: reservation.id },
+          message: 'Reservation saved.'
+        });
+    } else {
+      return res.status(500)
+        .send({
+          status: 'error',
+          message: '',
+        });
+    }
+  }
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      return res.status(400)
+        .send({
+          status: 'error',
+          data: e.errors,
+          message: e.message
+        });
+    }
+    if (e instanceof Error) {
+      return res.status(500)
+        .send({
+          status: 'error',
+          data: e.message,
+          message: 'Something went wrong'
+        });
+    }
+  }
+}
+
+
 export default {
   doctorList,
   doctorDetail,
@@ -469,6 +620,7 @@ export default {
   doctorSlots,
   postReview,
   signUp,
-  createReservation: notImplemented,
+  createReservationRegistered,
+  createReservationNonregistered,
   infoUpdate: notImplemented
 };
