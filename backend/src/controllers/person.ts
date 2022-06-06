@@ -94,6 +94,7 @@ const personUpdate = async (req: Request, res: Response) => {
 };
 
 const personReservations = async (req: Request, res: Response) => {
+  const date = new Date();
   const reservations = await prisma.person.findMany({
     where: {
       email: res.locals.jwt.username,
@@ -101,6 +102,11 @@ const personReservations = async (req: Request, res: Response) => {
     },
     select: {
       reservations: {
+        where:{
+          fromTime: {
+            gte: date,
+          }
+        },
         orderBy: {
           fromTime: "asc"
         },

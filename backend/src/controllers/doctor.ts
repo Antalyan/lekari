@@ -98,7 +98,7 @@ const doctorDetail = async (req: Request, res: Response) => {
 
   let reviews = doctor.references.map(function(review, index){
     return {
-      rate: review.rate,
+      rate: review.rate / 2,
       comment: review.comment,
       author: review.author,
       creatDate: review.created.toUTCString(),
@@ -106,7 +106,7 @@ const doctorDetail = async (req: Request, res: Response) => {
     }
   })
 
-  let reviewsRatesSum = doctor.references.reduce((a, b) => a + b.rate, 0);
+  let reviewsRatesSum = doctor.references.reduce((a, b) => a + (b.rate / 2), 0);
 
   let opening =  new Array<String>(7);
   doctor.openingHours.slice().reverse().forEach(function(x) {
@@ -238,8 +238,6 @@ const doctorInfoAll = async (req: Request, res: Response) => {
     opening[x.day] = x.opening;
   });
 
-  let reservations =  new Array<IReservationHours>(7);
-
   return res.status(200)
     .json({
       status: 'success',
@@ -355,6 +353,7 @@ const doctorList = async (req: Request, res: Response) => {
 };
 
 const doctorReservations = async (req: Request, res: Response) => {
+  const date = new Date()
   const reservations = await prisma.doctor.findMany({
     where: {
       person: {
@@ -365,6 +364,11 @@ const doctorReservations = async (req: Request, res: Response) => {
       reservations: {
         orderBy: {
           fromTime: "asc"
+        },
+        where:{
+          fromTime: {
+            gte: date,
+          }
         },
         select: {
           id: true,
@@ -539,7 +543,7 @@ const postReview = async (req: Request, res: Response) => {
       data: {
         doctorId: doc_id,
         comment: data.comment,
-        rate: data.rate,
+        rate: data.rate * 2,
         author: data.author || null
       }
     });
