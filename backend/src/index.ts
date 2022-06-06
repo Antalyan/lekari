@@ -23,6 +23,7 @@ api.get('/', (req: any, res: { send: (arg0: { status: string; data: {}; message:
  */
 
 api.get('/doctors', doctor.doctorList);
+api.get('/doctors-locations', doctor.locationList)
 api.get('/doctors/:id(\\d+)', doctor.doctorDetail);
 api.get('/doctor-reservations', extractJWT, doctor.doctorReservations);
 api.get('/doctors/:id(\\d+)/slots/:date', doctor.doctorSlots);

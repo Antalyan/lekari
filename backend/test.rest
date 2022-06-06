@@ -3,9 +3,9 @@ Content-Type: application/json
 
 {
   "firstname": "Adam",
-  "surname": "Ananas",
+  "surname": "Cibule",
   "birthdate": "1970-01-01T00:00:00",
-  "email": "adam@ananas.com",
+  "email": "adam@banan.com",
   "phonePrefix": "+420",
   "phone": 678456765,
   "insuranceNumber": 456788,
@@ -24,7 +24,7 @@ POST http://localhost:4000/login
 Content-Type: application/json
 
 {
-  "email": "adam@ananas.com",
+  "email": "adam@cibule.com",
   "password": "CUKR"
 }
 
@@ -45,7 +45,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkY
 ###
 
 GET http://localhost:4000/person-reservations
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1NDAzMTQxMCwiZXhwIjozMzA4NDIyODIwLCJpc3MiOiJjb29sSXNzdWVyIn0.WEqAKnXoTZWYfOwghMHsX4k6PyXqxxDDU1s91NAplFQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1Mzg2NDA4MCwiZXhwIjozMzA4MDg4MTYwLCJpc3MiOiJjb29sSXNzdWVyIn0.cqmFFpbjl0G4J-3ijRUrcno9WWVFqZxUKMc1DdLHg5U
 
 ###
 
@@ -69,7 +69,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkY
 
 ###
 
-GET http://localhost:4000/doctors?location=Pra&specialization=chir&surname=Anan
+GET http://localhost:4000/doctors
+
+###
+
+GET http://localhost:4000/doctors-locations
 
 ###
 
@@ -77,11 +81,11 @@ GET http://localhost:4000/doctors/1
 
 ###
 GET http://localhost:4000/doctor-reservations
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1Mzg0MzQ3OCwiZXhwIjozMzA4MDQ2OTU2LCJpc3MiOiJjb29sSXNzdWVyIn0.Rch3aNxTqIZYR4mbFBtk8JmvGeEo_i6K8vg-TWZmHno
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AY2lidWxlLmNvbSIsImlhdCI6MTY1NDUwMzM5MiwiZXhwIjozMzA5MzY2Nzg0LCJpc3MiOiJjb29sSXNzdWVyIn0.HeTamCA3Un7IkYeK-mBJ9POERx-KetMQk5Pis0K7PR8
 
 ###
 POST http://localhost:4000/doctor/1/reservations-registered
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1NDQ5MzM4MiwiZXhwIjozMzA5MzQ2NzY0LCJpc3MiOiJjb29sSXNzdWVyIn0.yzeFajD_eKWWGwsUVBvlMbQIef41rO3YUPQsQ0nuw0Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AY2lidWxlLmNvbSIsImlhdCI6MTY1NDUwMzM5MiwiZXhwIjozMzA5MzY2Nzg0LCJpc3MiOiJjb29sSXNzdWVyIn0.HeTamCA3Un7IkYeK-mBJ9POERx-KetMQk5Pis0K7PR8
 Content-Type: application/json
 
 {
@@ -98,12 +102,17 @@ POST http://localhost:4000/doctor/1/reservations-nonregistered
 Content-Type: application/json
 
 {
-  "firstname":"Tomáš",
-  "surname": "Jedno",
+  "firstname":"Matěj",
+  "surname": "Kulhavý",
   "birthdate": "1998-03-05T00:00:00",
   "email": "tomas@jedno.com",
   "phonePrefix": "+420",
   "phone": 666666666,
+  "country": "Česko",
+  "city": "Brno",
+  "postalCode": 56788,
+  "street": "Veveří",
+  "buildingNumber": "67/B",
   "date": "2022-06-06T00:00:00",
   "interval": 30,
   "slotIndex": 5,

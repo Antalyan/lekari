@@ -8,6 +8,29 @@ import reservationSchema from './schemas/reservationSchema';
 
 const bcryptjs = require('bcryptjs');
 
+const locationList = async (req: Request, res: Response) => {
+  const locations = await prisma.doctor.findMany({
+    select: {
+      address:{
+        select:{
+          city: true
+        }
+      }
+    }
+  })
+
+  let locationsList = locations.map(function(location, index){
+    return location.address.city
+  })
+
+  return res.status(200)
+      .send({
+        status: 'success',
+        data: locationsList.filter((v, i, a) => a.indexOf(v) === i),
+      });
+
+}
+
 const doctorDetail = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
 
@@ -676,6 +699,7 @@ const createReservationRegistered = async (req: Request, res: Response) => {
 
 
 export default {
+  locationList,
   doctorList,
   doctorDetail,
   doctorDelete,
