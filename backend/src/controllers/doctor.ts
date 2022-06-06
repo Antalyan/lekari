@@ -2,35 +2,33 @@ import { Request, Response } from 'express';
 import prisma from '../client';
 import { number, object, string, ValidationError } from 'yup';
 import doctorRegistrationSchema from './schemas/doctorSchema';
-import { boolean } from 'yup/lib/locale';
 import personTmpSchema from './schemas/personTmpSchema';
 import reservationSchema from './schemas/reservationSchema';
-import IReservationHours from '../interfaces/reservationHours';
 
 const bcryptjs = require('bcryptjs');
 
 const locationList = async (req: Request, res: Response) => {
   const locations = await prisma.doctor.findMany({
     select: {
-      address:{
-        select:{
+      address: {
+        select: {
           city: true
         }
       }
     }
-  })
+  });
 
-  let locationsList = locations.map(function(location, index){
-    return location.address.city
-  })
+  let locationsList = locations.map(function (location) {
+    return location.address.city;
+  });
 
   return res.status(200)
-      .send({
-        status: 'success',
-        data: locationsList.filter((v, i, a) => a.indexOf(v) === i),
-      });
+    .send({
+      status: 'success',
+      data: locationsList.filter((v, i, a) => a.indexOf(v) === i),
+    });
 
-}
+};
 
 const doctorDetail = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
@@ -96,22 +94,25 @@ const doctorDetail = async (req: Request, res: Response) => {
       });
   }
 
-  let reviews = doctor.references.map(function(review, index){
+  let reviews = doctor.references.map(function (review) {
     return {
       rate: review.rate / 2,
       comment: review.comment,
       author: review.author,
-      creatDate: review.created.toISOString().split('T')[0],
+      creatDate: review.created.toISOString()
+        .split('T')[0],
       createTime: review.created.toLocaleTimeString()
-    }
-  })
+    };
+  });
 
   let reviewsRatesSum = doctor.references.reduce((a, b) => a + (b.rate / 2), 0);
 
-  let opening =  new Array<String>(7);
-  doctor.openingHours.slice().reverse().forEach(function(x) {
-    opening[x.day] = x.opening;
-  });
+  let opening = new Array<String>(7);
+  doctor.openingHours.slice()
+    .reverse()
+    .forEach(function (x) {
+      opening[x.day] = x.opening;
+    });
 
   return res.status(200)
     .json({
@@ -136,7 +137,7 @@ const doctorDetail = async (req: Request, res: Response) => {
         profilePicture: doctor.profilePicture,
         actuality: doctor.actuality,
         openingHours: opening,
-        rateAverage: Math.round((reviewsRatesSum/doctor.references.length)*2)/2,
+        rateAverage: Math.round((reviewsRatesSum / doctor.references.length) * 2) / 2,
         reviews: reviews
       }
     });
@@ -155,7 +156,7 @@ const doctorList = async (req: Request, res: Response) => {
         specialization: 'asc',
       },
       {
-        person:{
+        person: {
           surname: 'asc',
         }
       },
@@ -222,7 +223,7 @@ const doctorList = async (req: Request, res: Response) => {
 };
 
 const doctorReservations = async (req: Request, res: Response) => {
-  const date = new Date()
+  const date = new Date();
   const reservations = await prisma.doctor.findMany({
     where: {
       person: {
@@ -232,9 +233,9 @@ const doctorReservations = async (req: Request, res: Response) => {
     select: {
       reservations: {
         orderBy: {
-          fromTime: "asc"
+          fromTime: 'asc'
         },
-        where:{
+        where: {
           fromTime: {
             gte: date,
           }
@@ -251,7 +252,7 @@ const doctorReservations = async (req: Request, res: Response) => {
             }
           },
           personTmp: {
-            select:{
+            select: {
               firstname: true,
               surname: true,
               degree: true,
@@ -278,8 +279,8 @@ const doctorReservations = async (req: Request, res: Response) => {
   }
 
   let data = (reservations[0]).reservations.map(
-    function(reservation, index){
-      if(reservation.person){
+    function (reservation) {
+      if (reservation.person) {
         return {
           id: reservation.id,
           personDegree: reservation.person.degree,
@@ -287,12 +288,14 @@ const doctorReservations = async (req: Request, res: Response) => {
           personSurname: reservation.person.surname,
           visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
           visitTimeTo: reservation.toTime.toLocaleTimeString(),
-          visitDate: reservation.fromTime.toISOString().split('T')[0],
+          visitDate: reservation.fromTime.toISOString()
+            .split('T')[0],
           note: reservation.personComment,
           createTime: reservation.created.toLocaleTimeString(),
-          createDate: reservation.created.toISOString().split('T')[0],
-        }
-      } else if (reservation.personTmp){
+          createDate: reservation.created.toISOString()
+            .split('T')[0],
+        };
+      } else if (reservation.personTmp) {
         return {
           id: reservation.id,
           personDegree: reservation.personTmp.degree,
@@ -304,14 +307,14 @@ const doctorReservations = async (req: Request, res: Response) => {
           note: reservation.personComment,
           createTime: reservation.created.toLocaleTimeString(),
           createDate: reservation.created.toUTCString(),
-        }
+        };
       }
     }
-  )
+  );
 
   return res.send({
     status: 'sucess',
-    data: {reservations: data},
+    data: { reservations: data },
   });
 };
 
@@ -570,8 +573,8 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
   try {
     const doc_id: number = parseInt(req.params.id);
     const data = await personTmpSchema.validate(req.body);
-    const day = new Date(data.date).getDay()
-    const today = new Date()
+    const day = new Date(data.date).getDay();
+    const today = new Date();
     const reservationHours = await prisma.reservationHours.findFirst({
       where: {
         doctorId: doc_id,
@@ -585,21 +588,21 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
         toTime: true,
         interval: true,
       }
-    })
+    });
 
-    if(!reservationHours){
+    if (!reservationHours) {
       return res.status(500)
         .send({
           status: 'error',
-          message: "Can't make reservation for this day.",
+          message: 'Can\'t make reservation for this day.',
         });
     }
     let fromTime = new Date(data.date);
-    let addTime = reservationHours.interval*data.slotIndex
-    fromTime.setHours(reservationHours.fromTime.getHours() + (Math.round(addTime/60)))
-    fromTime.setMinutes(reservationHours.fromTime.getMinutes()+ (addTime%60))
-    let toTime = new Date(fromTime)
-    toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval)
+    let addTime = reservationHours.interval * data.slotIndex;
+    fromTime.setHours(reservationHours.fromTime.getHours() + (Math.round(addTime / 60)));
+    fromTime.setMinutes(reservationHours.fromTime.getMinutes() + (addTime % 60));
+    let toTime = new Date(fromTime);
+    toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
     let reservation = null;
 
     const checkFree = await prisma.reservation.findMany({
@@ -607,20 +610,20 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
         doctorId: doc_id,
         fromTime: fromTime
       },
-    })
+    });
 
-    if(checkFree.length !== 0){
+    if (checkFree.length !== 0) {
       return res.status(500)
         .send({
           status: 'error',
-          message: "Someone already ordered.",
+          message: 'Someone already ordered.',
         });
     }
 
-    if(data.country && data.city && data.postalCode && data.buildingNumber){
+    if (data.country && data.city && data.postalCode && data.buildingNumber) {
       reservation = await prisma.reservation.create({
         data: {
-          doctor: { connect: { id: doc_id }},
+          doctor: { connect: { id: doc_id } },
           personTmp: {
             create: {
               firstname: data.firstname,
@@ -632,7 +635,7 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
               phonePrefix: data.phonePrefix,
               phone: data.phone,
               address: {
-                create:{
+                create: {
                   country: data.country,
                   city: data.city,
                   street: data.street || null,
@@ -647,10 +650,10 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
           personComment: data.comment,
         }
       });
-    } else{
+    } else {
       reservation = await prisma.reservation.create({
         data: {
-          doctor: { connect: { id: doc_id }},
+          doctor: { connect: { id: doc_id } },
           personTmp: {
             create: {
               firstname: data.firstname,
@@ -701,15 +704,14 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
         });
     }
   }
-}
-
+};
 
 const createReservationRegistered = async (req: Request, res: Response) => {
   try {
     const doc_id: number = parseInt(req.params.id);
     const data = await reservationSchema.validate(req.body);
-    const day = new Date(data.date).getDay()
-    const today = new Date()
+    const day = new Date(data.date).getDay();
+    const today = new Date();
     const reservationHours = await prisma.reservationHours.findFirst({
       where: {
         doctorId: doc_id,
@@ -723,66 +725,67 @@ const createReservationRegistered = async (req: Request, res: Response) => {
         toTime: true,
         interval: true,
       }
-    })
+    });
 
-    if(!reservationHours){
+    if (!reservationHours) {
       return res.status(500)
         .send({
           status: 'error',
-          message: "Can't make reservation for this day.",
+          message: 'Can\'t make reservation for this day.',
         });
     }
     let fromTime = new Date(data.date);
-    let addTime = reservationHours.interval*data.slotIndex
-    fromTime.setHours(reservationHours.fromTime.getHours() + (Math.round(addTime/60)))
-    fromTime.setMinutes(reservationHours.fromTime.getMinutes()+ (addTime%60))
-    let toTime = new Date(fromTime)
-    toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval)
+    let addTime = reservationHours.interval * data.slotIndex;
+    fromTime.setHours(reservationHours.fromTime.getHours() + (Math.round(addTime / 60)));
+    fromTime.setMinutes(reservationHours.fromTime.getMinutes() + (addTime % 60));
+    let toTime = new Date(fromTime);
+    toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
 
     const checkFree = await prisma.reservation.findMany({
       where: {
         doctorId: doc_id,
         fromTime: fromTime
       },
-    })
+    });
 
-    if(checkFree.length !== 0){
+    if (checkFree.length !== 0) {
       return res.status(500)
         .send({
           status: 'error',
-          message: "Someone already ordered.",
+          message: 'Someone already ordered.',
         });
     }
 
     const person = await prisma.person.findFirst({
       where: {
         email: res.locals.jwt.username,
-      }});
-    if(person){
-    const reservation = await prisma.reservation.create({
-      data: {
-        doctor: { connect: { id: doc_id }},
-        person: { connect: { id: person.id}},
-        fromTime: fromTime,
-        toTime: toTime,
-        personComment: data.comment,
       }
     });
-    if (reservation) {
-      return res.status(201)
-        .send({
-          status: 'success',
-          data: { id: reservation.id },
-          message: 'Reservation saved.'
-        });
-    } else {
-      return res.status(500)
-        .send({
-          status: 'error',
-          message: '',
-        });
+    if (person) {
+      const reservation = await prisma.reservation.create({
+        data: {
+          doctor: { connect: { id: doc_id } },
+          person: { connect: { id: person.id } },
+          fromTime: fromTime,
+          toTime: toTime,
+          personComment: data.comment,
+        }
+      });
+      if (reservation) {
+        return res.status(201)
+          .send({
+            status: 'success',
+            data: { id: reservation.id },
+            message: 'Reservation saved.'
+          });
+      } else {
+        return res.status(500)
+          .send({
+            status: 'error',
+            message: '',
+          });
+      }
     }
-  }
   } catch (e) {
     if (e instanceof ValidationError) {
       return res.status(400)
@@ -801,8 +804,7 @@ const createReservationRegistered = async (req: Request, res: Response) => {
         });
     }
   }
-}
-
+};
 
 export default {
   locationList,
