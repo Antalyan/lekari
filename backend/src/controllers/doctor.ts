@@ -238,8 +238,6 @@ const doctorInfoAll = async (req: Request, res: Response) => {
     opening[x.day] = x.opening;
   });
 
-  let reservations =  new Array<IReservationHours>(7);
-
   return res.status(200)
     .json({
       status: 'success',
@@ -355,6 +353,7 @@ const doctorList = async (req: Request, res: Response) => {
 };
 
 const doctorReservations = async (req: Request, res: Response) => {
+  const date = new Date()
   const reservations = await prisma.doctor.findMany({
     where: {
       person: {
@@ -365,6 +364,11 @@ const doctorReservations = async (req: Request, res: Response) => {
       reservations: {
         orderBy: {
           fromTime: "asc"
+        },
+        where:{
+          fromTime: {
+            gte: date,
+          }
         },
         select: {
           id: true,
