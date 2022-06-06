@@ -90,5 +90,38 @@ export interface IDatDoctorReservation {
     createDate: string,
 }
 
+export interface IDatOpening {
+    day: string,
+    opening: string
+}
+
+export interface IDatReview {
+    rate: number,
+    comment?: string,
+    author?: string,
+    created: string,
+}
+
+export interface IDatDoctorDetail {
+    degree?: string,
+    firstname: string,
+    surname: string,
+    specialization: string,
+    actuality?: string,
+    workEmail?: string,
+    workPhone?: number,
+    description: string,
+    link: string,
+    languages: string[]
+    workCountry: string,
+    workCity: string,
+    workPostalCode: number,
+    workStreet?: string,
+    workBuildingNumber: string,
+    profilePicture?: string
+    openingHours: IDatOpening[],
+    reviews: IDatReview[]
+}
+
 
 

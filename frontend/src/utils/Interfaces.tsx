@@ -3,7 +3,7 @@ export interface IDoctorCard {
     name: string,
     specialization: string,
     location: string,
-    actuality: string,
+    actuality?: string,
     rating?: number
 }
 
@@ -94,4 +94,12 @@ export interface IReservationSlots {
     timeTo7?: string,
     interval: number
 }
+
+export interface IContact {
+    email?: string,
+    phone?: string,
+    web?: string
+}
+
+
 

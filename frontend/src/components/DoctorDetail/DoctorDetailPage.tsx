@@ -5,11 +5,15 @@ import Box from "@mui/material/Box";
 import {DoctorCard} from "./DoctorCard";
 import {Footer} from "../Footer";
 import {DOCTORS} from "../../data/MockData";
-import {useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {Rating, Tab, Tabs} from "@mui/material";
 import {InfoPanel} from "./InfoPanel";
 import {ReservationPanel} from "./ReservationPanel";
 import {ReviewPanel} from "./ReviewPanel";
+import useSWR from "swr";
+import fetcher from "../../utils/fetcher";
+import {IDatDoctorDetail, IDatPersonReservation} from "../../utils/DatabaseInterfaces";
+import {IDoctorCard} from "../../utils/Interfaces";
 
 
 interface TabPanelProps {
@@ -50,14 +54,36 @@ export function DoctorDetailPage() {
         setTabValues(newValue);
     };
 
-    // TODO: return error or redirect if the user with this id does not exist
     const {id} = useParams();
+    let navigate = useNavigate();
     if (id === undefined) {
-        // This should never happen in fact (redirecting elsewhere)
-        return <>ERROR</>
+        navigate("/");
     }
-    // TODO: change doctors to API data request
-    const doctor = DOCTORS.filter((doctor) => doctor.id == parseInt(id))[0];
+
+    const url =  'http://localhost:4000/doctors/' + id;
+    // TODO: return error or redirect if the user with this id does not exist
+    const { data, error } = useSWR(url, fetcher);
+    if (error) console.log(error.message)
+    if (!data) return <div>Loading...</div>;
+    if (data) console.log(data)
+
+    const getAddress = (doctor: IDatDoctorDetail): string => {
+        if (doctor.workStreet != undefined) {
+            return doctor.workStreet + " " + doctor.workBuildingNumber + ", " + doctor.workCity
+        }
+        return doctor.workCity + " " + doctor.workBuildingNumber
+    }
+
+    const datDoctor: IDatDoctorDetail = data.data;
+    const doctor: IDoctorCard = {
+        actuality: datDoctor.actuality,
+        id: parseInt(id as string),
+        location: getAddress(datDoctor),
+        name: (datDoctor.degree ? datDoctor.degree + " " : "") + datDoctor.firstname + " " + datDoctor.surname,
+        // TODO: compute rating or better retrieve from db
+        rating: 0,
+        specialization: datDoctor.specialization
+    }
 
     return <>
         <Header/>
@@ -70,7 +96,6 @@ export function DoctorDetailPage() {
                 {doctor.rating != undefined && <Rating name="doctor-rating" value={doctor.rating} precision={0.5} readOnly
                                                        sx={{color: "primary.main"}}/>}
             </Box>
-
 
             <Box>
                 <Tabs value={tabValues} onChange={handleChange} aria-label="doctor-detail-tabs" centered variant="fullWidth">
