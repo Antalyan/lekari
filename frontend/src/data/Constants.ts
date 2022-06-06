@@ -8,7 +8,7 @@ export enum DataFormType {
     Invalid = "INVALID"
 }
 
-export const RESERVATION_INTERVAL_BOUNDS: number[] = [4, 20]
+export const RESERVATION_INTERVAL_BOUNDS: number[] = [5, 20]
 
 export const validateNumbers = {pattern: {value:/^\d+$|^$/, message: "Input must be only numeric"}}
 export const validateUrl = {
