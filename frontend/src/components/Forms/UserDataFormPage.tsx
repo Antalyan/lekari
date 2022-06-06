@@ -251,8 +251,8 @@ export function UserDataFormPage({type, isEdit}: IForm) {
     return (
         <>
             <Header/>
-            <Typography variant="h5" gutterBottom component="div" align={"center"}
-                        bgcolor={"primary.main"} color={"common.white"}
+            <Typography variant="h3" gutterBottom component="div" align={"center"}
+                        color={"text.primary"} fontWeight={"bold"}
                         padding={2} marginTop={1}>
                 {getFormLabel(type, isEdit)}
             </Typography>
