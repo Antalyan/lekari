@@ -5,6 +5,7 @@ import doctorRegistrationSchema from './schemas/doctorSchema';
 import { boolean } from 'yup/lib/locale';
 import personTmpSchema from './schemas/personTmpSchema';
 import reservationSchema from './schemas/reservationSchema';
+import IReservationHours from '../interfaces/reservationHours';
 
 const bcryptjs = require('bcryptjs');
 
@@ -194,6 +195,12 @@ const doctorInfoAll = async (req: Request, res: Response) => {
         }
       },
       reservationHours: {
+        orderBy: [
+          {
+            day: 'asc',
+          },
+        ],
+        distinct: ['day'],
         select: {
           day: true,
           fromTime: true,
@@ -224,6 +231,13 @@ const doctorInfoAll = async (req: Request, res: Response) => {
     }
   })
 
+  let opening =  new Array<String>(7);
+  doctor.openingHours.slice().reverse().forEach(function(x) {
+    opening[x.day] = x.opening;
+  });
+
+  let reservations =  new Array<IReservationHours>(7);
+
   return res.status(200)
     .json({
       status: 'success',
@@ -251,10 +265,9 @@ const doctorInfoAll = async (req: Request, res: Response) => {
         workBuildingNumber: doctor.address.buildingNumber,
         profilePicture: doctor.profilePicture,
         actuality: doctor.actuality,
-        openingHours: doctor.openingHours,
+        openingHours: opening,
         reviews: reviews,
         reservationHours: doctor.reservationHours,
-
       }
     });
 };

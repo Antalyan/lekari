@@ -109,7 +109,7 @@ model DoctorLanguage {
 model ReservationHours {
   doctorId Int
   doctor   Doctor   @relation(fields: [doctorId], references: [id])
-  day      String // TODO: enum
+  day      Int
   fromTime DateTime
   toTime   DateTime
   fromDate DateTime @default(now())
