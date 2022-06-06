@@ -435,7 +435,7 @@ const signUp = async (req: Request, res: Response) => {
 
 const doctorDelete = async (req: Request, res: Response) => {
   try {
-    const doctor = await prisma.doctor.updateMany({
+    await prisma.doctor.updateMany({
       where: {
         person: {
           email: res.locals.jwt.username

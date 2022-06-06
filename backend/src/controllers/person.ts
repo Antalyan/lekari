@@ -140,7 +140,7 @@ const personReservations = async (req: Request, res: Response) => {
 
 const personDelete = async (req: Request, res: Response) => {
   try {
-    const person = await prisma.person.updateMany({
+    await prisma.person.updateMany({
       where: {
         email: res.locals.jwt.username
       },
