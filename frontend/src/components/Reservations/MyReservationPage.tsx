@@ -31,7 +31,8 @@ export function MyReservationPage(props: { isPatient: boolean }) {
         data.data.reservations.map((reservation: IDatPersonReservation): IReservation => {
             return {
                 id: reservation.id,
-                doctorName: reservation.doctorDegree + " " + reservation.doctorFirstname + " " + reservation.doctorSurname,
+                doctorName: (reservation.doctorDegree ? reservation.doctorDegree + " " : "")
+                    + reservation.doctorFirstname + " " + reservation.doctorSurname,
                 createDate: reservation.createDate,
                 createTime: reservation.createTime,
                 visitDate: reservation.visitDate,
@@ -43,7 +44,8 @@ export function MyReservationPage(props: { isPatient: boolean }) {
             data.data.reservations.map((reservation: IDatDoctorReservation): IReservation => {
                 return {
                     id: reservation.id,
-                    doctorName: reservation.patientDegree + " " + reservation.patientFirstname + " " + reservation.patientSurname,
+                    doctorName: (reservation.patientDegree ? reservation.patientDegree + " " : "")
+                        + reservation.patientFirstname + " " + reservation.patientSurname,
                     createDate: reservation.createDate,
                     createTime: reservation.createTime,
                     visitDate: reservation.visitDate,

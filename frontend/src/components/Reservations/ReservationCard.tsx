@@ -25,7 +25,7 @@ export function ReservationCardLabels(props: { isPatient: boolean, reservation: 
                             color={"text.secondary"}
                             display={"inline"}>
                     {/*TODO: fix date format*/}
-                    {/*{props.reservation.creationAt.toDateString()}*/}
+                    {props.reservation.createTime + " " + props.reservation.createDate}
                 </Typography>
             </Stack>
         </Grid>
@@ -33,7 +33,7 @@ export function ReservationCardLabels(props: { isPatient: boolean, reservation: 
             <AccessTimeIcon color={"info"}/>
             <Typography>
                 {/*TODO: fix date format*/}
-                {/*{props.reservation.visitDate.toDateString()}*/}
+                {props.reservation.visitTimeFrom + " – " + props.reservation.visitTimeTo + "," + props.reservation.visitDate}
             </Typography>
         </Stack>
         {props.isPatient && <Stack direction="row" spacing={1}>
