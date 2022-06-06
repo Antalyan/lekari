@@ -24,7 +24,7 @@ POST http://localhost:4000/login
 Content-Type: application/json
 
 {
-  "email": "adam@cibule.com",
+  "email": "adam@banan.com",
   "password": "CUKR"
 }
 
@@ -70,7 +70,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkY
 ###
 
 GET http://localhost:4000/doctor-info
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AY2lidWxlLmNvbSIsImlhdCI6MTY1NDUwODA5MywiZXhwIjozMzA5Mzc2MTg2LCJpc3MiOiJjb29sSXNzdWVyIn0.y4sdfD6fEBupZLHF-yhbeiv7J_80qq0gM_ByPxB1j30
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYmFuYW4uY29tIiwiaWF0IjoxNjU0NTI3NzMxLCJleHAiOjMzMDk0MTU0NjIsImlzcyI6ImNvb2xJc3N1ZXIifQ.kox-3vj3bQaBc6NDotaJRytWDM6OvTKClUg6LY3b02E
 
 ###
 
@@ -86,8 +86,7 @@ GET http://localhost:4000/doctors/1
 
 ###
 GET http://localhost:4000/doctor-reservations
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AY2lidWxlLmNvbSIsImlhdCI6MTY1NDUwMzM5MiwiZXhwIjozMzA5MzY2Nzg0LCJpc3MiOiJjb29sSXNzdWVyIn0.HeTamCA3Un7IkYeK-mBJ9POERx-KetMQk5Pis0K7PR8
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYmFuYW4uY29tIiwiaWF0IjoxNjU0NTI4NDM1LCJleHAiOjMzMDk0MTY4NzAsImlzcyI6ImNvb2xJc3N1ZXIifQ.WIBE8AJD0IE6bhUrmIqV6ckjSMHgxU_T0TqhXjjL1QI
 ###
 POST http://localhost:4000/doctor/1/reservations-registered
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AY2lidWxlLmNvbSIsImlhdCI6MTY1NDUwMzM5MiwiZXhwIjozMzA5MzY2Nzg0LCJpc3MiOiJjb29sSXNzdWVyIn0.HeTamCA3Un7IkYeK-mBJ9POERx-KetMQk5Pis0K7PR8
@@ -95,8 +94,7 @@ Content-Type: application/json
 
 {
   "date": "2022-06-06T00:00:00",
-  "interval": 30,
-  "slotIndex": 5,
+  "slotIndex": 8,
   "comment": "Operace zubu."
 }
 
@@ -119,8 +117,7 @@ Content-Type: application/json
   "street": "Veveří",
   "buildingNumber": "67/B",
   "date": "2022-06-06T00:00:00",
-  "interval": 30,
-  "slotIndex": 5,
+  "slotIndex": 7,
   "comment": "Operace zubu."
 }
 
@@ -131,7 +128,6 @@ POST http://localhost:4000/doctors/1/review
 Content-Type: application/json
 
 {
-  "comment": "To je vražda napsala",
   "rate": 5,
   "author": "Já"
 }

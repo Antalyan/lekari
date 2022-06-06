@@ -696,7 +696,6 @@ const doctorDelete = async (req: Request, res: Response) => {
   }
 };
 
-//TODO: nonvalid calculation of fromTime
 const createReservationNonregistered = async (req: Request, res: Response) => {
   try {
     const doc_id: number = parseInt(req.params.id);
@@ -725,12 +724,29 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
           message: "Can't make reservation for this day.",
         });
     }
-    let fromTime = new Date(reservationHours.fromTime);
-
-    fromTime.setMinutes(fromTime.getMinutes() + (reservationHours.interval*data.slotIndex));
-    let toDate = new Date(reservationHours.fromTime)
-    toDate.setMinutes(fromTime.getMinutes() + reservationHours.interval)
+    let fromTime = new Date(data.date);
+    let addTime = reservationHours.interval*data.slotIndex
+    fromTime.setHours(reservationHours.fromTime.getHours() + (Math.round(addTime/60)))
+    fromTime.setMinutes(reservationHours.fromTime.getMinutes()+ (addTime%60))
+    let toTime = new Date(fromTime)
+    toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval)
     let reservation = null;
+
+    const checkFree = await prisma.reservation.findMany({
+      where: {
+        doctorId: doc_id,
+        fromTime: fromTime
+      },
+    })
+
+    if(checkFree.length !== 0){
+      return res.status(500)
+        .send({
+          status: 'error',
+          message: "Someone already ordered.",
+        });
+    }
+
     if(data.country && data.city && data.postalCode && data.buildingNumber){
       reservation = await prisma.reservation.create({
         data: {
@@ -757,7 +773,7 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
             }
           },
           fromTime: fromTime,
-          toTime: toDate,
+          toTime: toTime,
           personComment: data.comment,
         }
       });
@@ -778,7 +794,7 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
             }
           },
           fromTime: fromTime,
-          toTime: toDate,
+          toTime: toTime,
           personComment: data.comment,
         }
       });
@@ -817,14 +833,56 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
   }
 }
 
-//TODO: nonvalid calculation of fromTime
+
 const createReservationRegistered = async (req: Request, res: Response) => {
   try {
     const doc_id: number = parseInt(req.params.id);
     const data = await reservationSchema.validate(req.body);
-    let fromTime = new Date(new Date(data.date).getTime() + (data.interval*data.slotIndex*60000));
+    const day = new Date(data.date).getDay()
+    const today = new Date()
+    const reservationHours = await prisma.reservationHours.findFirst({
+      where: {
+        doctorId: doc_id,
+        day: day,
+        fromDate: {
+          lte: today
+        }
+      },
+      select: {
+        fromTime: true,
+        toTime: true,
+        interval: true,
+      }
+    })
+
+    if(!reservationHours){
+      return res.status(500)
+        .send({
+          status: 'error',
+          message: "Can't make reservation for this day.",
+        });
+    }
+    let fromTime = new Date(data.date);
+    let addTime = reservationHours.interval*data.slotIndex
+    fromTime.setHours(reservationHours.fromTime.getHours() + (Math.round(addTime/60)))
+    fromTime.setMinutes(reservationHours.fromTime.getMinutes()+ (addTime%60))
     let toTime = new Date(fromTime)
-    toTime.setMinutes(fromTime.getMinutes() + data.interval)
+    toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval)
+
+    const checkFree = await prisma.reservation.findMany({
+      where: {
+        doctorId: doc_id,
+        fromTime: fromTime
+      },
+    })
+
+    if(checkFree.length !== 0){
+      return res.status(500)
+        .send({
+          status: 'error',
+          message: "Someone already ordered.",
+        });
+    }
 
     const person = await prisma.person.findFirst({
       where: {
