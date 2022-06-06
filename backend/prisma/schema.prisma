@@ -8,17 +8,17 @@ datasource db {
 }
 
 model Person {
-  id              Int        @id @default(autoincrement())
+  id              Int           @id @default(autoincrement())
   degree          String?
   firstname       String
-  surname        String
+  surname         String
   birthdate       DateTime
   email           String        @unique
   phonePrefix     String
   phone           Int
-  deleted Boolean @default(false)
+  deleted         Boolean       @default(false)
   insuranceNumber Int?
-  addressId       Int        @unique
+  addressId       Int           @unique
   address         Address       @relation(fields: [addressId], references: [id])
   password        String
   reservations    Reservation[]
@@ -26,22 +26,22 @@ model Person {
 }
 
 model PersonTmp {
-  id              Int        @id @default(autoincrement())
+  id              Int           @id @default(autoincrement())
   degree          String?
   firstname       String
-  surname        String
+  surname         String
   birthdate       DateTime
   email           String?       @unique
   phonePrefix     String
   phone           Int
   insuranceNumber Int?
-  addressId       Int?       @unique
+  addressId       Int?          @unique
   address         Address?      @relation(fields: [addressId], references: [id])
   reservations    Reservation[]
 }
 
 model Address {
-  id             Int     @id @default(autoincrement())
+  id             Int        @id @default(autoincrement())
   country        String
   city           String
   postalCode     Int
@@ -55,7 +55,7 @@ model Address {
 model Reservation {
   id            String     @id @default(uuid())
   personId      Int?
-  person        Person?     @relation(fields: [personId], references: [id])
+  person        Person?    @relation(fields: [personId], references: [id])
   personTmpId   Int?
   personTmp     PersonTmp? @relation(fields: [personId], references: [id])
   doctorId      Int
@@ -66,25 +66,25 @@ model Reservation {
 }
 
 model Doctor {
-  id                     Int                   @id @default(autoincrement())
-  specialization         String // TODO: enum
-  actuality              String?
-  addressId              Int                   @unique
-  address                Address                  @relation(fields: [addressId], references: [id])
-  personId               Int                   @unique
-  person                 Person                   @relation(fields: [personId], references: [id])
-  profilePicture         String?
-  deleted Boolean @default(false)
+  id               Int                @id @default(autoincrement())
+  specialization   String // TODO: enum
+  actuality        String?
+  addressId        Int                @unique
+  address          Address            @relation(fields: [addressId], references: [id])
+  personId         Int                @unique
+  person           Person             @relation(fields: [personId], references: [id])
+  profilePicture   String?
+  deleted          Boolean            @default(false)
   //
-  email                  String?
-  phone                  String?
-  description            String?
-  link                   String?
-  reservations           Reservation[]
-  references             Review[]
-  languages              DoctorLanguage[]
-  openingHours           ReservationHours[]
-  openingHoursOrdination OpeningHours[]
+  email            String?
+  phone            String?
+  description      String?
+  link             String?
+  reservations     Reservation[]
+  references       Review[]
+  languages        DoctorLanguage[]
+  reservationHours ReservationHours[]
+  openingHours     OpeningHours[]
 }
 
 model Review {

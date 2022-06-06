@@ -43,7 +43,7 @@ const doctorDetail = async (req: Request, res: Response) => {
       },
       profilePicture: true,
       actuality: true,
-      openingHours: {
+      reservationHours: {
         select: {
           day: true,
           fromTime: true,
@@ -93,7 +93,7 @@ const doctorDetail = async (req: Request, res: Response) => {
         workBuildingNumber: doctor.address.buildingNumber,
         profilePicture: doctor.profilePicture,
         actuality: doctor.actuality,
-        reservationHours: doctor.openingHours,
+        reservationHours: doctor.reservationHours,
         references: doctor.references
       }
     });
