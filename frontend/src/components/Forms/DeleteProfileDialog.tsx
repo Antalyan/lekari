@@ -1,6 +1,7 @@
 import * as React from "react";
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Link} from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Grid from "@mui/material/Grid";
 
 export function DeleteProfileDialog() {
     let navigate = useNavigate();
@@ -18,9 +19,11 @@ export function DeleteProfileDialog() {
     };
 
     return <>
-        <Button variant="text" onClick={handleClickOpen}>
-            Smazat profil
-        </Button>
+        <Grid>
+            <Button variant="text" onClick={handleClickOpen}>
+                Smazat profil
+            </Button>
+        </Grid>
         <Dialog
             open={open}
             onClose={handleClose}

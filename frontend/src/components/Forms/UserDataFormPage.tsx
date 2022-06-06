@@ -419,8 +419,12 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                     </Grid>
                                 </>}
 
+                            {isEdit && <Grid item xs={11}>
+                                <DeleteProfileDialog/>
+                            </Grid>}
+
                             <Grid item xs={12}>
-                                <Stack direction="row" justifyContent="space-evenly" spacing={2}>
+                                <Stack direction="row" justifyContent="space-evenly" spacing={2} padding={2}>
                                     {isEdit ?
                                         <>
                                             <Button variant='contained' type={'submit'} color={'primary'}
@@ -432,10 +436,6 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                         >{"Registrovat se"}</Button>}
                                 </Stack>
                             </Grid>
-
-                            {isEdit && <Grid item xs={11}>
-                                <DeleteProfileDialog/>
-                            </Grid>}
                         </Grid>
                     </FormContainer>
                 </LocalizationProvider>
