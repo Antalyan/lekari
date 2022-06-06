@@ -696,6 +696,7 @@ const doctorDelete = async (req: Request, res: Response) => {
   }
 };
 
+//TODO: nonvalid calculation of fromTime
 const createReservationNonregistered = async (req: Request, res: Response) => {
   try {
     const doc_id: number = parseInt(req.params.id);
@@ -936,7 +937,6 @@ const createReservationRegistered = async (req: Request, res: Response) => {
 
 export default {
   locationList,
-  doctorInfoAll,
   doctorList,
   doctorDetail,
   doctorDelete,
