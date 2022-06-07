@@ -22,7 +22,7 @@ const personSchema = object({
   buildingNumber: string(),
   date: string()
     .required(),
-  slotIndex: string()
+  time: string()
     .required(),
   comment: string()
 });

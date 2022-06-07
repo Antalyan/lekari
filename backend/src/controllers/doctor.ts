@@ -600,8 +600,8 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
     }
     let fromTime = new Date(data.date);
     // parseInt parameter 10 for remove leading zeros
-    let hours = parseInt(data.slotIndex.split(':')[0], 10)
-    let minutes = parseInt(data.slotIndex.split(':')[1], 10)
+    let hours = parseInt(data.time.split(':')[0], 10)
+    let minutes = parseInt(data.time.split(':')[1], 10)
     fromTime.setHours(hours);
     fromTime.setMinutes(minutes);
     let toTime = new Date(fromTime);
@@ -746,8 +746,8 @@ const createReservationRegistered = async (req: Request, res: Response) => {
     }
     let fromTime = new Date(data.date);
     // parseInt parameter 10 for remove leading zeros
-    let hours = parseInt(data.slotIndex.split(':')[0], 10)
-    let minutes = parseInt(data.slotIndex.split(':')[1], 10)
+    let hours = parseInt(data.time.split(':')[0], 10)
+    let minutes = parseInt(data.time.split(':')[1], 10)
     fromTime.setHours(hours);
     fromTime.setMinutes(minutes);
     let toTime = new Date(fromTime);
