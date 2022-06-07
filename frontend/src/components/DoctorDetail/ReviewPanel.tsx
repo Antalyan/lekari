@@ -22,7 +22,6 @@ function ReviewCreate() {
             rate: rating == null ? undefined: rating
         }
 
-        // TODO: check and update request
         const url = `http://localhost:4000/doctors/${id}/review`
         await axios.post(url, review)
             .then(response => {
