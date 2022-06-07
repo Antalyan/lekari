@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import prisma from '../client';
 import { number, object, string, ValidationError } from 'yup';
-import doctorRegistrationSchema from './schemas/doctorSchema';
+import {doctorRegistrationSchema, doctorUpdateSchema} from './schemas/doctorSchema';
 import personTmpSchema from './schemas/personTmpSchema';
 import reservationSchema from './schemas/reservationSchema';
 import reservationHoursSchema from './schemas/reservationHours';
+import getPerson from '../models/personModel';
 
 const bcryptjs = require('bcryptjs');
 
@@ -823,6 +824,138 @@ const createReservationRegistered = async (req: Request, res: Response) => {
   }
 }*/
 
+const passwordError = (res: Response, message: String) => {
+  return res.status(400)
+    .json({
+      status: 'error',
+      data: {},
+      message: message,
+    });
+};
+
+const infoUpdate = async (req: Request, res: Response) => {
+  try {
+    const data = await doctorUpdateSchema.validate(req.body);
+    let updatedPerson = null
+
+    if(data.oldPassword && data.password1 && data.password2){
+      const person = await getPerson({ email: res.locals.jwt.username });
+      if (!person) return passwordError(res, "Can't find person.");
+
+      const validPassword = await bcryptjs.compare(data.oldPassword, person.password);
+      if (!validPassword) return passwordError(res, "Old password is not valid.");
+
+      if (data.password1 !== data.password2) return passwordError(res, "Passwords don't match.");
+
+      const hash = await bcryptjs.hash(data.password1, 10);
+
+      updatedPerson = await prisma.person.update({
+        where: {
+          email: res.locals.jwt.username,
+        },
+        data: {
+          firstname: data.firstname,
+          surname: data.surname,
+          degree: data.degree || null,
+          birthdate: data.birthdate,
+          email: data.email,
+          phonePrefix: data.phonePrefix,
+          phone: data.phone,
+          insuranceNumber: data.insuranceNumber || null,
+          address:{
+            update: {
+              country: data.country,
+              city: data.city,
+              postalCode: data.postalCode,
+              street: data.street || null,
+              buildingNumber: data.buildingNumber,
+            }
+          },
+          doctor: {
+            update:{
+              specialization: data.specialization,
+              actuality: data.actuality || null,
+              address:{
+                update: {
+                  country: data.workCountry,
+                  city: data.workCity,
+                  postalCode: data.workPostalCode,
+                  street: data.workStreet || null,
+                  buildingNumber: data.workBuildingNumber,
+                }
+              },
+            }
+          },
+          password: hash
+        }
+      });
+    } else{
+      updatedPerson = await prisma.person.update({
+        where: {
+          email: res.locals.jwt.username,
+        },
+        data: {
+          firstname: data.firstname,
+          surname: data.surname,
+          degree: data.degree || null,
+          birthdate: data.birthdate,
+          email: data.email,
+          phonePrefix: data.phonePrefix,
+          phone: data.phone,
+          insuranceNumber: data.insuranceNumber || null,
+          address:{
+            update: {
+              country: data.country,
+              city: data.city,
+              postalCode: data.postalCode,
+              street: data.street || null,
+              buildingNumber: data.buildingNumber,
+            }
+          },
+          doctor: {
+            update:{
+              specialization: data.specialization,
+              actuality: data.actuality || null,
+              address:{
+                update: {
+                  country: data.workCountry,
+                  city: data.workCity,
+                  postalCode: data.workPostalCode,
+                  street: data.workStreet || null,
+                  buildingNumber: data.workBuildingNumber,
+                }
+              },
+            }
+          }
+        }
+      });
+    }
+
+    if (!updatedPerson) {
+      return res.status(404)
+        .send({
+          status: 'error',
+          data: {},
+          message: 'Person was not found'
+        });
+    }
+
+    return res.send({
+      status: 'sucess',
+      data: updatedPerson.id
+    });
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      return res.status(400)
+        .send({
+          status: 'error',
+          data: e.errors,
+          message: e.message
+        });
+    }
+  }
+}
+
 export default {
   locationList,
   doctorList,
@@ -834,5 +967,5 @@ export default {
   signUp,
   createReservationRegistered,
   createReservationNonregistered,
-  infoUpdate: notImplemented
+  infoUpdate,
 };

@@ -30,7 +30,7 @@ api.get('/doctors/:id(\\d+)/slots/:date', doctor.doctorSlots);
 
 api.post('/signup-doctor', doctor.signUp);
 api.post('/doctors/:id(\\d+)/review', doctor.postReview);
-api.patch('/doctor-info', doctor.infoUpdate);
+api.patch('/doctor-info', extractJWT, doctor.infoUpdate);
 api.delete('/doctor-info', extractJWT, doctor.doctorDelete);
 api.post('/doctor/:id(\\d+)/reservations-registered', extractJWT, doctor.createReservationRegistered);
 api.post('/doctor/:id(\\d+)/reservations-nonregistered', doctor.createReservationNonregistered);
