@@ -54,7 +54,6 @@ export function ReservationCardLabels(props: { isPatient: boolean, reservation: 
 export function ReservationCard(props: { isPatient: boolean, reservation: IReservation }) {
 
     return (
-        // TODO change bgcolor
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
             <Grid item xs={12}>
                 <Divider/>

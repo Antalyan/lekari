@@ -38,22 +38,27 @@ function ReservationDatePanel() {
     const {handleSubmit} = formContext;
     const user = useRecoilValue(userAtom);
 
-    // TODO check
+    // TODO check used slots are no longer available
     const sendReservation = async (formData: IReservationBasic) => {
         const reservation: IDatResCreate = {
             comment: formData.reservationNote,
             date: formData.reservationDate,
             slotIndex: formData.reservationTime
         };
-        const url = `http://localhost4000/doctor/${id}/reservations-registered`
-        await axios.post(url, {
-            reservation,
+
+        // note: data has to be in data part, headers in config part
+        const url = `http://localhost:4000/doctor/${id}/reservations-registered`
+        await axios.post(url, reservation,{
             headers: {
                 'Authorization': `Bearer ${user.token}`
             }
         })
             .then(response => {
                 console.log(response);
+                alert("Rezervace vytvořena!")
+                if (response.data.status === "success") {
+                    window.location.reload();
+                }
             })
             .catch((error) => {
                 console.error(error);
@@ -91,7 +96,7 @@ function ReservationDatePanel() {
             reservationTimes = datSlots.map((slot, index) => {
                 return {
                     id: index,
-                    title: parseInt(slot).toString(),
+                    title: slot,
                 }
             })
         }
