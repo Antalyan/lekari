@@ -569,7 +569,7 @@ const doctorDelete = async (req: Request, res: Response) => {
   }
 };
 
-//TODO: nonvalid calculation of fromTime
+
 const createReservationNonregistered = async (req: Request, res: Response) => {
   try {
     const doc_id: number = parseInt(req.params.id);
@@ -599,11 +599,20 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
         });
     }
     let fromTime = new Date(data.date);
-    let addTime = reservationHours.interval * data.slotIndex;
-    fromTime.setHours(reservationHours.fromTime.getHours() + (Math.round(addTime / 60)));
-    fromTime.setMinutes(reservationHours.fromTime.getMinutes() + (addTime % 60));
+    // parseInt parameter 10 for remove leading zeros
+    let hours = parseInt(data.slotIndex.split(':')[0], 10)
+    let minutes = parseInt(data.slotIndex.split(':')[1], 10)
+    fromTime.setHours(hours);
+    fromTime.setMinutes(minutes);
     let toTime = new Date(fromTime);
     toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
+    if(fromTime < reservationHours.fromTime || toTime > reservationHours.toTime){
+      return res.status(500)
+        .send({
+          status: 'error',
+          message: 'Time is out of reservation hours.',
+        });
+    }
     let reservation = null;
 
     const checkFree = await prisma.reservation.findMany({
@@ -736,12 +745,20 @@ const createReservationRegistered = async (req: Request, res: Response) => {
         });
     }
     let fromTime = new Date(data.date);
-    let addTime = reservationHours.interval * data.slotIndex;
-    fromTime.setHours(reservationHours.fromTime.getHours() + (Math.round(addTime / 60)));
-    fromTime.setMinutes(reservationHours.fromTime.getMinutes() + (addTime % 60));
+    // parseInt parameter 10 for remove leading zeros
+    let hours = parseInt(data.slotIndex.split(':')[0], 10)
+    let minutes = parseInt(data.slotIndex.split(':')[1], 10)
+    fromTime.setHours(hours);
+    fromTime.setMinutes(minutes);
     let toTime = new Date(fromTime);
     toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
-
+    if(fromTime < reservationHours.fromTime || toTime > reservationHours.toTime){
+      return res.status(500)
+        .send({
+          status: 'error',
+          message: 'Time is out of reservation hours.',
+        });
+    }
     const checkFree = await prisma.reservation.findMany({
       where: {
         doctorId: doc_id,
@@ -776,7 +793,7 @@ const createReservationRegistered = async (req: Request, res: Response) => {
         return res.status(201)
           .send({
             status: 'success',
-            data: { id: reservation.id },
+            data: { id: fromTime },
             message: 'Reservation saved.'
           });
       } else {
