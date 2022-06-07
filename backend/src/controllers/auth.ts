@@ -3,6 +3,7 @@ import signJWT from '../functions/signJWT';
 import { ValidationError } from 'yup';
 import prisma from '../client';
 import { loginSchema, personRegistrationSchema } from './schemas/personSchema';
+import getPerson from '../models/personModel';
 
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -91,16 +92,8 @@ const register = async (req: Request, res: Response) => {
 const login = async (req: Request, res: Response) => {
   try {
     const data = await loginSchema.validate(req.body);
-    const person = await prisma.person.findFirst({
-      where: {
-        email: data.email,
-        deleted: false,
-      },
-      include: {
-        doctor: true,
-      },
-    });
 
+    const person = await getPerson({ email: data.email });
     if (!person) {
       return res.status(400)
         .json({
@@ -109,6 +102,7 @@ const login = async (req: Request, res: Response) => {
           message: 'Bad credentials',
         });
     }
+
     const validPassword = await bcryptjs.compare(data.password, person.password);
     if (!validPassword) {
       return res.status(400)
