@@ -2,7 +2,7 @@ import {FormContainer, PasswordElement} from "react-hook-form-mui";
 import {Box, Button, Grid, IconButton, Stack, styled, Typography} from "@mui/material";
 import {useFormContext} from "react-hook-form";
 import * as React from "react";
-import {IEditable, IFormPerson, IReservationBasic} from "../../utils/Interfaces";
+import {IEditable, IFormPerson, IFormRes, IReservationBasic} from "../../utils/Interfaces";
 import {
     COUNTRIES,
     findCountryIndex,
@@ -20,7 +20,7 @@ import {Footer} from "../Footer";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {DeleteProfileDialog} from "./DeleteProfileDialog";
-import {NavigateFunction, useLocation, useNavigate} from "react-router-dom";
+import {NavigateFunction, useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import {IDatDoctorProfile, IDatPatientProfile, IDatTmpRes} from "../../utils/DatabaseInterfaces";
 import useSWR from "swr";
@@ -93,6 +93,21 @@ async function updateProfile(url: string, subject: any, navigate: NavigateFuncti
         });
 }
 
+async function completeReservation(url: string, subject: any, navigate: NavigateFunction, id?: string) {
+    await axios.post(url, subject)
+        .then(response => {
+            console.log(response);
+            if (response.data.status === "success") {
+                alert("Rezervace vytvořena!");
+                navigate("/doctor/" + id);
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+            alert("Rezervaci nelze vytvořit!\n\n" + error.response.data.message)
+        });
+}
+
 export function UserDataFormPage({type, isEdit}: IForm) {
     const getDefaultValues = () => {
         // TODO: check default attributes when API edit finished
@@ -130,6 +145,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
     }
 
     const location = useLocation();
+    const {id} = useParams();
 
     const {data, error} = useSWR(isEdit ? ['http://localhost:4000/personal-info', user.token] : null, fetcherWithToken);
     let defaultValues = {};
@@ -167,7 +183,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
     }
 
         // TODO: check required and non-required (undefined)
-        const storeReservation = async (formData: IFormPerson) => {
+        const storeReservation = async (formData: IFormRes) => {
             const res: IDatTmpRes = {
                 firstname: formData.name,
                 surname: formData.surname,
@@ -176,21 +192,21 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                 street: formData.street,
                 buildingNumber: formData.streetNumber,
                 city: formData.city,
-                postalCode: parseInt(formData.postalCode),
-                country: findCountryName(formData.country),
+                postalCode: formData.postalCode === undefined ? undefined : parseInt(formData.postalCode),
+                country: formData.country === undefined ? undefined : findCountryName(formData.country),
                 email: formData.email,
                 phonePrefix: findPhoneCodeName(formData.phoneCode).toString(),
                 phone: parseInt(formData.phone),
                 insuranceNumber: formData.insuranceNumber === undefined ? undefined : parseInt(formData.insuranceNumber),
                 /* @ts-ignore */
-                comment: location.state.formData.reservationNote,
+                comment: location.state.reservationNote,
                 /* @ts-ignore */
-                date: location.state.formData.reservationDate,
+                date: location.state.reservationDate,
                 /* @ts-ignore */
-                slotIndex: location.state.formData.reservationTime
+                slotIndex: location.state.reservationTime
             }
             // TODO: finish update reservation - send to db
-            // await updateProfile('http://localhost:4000/personal-info', res);
+            await completeReservation(`http://localhost:4000/doctor/${id}/reservations-nonregistered`, res, navigate, id);
     };
 
     // TODO: check storing address doctor attributes when API impl finished
@@ -240,7 +256,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                 break;
             default:
                 // TODO: change to reservation based on logged information
-                storePatient(formData, isEdit);
+                storeReservation(formData);
                 break;
         }
     }
@@ -352,13 +368,13 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                             </Grid>
                             <Grid item xs={12}>
                                 <FormSelect isEdit={isEdit} name={'phoneCode'} label={'Předvolba'}
-                                            required={type != DataFormType.Reservation} fullWidth
+                                            required fullWidth
                                             options={phoneOptions}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <FormTextField isEdit={isEdit} name={'phone'} label={'Telefon'}
-                                               required={type != DataFormType.Reservation} fullWidth
+                                               required fullWidth
                                                type={"number"}/>
                             </Grid>
                             <Grid item xs={12}>

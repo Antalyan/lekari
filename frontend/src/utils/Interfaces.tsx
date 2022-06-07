@@ -41,6 +41,23 @@ export interface IFormPerson {
     doctorCountry?: number,
 }
 
+export interface IFormRes {
+    id?: number,
+    name: string,
+    surname: string,
+    degree?: string,
+    birthdate?: string,
+    street?: string,
+    streetNumber?: string,
+    city?: string,
+    postalCode?: string,
+    country?: number,
+    email?: string,
+    phoneCode: number,
+    phone: string,
+    insuranceNumber?: string,
+}
+
 export interface IEditable {
     editable: boolean
 }
@@ -116,7 +133,7 @@ export interface IDoctorDetailInfo {
 }
 
 export interface ISelectItem {
-    id: number,
+    id: string,
     title?: string
 }
 

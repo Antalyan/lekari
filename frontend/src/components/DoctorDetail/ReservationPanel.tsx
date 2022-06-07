@@ -72,7 +72,11 @@ function ReservationDatePanel() {
             sendReservation(formData);
         } else {
             navigate(`/doctor/${id}/make-reservation`, {
-                state: formData
+                state: {
+                    reservationDate: formData.reservationDate,
+                    reservationTime: formData.reservationTime,
+                    reservationNote: formData.reservationNote
+                }
             })
             // TODO: pass <formData>: https://reactnavigation.org/docs/params/
         }
@@ -97,7 +101,7 @@ function ReservationDatePanel() {
             const datSlots: string[] = data.data.slots;
             reservationTimes = datSlots.map((slot, index) => {
                 return {
-                    id: index,
+                    id: slot,
                     title: slot,
                 }
             })
