@@ -61,6 +61,26 @@ export interface IDatDoctorProfile {
     workCountry: string,
 }
 
+export interface IDatTmpRes {
+    firstname: string,
+    surname: string,
+    degree?: string,
+    birthdate?: string,
+    email?: string,
+    phonePrefix?: string,
+    phone?: number,
+    insuranceNumber?: number,
+    country?: string,
+    city?: string,
+    postalCode?: number,
+    street?: string,
+    buildingNumber?: string,
+    date: string,
+    slotIndex: number,
+    comment?: string
+}
+
+
 export interface IDatPersonReservation {
     id: number,
     doctorDegree?: string,

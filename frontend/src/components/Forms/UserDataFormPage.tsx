@@ -2,7 +2,7 @@ import {FormContainer, PasswordElement} from "react-hook-form-mui";
 import {Box, Button, Grid, IconButton, Stack, styled, Typography} from "@mui/material";
 import {useFormContext} from "react-hook-form";
 import * as React from "react";
-import {IEditable, IFormPerson} from "../../utils/Interfaces";
+import {IEditable, IFormPerson, IReservationBasic} from "../../utils/Interfaces";
 import {
     COUNTRIES,
     findCountryIndex,
@@ -20,9 +20,9 @@ import {Footer} from "../Footer";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {DeleteProfileDialog} from "./DeleteProfileDialog";
-import {NavigateFunction, useNavigate} from "react-router-dom";
+import {NavigateFunction, useLocation, useNavigate} from "react-router-dom";
 import axios from 'axios';
-import {IDatDoctorProfile, IDatPatientProfile} from "../../utils/DatabaseInterfaces";
+import {IDatDoctorProfile, IDatPatientProfile, IDatTmpRes} from "../../utils/DatabaseInterfaces";
 import useSWR from "swr";
 import {fetcherWithToken} from "../../utils/fetcher";
 import {findSpecializationIndex, findSpecializationName, SPECIALIZATIONS} from "../../data/Specializations";
@@ -129,6 +129,8 @@ export function UserDataFormPage({type, isEdit}: IForm) {
         navigate("/")
     }
 
+    const location = useLocation();
+
     const {data, error} = useSWR(isEdit ? ['http://localhost:4000/personal-info', user.token] : null, fetcherWithToken);
     let defaultValues = {};
     if (isEdit) {
@@ -162,7 +164,33 @@ export function UserDataFormPage({type, isEdit}: IForm) {
         } else {
             await completeRegistration('http://localhost:4000/register', patient, navigate);
         }
+    }
 
+        // TODO: check required and non-required (undefined)
+        const storeReservation = async (formData: IFormPerson) => {
+            const res: IDatTmpRes = {
+                firstname: formData.name,
+                surname: formData.surname,
+                degree: formData.degree,
+                birthdate: formData.birthdate,
+                street: formData.street,
+                buildingNumber: formData.streetNumber,
+                city: formData.city,
+                postalCode: parseInt(formData.postalCode),
+                country: findCountryName(formData.country),
+                email: formData.email,
+                phonePrefix: findPhoneCodeName(formData.phoneCode).toString(),
+                phone: parseInt(formData.phone),
+                insuranceNumber: formData.insuranceNumber === undefined ? undefined : parseInt(formData.insuranceNumber),
+                /* @ts-ignore */
+                comment: location.state.formData.reservationNote,
+                /* @ts-ignore */
+                date: location.state.formData.reservationDate,
+                /* @ts-ignore */
+                slotIndex: location.state.formData.reservationTime
+            }
+            // TODO: finish update reservation - send to db
+            // await updateProfile('http://localhost:4000/personal-info', res);
     };
 
     // TODO: check storing address doctor attributes when API impl finished

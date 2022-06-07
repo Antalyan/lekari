@@ -71,7 +71,9 @@ function ReservationDatePanel() {
         if (user.token) {
             sendReservation(formData);
         } else {
-            navigate(`/doctor/${id}/make-reservation`)
+            navigate(`/doctor/${id}/make-reservation`, {
+                state: formData
+            })
             // TODO: pass <formData>: https://reactnavigation.org/docs/params/
         }
     })
