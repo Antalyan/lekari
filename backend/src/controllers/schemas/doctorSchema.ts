@@ -1,7 +1,7 @@
-import { personRegistrationSchema } from './personSchema';
-import { number, string } from 'yup';
+import { personRegistrationSchema, personUpdateSchema } from './personSchema';
+import { number, string, object } from 'yup';
 
-export const doctorRegistrationSchema = personRegistrationSchema.shape({
+export const doctorSchema = object({
   specialization: string()
     .required(),
   actuality: string(),
@@ -14,6 +14,10 @@ export const doctorRegistrationSchema = personRegistrationSchema.shape({
   workStreet: string(),
   workBuildingNumber: string()
     .required(),
-});
+})
+
+export const doctorRegistrationSchema = personRegistrationSchema.shape(doctorSchema.fields);
+
+export const doctorUpdateSchema = personUpdateSchema.shape(doctorSchema.fields);
 
 export default doctorRegistrationSchema;

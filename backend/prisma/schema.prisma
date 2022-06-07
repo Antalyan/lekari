@@ -113,6 +113,7 @@ model ReservationHours {
   fromTime DateTime
   toTime   DateTime
   fromDate DateTime @default(now())
+  toDate DateTime
   interval Int      @default(20)
 
   @@unique([doctorId, day, fromDate])
