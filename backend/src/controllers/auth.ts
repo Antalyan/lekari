@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
-import signJWT from '../functions/signJWT';
 import { ValidationError } from 'yup';
 import prisma from '../client';
 import { loginSchema, personRegistrationSchema } from './schemas/personSchema';
 import getPerson from '../models/personModel';
 
+const dotenv = require('dotenv');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
+dotenv.config();
 
 const validateToken = (req: Request, res: Response) => {
   return res.status(200)
@@ -108,27 +110,22 @@ const login = async (req: Request, res: Response) => {
     const validPassword = await bcryptjs.compare(data.password, person.password);
     if (!validPassword) return loginError(res);
 
-    signJWT(person, (_error, token) => {
-      if (_error) {
-        return res.status(401)
-          .json({
-            message: 'Unable to Sign JWT',
-            error: _error
-          });
-      } else if (token) {
-        return res.status(200)
-          .json({
-            message: 'Auth Successful',
-            user: {
-              id: person.id,
-              firstName: person.firstname,
-              surname: person.surname,
-              token: token,
-              isDoctor: (person.doctor !== null && !person.doctor.deleted)
-            }
-          });
-      }
-    });
+    const accessToken = jwt.sign({
+      id: person.id,
+      email: person.email,
+    }, process.env.ACCESS_TOKEN_SECRET);
+
+    return res.status(200)
+      .json({
+        message: 'Auth Successful',
+        user: {
+          id: person.id,
+          firstName: person.firstname,
+          surname: person.surname,
+          token: accessToken,
+          isDoctor: (person.doctor !== null && !person.doctor.deleted)
+        }
+      });
 
   } catch (e) {
     if (e instanceof ValidationError) {
