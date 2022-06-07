@@ -24,7 +24,6 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
       id: user.id
     });
     if (!person) return validateTokenError(res, 401, 'Forbidden');
-    console.log(person);
     res.locals.jwt = person;
     next();
   });
