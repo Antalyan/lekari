@@ -1,5 +1,6 @@
 import config from '../config/config';
 import { NextFunction, Request, Response } from 'express';
+import getPerson from '../models/personModel';
 
 const jwt = require('jsonwebtoken');
 
@@ -18,7 +19,13 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
 
   jwt.verify(token, config.server.token.secret, (err: any, user: any) => {
     if (err) return validateTokenError(res, 403, 'Forbidden');
-    res.locals.jwt = user;
+    const person = getPerson({
+      email: user.email,
+      id: user.id
+    });
+    if (!person) return validateTokenError(res, 401, 'Forbidden');
+    console.log(person);
+    res.locals.jwt = person;
     next();
   });
 };
