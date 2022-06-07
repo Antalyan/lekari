@@ -3,7 +3,7 @@ import { number, object, string } from 'yup';
 const registrationSchema = object({
   date: string()
     .required(),
-  slotIndex: string()
+  time: string()
     .required(),
   comment: string()
 });
