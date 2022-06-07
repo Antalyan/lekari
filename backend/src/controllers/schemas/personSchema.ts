@@ -42,4 +42,19 @@ export const loginSchema = object({
     .required(),
 });
 
+/*
+TODO: Finnish validation in this style.
+.when(['newPassword1', 'newPassword2'], {
+    is: (newPassword1, newPassword2) => newPassword1 && newPassword2,
+    then: string().required('Required'),
+    otherwise: string()
+  })
+*/
+const updatePasswordSchema = object({
+  oldPassword: string(),
+  newPassword1: string(),
+  newPassword2: string(),
+});
+
+export const personUpdateSchema = personSchema.shape(updatePasswordSchema.fields)
 export const personRegistrationSchema = personSchema.shape(passwordSchema.fields);

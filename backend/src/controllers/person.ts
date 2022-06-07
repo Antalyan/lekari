@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { ValidationError } from 'yup';
 import prisma from '../client';
-import { personRegistrationSchema } from './schemas/personSchema';
+import { personRegistrationSchema, personUpdateSchema } from './schemas/personSchema';
+import registrationSchema from './schemas/reservationSchema';
+import getPerson from '../models/personModel';
+
+const bcryptjs = require('bcryptjs');
 
 const personList = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -57,18 +61,84 @@ const personDetail = async (req: Request, res: Response) => {
   });
 };
 
+const passwordError = (res: Response, message: String) => {
+  return res.status(400)
+    .json({
+      status: 'error',
+      data: {},
+      message: message,
+    });
+};
+
 const personUpdate = async (req: Request, res: Response) => {
   try {
-    const data = await personRegistrationSchema.validate(req.body);
-    const person = await prisma.person.updateMany({
-      where: {
-        email: res.locals.jwt.username,
-        deleted: false,
-      },
-      data: data
-    });
+    const data = await personUpdateSchema.validate(req.body);
+    let updatedPerson = null
 
-    if (!person) {
+    if(data.oldPassword && data.newPassword1 && data.newPassword2){
+      const person = await getPerson({ email: res.locals.jwt.username });
+      if (!person) return passwordError(res, "Can't find person.");
+
+      const validPassword = await bcryptjs.compare(data.oldPassword, person.password);
+      if (!validPassword) return passwordError(res, "Old password is not valid.");
+
+      if (data.newPassword1 !== data.newPassword2) return passwordError(res, "Passwords don't match.");
+
+      const hash = await bcryptjs.hash(data.newPassword1, 10);
+
+      updatedPerson = await prisma.person.update({
+        where: {
+          email: res.locals.jwt.username,
+        },
+        data: {
+          firstname: data.firstname,
+          surname: data.surname,
+          degree: data.degree || null,
+          birthdate: data.birthdate,
+          email: data.email,
+          phonePrefix: data.phonePrefix,
+          phone: data.phone,
+          insuranceNumber: data.insuranceNumber,
+          address:{
+            update: {
+              country: data.country,
+              city: data.city,
+              postalCode: data.postalCode,
+              street: data.street || null,
+              buildingNumber: data.buildingNumber,
+            }
+          },
+          password: hash
+        }
+      });
+    } else{
+      updatedPerson = await prisma.person.update({
+        where: {
+          email: res.locals.jwt.username,
+        },
+        data: {
+          firstname: data.firstname,
+          surname: data.surname,
+          degree: data.degree || null,
+          birthdate: data.birthdate,
+          email: data.email,
+          phonePrefix: data.phonePrefix,
+          phone: data.phone,
+          insuranceNumber: data.insuranceNumber,
+          address:{
+            update: {
+              country: data.country,
+              city: data.city,
+              postalCode: data.postalCode,
+              street: data.street || null,
+              buildingNumber: data.buildingNumber,
+            }
+          }
+        }
+      });
+    }
+
+    if (!updatedPerson) {
       return res.status(404)
         .send({
           status: 'error',
@@ -79,7 +149,7 @@ const personUpdate = async (req: Request, res: Response) => {
 
     return res.send({
       status: 'sucess',
-      data: person
+      data: updatedPerson
     });
   } catch (e) {
     if (e instanceof ValidationError) {
