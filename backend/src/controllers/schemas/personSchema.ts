@@ -52,8 +52,8 @@ TODO: Finnish validation in this style.
 */
 const updatePasswordSchema = object({
   oldPassword: string(),
-  newPassword1: string(),
-  newPassword2: string(),
+  password1: string(),
+  password2: string(),
 });
 
 export const personUpdateSchema = personSchema.shape(updatePasswordSchema.fields)

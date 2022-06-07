@@ -21,9 +21,10 @@ const personList = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const personDetail = async (req: Request, res: Response) => {
-  const person = await prisma.person.findMany({
+  const person = await prisma.person.findFirst({
     where: {
       email: res.locals.jwt.username,
+      deleted: false,
     },
     select: {
       firstname: true,
@@ -46,7 +47,7 @@ const personDetail = async (req: Request, res: Response) => {
     }
   });
 
-  if (!person || person[0].deleted) {
+  if (!person || person.deleted) {
     return res.status(404)
       .send({
         status: 'error',
@@ -57,7 +58,20 @@ const personDetail = async (req: Request, res: Response) => {
 
   return res.send({
     status: 'sucess',
-    data: person[0],
+    data: {
+      firstname: person.firstname,
+      surname: person.surname,
+      degree: person.degree || null,
+      email: person.email,
+      phone: person.phone,
+      phonePrefix: person.phonePrefix,
+      birthdate: person.birthdate,
+      insuranceNumber: person.insuranceNumber || null,
+      country: person.address.country,
+      city: person.address.city,
+      postalCode: person.address.postalCode,
+      street: person.address.street
+    }
   });
 };
 
@@ -75,16 +89,16 @@ const personUpdate = async (req: Request, res: Response) => {
     const data = await personUpdateSchema.validate(req.body);
     let updatedPerson = null
 
-    if(data.oldPassword && data.newPassword1 && data.newPassword2){
+    if(data.oldPassword && data.password1 && data.password2){
       const person = await getPerson({ email: res.locals.jwt.username });
       if (!person) return passwordError(res, "Can't find person.");
 
       const validPassword = await bcryptjs.compare(data.oldPassword, person.password);
       if (!validPassword) return passwordError(res, "Old password is not valid.");
 
-      if (data.newPassword1 !== data.newPassword2) return passwordError(res, "Passwords don't match.");
+      if (data.password1 !== data.password2) return passwordError(res, "Passwords don't match.");
 
-      const hash = await bcryptjs.hash(data.newPassword1, 10);
+      const hash = await bcryptjs.hash(data.password1, 10);
 
       updatedPerson = await prisma.person.update({
         where: {
@@ -98,7 +112,7 @@ const personUpdate = async (req: Request, res: Response) => {
           email: data.email,
           phonePrefix: data.phonePrefix,
           phone: data.phone,
-          insuranceNumber: data.insuranceNumber,
+          insuranceNumber: data.insuranceNumber || null,
           address:{
             update: {
               country: data.country,
@@ -124,7 +138,7 @@ const personUpdate = async (req: Request, res: Response) => {
           email: data.email,
           phonePrefix: data.phonePrefix,
           phone: data.phone,
-          insuranceNumber: data.insuranceNumber,
+          insuranceNumber: data.insuranceNumber || null,
           address:{
             update: {
               country: data.country,
@@ -149,7 +163,7 @@ const personUpdate = async (req: Request, res: Response) => {
 
     return res.send({
       status: 'sucess',
-      data: updatedPerson
+      data: updatedPerson.id
     });
   } catch (e) {
     if (e instanceof ValidationError) {
