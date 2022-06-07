@@ -478,7 +478,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                             >{"Zrušit změny"}</Button>
                                         </>
                                         : <Button variant='contained' type={'submit'} color={'primary'}
-                                        >{"Registrovat se"}</Button>}
+                                        >{type == DataFormType.Reservation ? "Vytvořit rezervaci" : "Registrovat se"}</Button>}
                                 </Stack>
                             </Grid>
                         </Grid>

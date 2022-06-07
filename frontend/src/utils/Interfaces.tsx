@@ -139,6 +139,6 @@ export interface ISelectItem {
 
 export interface IReservationBasic {
     reservationDate: string,
-    reservationTime: number,
+    reservationTime: string,
     reservationNote?: string
 }

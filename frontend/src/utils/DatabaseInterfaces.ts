@@ -76,7 +76,7 @@ export interface IDatTmpRes {
     street?: string,
     buildingNumber?: string,
     date: string,
-    slotIndex: number,
+    slotIndex: string,
     comment?: string
 }
 
@@ -151,7 +151,7 @@ export interface IDatDoctorInfo {
 
 export interface IDatResCreate {
     date: string,
-    slotIndex: number,
+    slotIndex: string,
     comment?: string
 }
 
