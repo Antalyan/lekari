@@ -103,7 +103,7 @@ const login = async (req: Request, res: Response) => {
     const accessToken = jwt.sign({
       id: person.id,
       email: person.email,
-    }, config.server.token.secret);
+    }, config.server.token.secret, { expiresIn: config.server.token.expiration });
 
     return res.status(200)
       .json({
