@@ -1,6 +1,7 @@
 import * as React from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import {IReservation} from "../../utils/Interfaces";
+import axios from "axios";
 
 export function DeleteReservationDialog(props: { isPatient: boolean, reservation: IReservation }) {
     const [open, setOpen] = React.useState(false);
@@ -10,9 +11,25 @@ export function DeleteReservationDialog(props: { isPatient: boolean, reservation
     const handleClose = () => {
         setOpen(false);
     };
-    const handleDeleteReservation = () => {
+
+    const handleDeleteReservation = async () => {
         // TODO: delete reservation from database AND update GUI (perhaps automatically using SWR?)
-        setOpen(false);
+        // setOpen(false);
+        // const url = 'http://localhost:4000/' + (user.isDoctor == true ? 'doctor-info' : 'personal-info');
+        // console.log(url);
+        // await axios.delete(url, {
+        //     headers: {
+        //         'Authorization': `Bearer ${user.token}`
+        //     }})
+        //     .then(response => {
+        //         console.log("Deletion succeeded");
+        //         setUser({});
+        //         navigate("/");
+        //     })
+        //     .catch(error => {
+        //         console.error(error);
+        //         alert("Mazání profilu selhalo!\n\n" + error.response.data.message)
+        //     });
     };
 
     return <>
