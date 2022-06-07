@@ -89,29 +89,24 @@ const register = async (req: Request, res: Response) => {
   }
 };
 
+const loginError = (res: Response) => {
+  return res.status(400)
+    .json({
+      status: 'error',
+      data: {},
+      message: 'Bad credentials',
+    });
+};
+
 const login = async (req: Request, res: Response) => {
   try {
     const data = await loginSchema.validate(req.body);
 
     const person = await getPerson({ email: data.email });
-    if (!person) {
-      return res.status(400)
-        .json({
-          status: 'error',
-          data: {},
-          message: 'Bad credentials',
-        });
-    }
+    if (!person) return loginError(res);
 
     const validPassword = await bcryptjs.compare(data.password, person.password);
-    if (!validPassword) {
-      return res.status(400)
-        .json({
-          status: 'error',
-          data: {},
-          message: 'Bad credentials',
-        });
-    }
+    if (!validPassword) return loginError(res);
 
     signJWT(person, (_error, token) => {
       if (_error) {
