@@ -3,6 +3,7 @@ import person from './controllers/person';
 import doctor from './controllers/doctor';
 
 import validateToken from './middleware/extractJWT';
+import { Request, Response } from 'express';
 
 const cors = require('cors');
 const express = require('express');
@@ -42,7 +43,9 @@ api.patch('/personal-info', validateToken, person.personUpdate);
 api.get('/person-reservations', validateToken, person.personReservations);
 api.delete('/personal-info', validateToken, person.personDelete);
 
-api.get('/validate', validateToken, auth.validateToken);       // Undocumented
+api.get('/validate', validateToken, (req: Request, res: Response) => {
+  return res.sendStatus(200);
+});       // Undocumented
 api.post('/register', auth.register);
 api.post('/login', auth.login);
 api.put('/logout', auth.logout);

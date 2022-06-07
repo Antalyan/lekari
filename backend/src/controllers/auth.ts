@@ -8,14 +8,6 @@ import config from '../config/config';
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const validateToken = (req: Request, res: Response) => {
-  return res.status(200)
-    .json({
-      status: 'success',
-      message: 'Token(s) validated'
-    });
-};
-
 const register = async (req: Request, res: Response) => {
   let {
     password1,
@@ -158,7 +150,6 @@ const logout = async (req: Request, res: Response) => {
 };
 
 export default {
-  validateToken,
   register,
   login,
   logout
