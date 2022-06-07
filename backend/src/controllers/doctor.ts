@@ -4,6 +4,7 @@ import { number, object, string, ValidationError } from 'yup';
 import doctorRegistrationSchema from './schemas/doctorSchema';
 import personTmpSchema from './schemas/personTmpSchema';
 import reservationSchema from './schemas/reservationSchema';
+import reservationHoursSchema from './schemas/reservationHours';
 
 const bcryptjs = require('bcryptjs');
 
@@ -804,6 +805,23 @@ const createReservationRegistered = async (req: Request, res: Response) => {
     }
   }
 };
+
+/*const createReservationHours = async (req: Request, res: Response) => {
+  const data = await reservationHoursSchema.validate(req.body);
+  const intervals = [10, 15, 20, 30, 60]
+  let reservationHours = []
+  const baseTime = new Date()
+  if(data.timeFrom0 && data.timeTo0){
+
+    reservationHours.push({
+      day: 0,
+      fromTime: new Date(baseTime).setHours(baseTime.getHours() + (intervals[data.interval] * data.timeFrom0))
+      toTime: new Date(baseTime).setHours(baseTime.getHours() + (intervals[data.interval] * data.timeFrom0))
+      fromDate:
+      interval:
+    })
+  }
+}*/
 
 export default {
   locationList,
