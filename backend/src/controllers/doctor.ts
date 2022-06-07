@@ -321,22 +321,18 @@ const doctorReservations = async (req: Request, res: Response) => {
 const doctorSlots = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   const date = new Date(req.params.date);
-  const tomorrow = new Date();
-  tomorrow.setDate(date.getDate() + 1);
-  const weekday = new Array(7);
-  weekday[0] = 'Monday';
-  weekday[1] = 'Tuesday';
-  weekday[2] = 'Wednesday';
-  weekday[3] = 'Thursday';
-  weekday[4] = 'Friday';
-  weekday[5] = 'Saturday';
-  weekday[6] = 'Sunday';
-  const day = weekday[date.getDay()];
+  const nextDay = new Date();
+  nextDay.setDate(date.getDate() + 1);
+  const day = date.getDay();
+  let today = new Date()
 
-  const openingHours = await prisma.reservationHours.findMany({
+  const reservationHours = await prisma.reservationHours.findMany({
     where: {
       doctorId: id,
       day: day,
+      fromDate: {
+        lte: today
+      }
     },
     select: {
       fromTime: true,
@@ -351,7 +347,7 @@ const doctorSlots = async (req: Request, res: Response) => {
       doctorId: id,
       fromTime: {
         gte: date,
-        lt: tomorrow,
+        lt: nextDay,
       }
     },
     select: {
@@ -359,32 +355,33 @@ const doctorSlots = async (req: Request, res: Response) => {
     }
   });
 
-  if (openingHours.length === 0) {
+  if (reservationHours.length === 0) {
     return res.status(404)
       .send({
         status: 'error',
         data: {},
-        message: 'Opening hours was not found'
+        message: 'Reservation hours were not found'
       });
   }
   let dateFrom = new Date(date);
-  dateFrom.setTime(openingHours[0].fromTime.getTime());
+  dateFrom.setHours(reservationHours[0].fromTime.getHours());
+  dateFrom.setMinutes(reservationHours[0].fromTime.getMinutes());
   let allTimeSlots = [];
-  let time = openingHours[0].toTime.getTime() - openingHours[0].fromTime.getTime();
+  let time = reservationHours[0].toTime.getTime() - reservationHours[0].fromTime.getTime();
   let lastTime = new Date(dateFrom);
-  for (let i = 0; i < (((time / 60) / openingHours[0].interval) / 1000); i++) {
-    allTimeSlots.push(new Date(lastTime));
-    lastTime.setMinutes(lastTime.getMinutes() + openingHours[0].interval);
+  for (let i = 0; i < (((time / 60) / reservationHours[0].interval) / 1000); i++) {
+    allTimeSlots.push(new Date(lastTime).toLocaleTimeString());
+    lastTime.setMinutes(lastTime.getMinutes() + reservationHours[0].interval);
   }
 
-  const reservationsTimes = reservations.map((item: { fromTime: any; }) => item.fromTime.toLocaleString());
+  const reservationsTimes = reservations.map((item: { fromTime: any; }) => item.fromTime.toLocaleTimeString());
   let timeSlots = allTimeSlots.filter(function (el) {
-    return !reservationsTimes.includes(el.toLocaleString());
+    return !reservationsTimes.includes(el);
   });
 
   return res.send({
     status: 'sucess',
-    data: timeSlots
+    data: {slots: timeSlots}
   });
 };
 
