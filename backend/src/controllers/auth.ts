@@ -3,12 +3,10 @@ import { ValidationError } from 'yup';
 import prisma from '../client';
 import { loginSchema, personRegistrationSchema } from './schemas/personSchema';
 import getPerson from '../models/personModel';
+import config from '../config/config';
 
-const dotenv = require('dotenv');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
-dotenv.config();
 
 const validateToken = (req: Request, res: Response) => {
   return res.status(200)
@@ -113,7 +111,7 @@ const login = async (req: Request, res: Response) => {
     const accessToken = jwt.sign({
       id: person.id,
       email: person.email,
-    }, process.env.ACCESS_TOKEN_SECRET);
+    }, config.server.token.secret);
 
     return res.status(200)
       .json({
