@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import signJWT from '../functions/signJWT';
 import { ValidationError } from 'yup';
 import prisma from '../client';
-import { personRegistrationSchema } from './schemas/personSchema';
+import { loginSchema, personRegistrationSchema } from './schemas/personSchema';
 
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -89,60 +89,69 @@ const register = async (req: Request, res: Response) => {
 };
 
 const login = async (req: Request, res: Response) => {
-  let {
-    email,
-    password
-  } = req.body;
+  try {
+    const data = await loginSchema.validate(req.body);
+    const person = await prisma.person.findFirst({
+      where: {
+        email: data.email,
+        deleted: false,
+      },
+      include: {
+        doctor: true,
+      },
+    });
 
-  const person = await prisma.person.findFirst({
-    where: {
-      email: email,
-      deleted: false,
-    },
-    include: {
-      doctor: true,
-    },
-  });
-
-  if (!person) {
-    return res.status(400)
-      .json({
-        status: 'error',
-        data: {},
-        message: 'Bad credentials',
-      });
-  }
-  const validPassword = await bcryptjs.compare(password, person.password);
-  if (!validPassword) {
-    return res.status(400)
-      .json({
-        status: 'error',
-        data: {},
-        message: 'Bad credentials',
-      });
-  }
-
-  signJWT(person, (_error, token) => {
-    if (_error) {
-      return res.status(401)
+    if (!person) {
+      return res.status(400)
         .json({
-          message: 'Unable to Sign JWT',
-          error: _error
-        });
-    } else if (token) {
-      return res.status(200)
-        .json({
-          message: 'Auth Successful',
-          user: {
-            id: person.id,
-            firstName: person.firstname,
-            surname: person.surname,
-            token: token,
-            isDoctor: (person.doctor !== null && !person.doctor.deleted)
-          }
+          status: 'error',
+          data: {},
+          message: 'Bad credentials',
         });
     }
-  });
+    const validPassword = await bcryptjs.compare(data.password, person.password);
+    if (!validPassword) {
+      return res.status(400)
+        .json({
+          status: 'error',
+          data: {},
+          message: 'Bad credentials',
+        });
+    }
+
+    signJWT(person, (_error, token) => {
+      if (_error) {
+        return res.status(401)
+          .json({
+            message: 'Unable to Sign JWT',
+            error: _error
+          });
+      } else if (token) {
+        return res.status(200)
+          .json({
+            message: 'Auth Successful',
+            user: {
+              id: person.id,
+              firstName: person.firstname,
+              surname: person.surname,
+              token: token,
+              isDoctor: (person.doctor !== null && !person.doctor.deleted)
+            }
+          });
+      }
+    });
+
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      return res.status(400)
+        .send({
+          status: 'error',
+          data: e.errors,
+          message: e.message
+        });
+    }
+  }
+
 };
 
 const logout = async (req: Request, res: Response) => {

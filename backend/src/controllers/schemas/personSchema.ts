@@ -34,4 +34,12 @@ const passwordSchema = object({
     .required(),
 });
 
+export const loginSchema = object({
+  email: string()
+    .email()
+    .required(),
+  password: string()
+    .required(),
+});
+
 export const personRegistrationSchema = personSchema.shape(passwordSchema.fields);
