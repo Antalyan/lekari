@@ -4,7 +4,6 @@ import Header from "../Header";
 import Box from "@mui/material/Box";
 import {DoctorCard} from "./DoctorCard";
 import {Footer} from "../Footer";
-import {DOCTORS} from "../../data/MockData";
 import {useNavigate, useParams} from 'react-router-dom';
 import {Rating, Tab, Tabs} from "@mui/material";
 import {InfoPanel} from "./InfoPanel";
@@ -80,8 +79,7 @@ export function DoctorDetailPage() {
         id: parseInt(id as string),
         location: getAddress(datDoctor),
         name: (datDoctor.degree ? datDoctor.degree + " " : "") + datDoctor.firstname + " " + datDoctor.surname,
-        // TODO: compute rating or better retrieve from db
-        rating: 0,
+        rating: datDoctor.rateAverage,
         specialization: datDoctor.specialization
     }
     const info: IDoctorDetailInfo = {

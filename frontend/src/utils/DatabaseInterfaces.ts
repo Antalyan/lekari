@@ -116,7 +116,8 @@ export interface IDatDoctorDetail {
     workBuildingNumber: string,
     profilePicture?: string
     openingHours: string[],
-    reviews: IDatReview[]
+    reviews: IDatReview[],
+    rateAverage: number
 }
 
 export interface IDatDoctorInfo {
@@ -128,5 +129,10 @@ export interface IDatDoctorInfo {
     openingHours: (string | undefined)[],
 }
 
+export interface IDatResCreate {
+    date: string,
+    slotIndex: number,
+    comment?: string
+}
 
 

@@ -37,7 +37,6 @@ export function MainPage() {
             }
             tmpurl = tmpurl + "location=" + dataFilter.location
         }
-        // TODO: fix surname
         if (dataFilter.search != null) {
             if (tmpurl.includes("=")) {
                 tmpurl = tmpurl + "&"

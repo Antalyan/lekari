@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Grid from "@mui/material/Grid";
 import {Divider, FormControlLabel, FormGroup, Stack, Switch} from "@mui/material";
 import Button from "@mui/material/Button";
@@ -8,23 +8,15 @@ import {DatePickerElement, FormContainer, SelectElement, TextFieldElement} from 
 import {useForm} from "react-hook-form";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import {DAYS, RESERVATION_INTERVAL_BOUNDS} from "../../data/Constants";
-import {INTERVALS, RESERVATION_TIMES} from "../../data/MockData";
-import {useParams} from "react-router-dom";
+import {DAYS, INTERVALS, RESERVATION_INTERVAL_BOUNDS} from "../../data/Constants";
+import {useNavigate, useParams} from "react-router-dom";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
-import {IReservationSlots} from "../../utils/Interfaces";
-
-interface IReservationBasic {
-    reservationDate: Date,
-    reservationTime: string,
-    reservationNote?: string
-}
-
-function getReservationTimes(date?: Date) {
-    // TODO: replace with a database request
-    return RESERVATION_TIMES
-}
+import {IReservationBasic, IReservationSlots, ISelectItem} from "../../utils/Interfaces";
+import useSWR from "swr";
+import fetcher from "../../utils/fetcher";
+import axios from "axios";
+import {IDatResCreate} from "../../utils/DatabaseInterfaces";
 
 // interval | 60
 function countIntervals(interval: number) {
@@ -44,13 +36,67 @@ function countIntervals(interval: number) {
 function ReservationDatePanel() {
     const formContext = useForm<IReservationBasic>();
     const {handleSubmit} = formContext;
+    const user = useRecoilValue(userAtom);
+
+    // TODO check
+    const sendReservation = async (formData: IReservationBasic) => {
+        const reservation: IDatResCreate = {
+            comment: formData.reservationNote,
+            date: formData.reservationDate,
+            slotIndex: formData.reservationTime
+        };
+        const url = `http://localhost4000/doctor/${id}/reservations-registered`
+        await axios.post(url, {
+            reservation,
+            headers: {
+                'Authorization': `Bearer ${user.token}`
+            }
+        })
+            .then(response => {
+                console.log(response);
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("Rezervace selhala!\n\n" + error.response.data.message)
+            });
+    }
 
     const onSubmit = handleSubmit((formData: IReservationBasic) => {
-        // TODO: redirect to reservation form (unlogged) or create reservation (logged)
-        console.log(formData)
+        console.log(formData);
+        if (user.token) {
+            sendReservation(formData);
+        } else {
+            navigate(`/doctor/${id}/make-reservation`)
+            // TODO: pass <formData>: https://reactnavigation.org/docs/params/
+        }
     })
 
     const [dateState, setDateState] = useState();
+    const {id} = useParams();
+    const navigate = useNavigate();
+
+    let reservationTimes: ISelectItem[] = [];
+    const url = `http://localhost:4000/doctors/${id}/slots/${dateState}`;
+    const {data, error} = useSWR(dateState == null ? null : url, fetcher);
+
+    useEffect(() => {
+        console.log(url);
+    }, [dateState]);
+
+    if (error) console.log(error.message);
+    if (data) {
+        console.log(data);
+        if (data.status != "error") {
+            const datSlots: string[] = data.data.slots;
+            reservationTimes = datSlots.map((slot, index) => {
+                return {
+                    id: index,
+                    title: parseInt(slot).toString(),
+                }
+            })
+        }
+    }
+
 
     return <>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -70,14 +116,14 @@ function ReservationDatePanel() {
                                        inputProps={{fullWidth: true}} onChange={(e) => setDateState(e)}/>
                     {dateState != null &&
                         <SelectElement name={'reservationTime'} label={'Čas rezervace'} required fullWidth
-                                       options={getReservationTimes(dateState)}
+                                       options={reservationTimes}
                         />}
                     {dateState != null &&
                         <TextFieldElement name={"reservationNote"} label={"Poznámka pro lékaře"} size="small"
                                           multiline/>}
-                    {/*TODO: change href for reservation creation  */}
                     {dateState != null && <Grid container justifyContent={"center"}>
-                        <Button variant='contained' size={"large"} type={'submit'} color={'primary'} onSubmit={onSubmit}>
+                        <Button variant='contained' size={"large"} type={'submit'} color={'primary'}
+                                onSubmit={onSubmit}>
                             {"Vytvořit rezervaci"}
                         </Button>
                     </Grid>}
@@ -96,7 +142,7 @@ function ReservationSlots() {
         console.log(formData)
     })
 
-    const [daysState, setDaysState] = useState<boolean[]>([true, true, true, true, true, false, false]);
+    const [daysState, setDaysState] = useState<boolean[]>([false, false, false, false, false, false, false]);
     const setArray = (index: number) => {
         return setDaysState(daysState.map((val, ind) => {
             return index == ind ? !val : val
@@ -104,10 +150,8 @@ function ReservationSlots() {
     };
 
     const [intervalState, setIntervalState] = useState(INTERVALS[3]);
-
     const [fromDateState, setFromDateState] = useState<Date>();
 
-    // @ts-ignore
     return <>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             {/*@ts-ignore*/}
@@ -164,7 +208,8 @@ function ReservationSlots() {
                         setIntervalState(INTERVALS[index])
                     }}/>
                     <Grid container justifyContent={"center"}>
-                        <Button variant='contained' size={"large"} type={'submit'} color={'primary'} onSubmit={onSubmit}>
+                        <Button variant='contained' size={"large"} type={'submit'} color={'primary'}
+                                onSubmit={onSubmit}>
                             {"Provést změnu"}
                         </Button>
                     </Grid>

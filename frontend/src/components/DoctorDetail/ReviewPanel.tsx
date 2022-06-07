@@ -110,7 +110,6 @@ export function ReviewPanel({reviews}: IReviewList) {
     const {id} = useParams();
     return <Stack spacing={4}>
         {user.id != id  && <ReviewCreate/>}
-        {/*TODO: check sorted by date*/}
         {reviews.map((review) => <ReviewCard {...review}/>)}
     </Stack>
 }

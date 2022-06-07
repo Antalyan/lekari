@@ -115,4 +115,13 @@ export interface IDoctorDetailInfo {
     openingHours6?: string,
 }
 
+export interface ISelectItem {
+    id: number,
+    title?: string
+}
 
+export interface IReservationBasic {
+    reservationDate: string,
+    reservationTime: number,
+    reservationNote?: string
+}
