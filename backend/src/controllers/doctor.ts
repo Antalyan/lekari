@@ -11,24 +11,22 @@ import getPerson from '../models/personModel';
 const bcryptjs = require('bcryptjs');
 
 const locationList = async (req: Request, res: Response) => {
-  const locations = await prisma.doctor.findMany({
-    select: {
-      address: {
-        select: {
-          city: true
-        }
+  const cities = await prisma.address.findMany({
+    where: {
+      NOT: {
+        doctor: null,
       }
+    },
+    distinct: ['city'],
+    select: {
+      city: true,
     }
   });
-
-  let locationsList = locations.map(function (location) {
-    return location.address.city;
-  });
-
+  
   return res.status(200)
     .send({
       status: 'success',
-      data: locationsList.filter((v, i, a) => a.indexOf(v) === i),
+      data: cities.map((location) => location.city),
     });
 
 };
