@@ -3,28 +3,24 @@ import { NextFunction, Request, Response } from 'express';
 
 const jwt = require('jsonwebtoken');
 
-const extractJWT = (req: Request, res: Response, next: NextFunction) => {
-  let token = req.headers.authorization?.split(' ')[1];
-
-  if (token) {
-    jwt.verify(token, config.server.token.secret, (error: any, decoded: any) => {
-      if (error) {
-        return res.status(404)
-          .json({
-            message: error,
-            error
-          });
-      } else {
-        res.locals.jwt = decoded;
-        next();
-      }
+const validateTokenError = (res: Response, code: number, message: string) => {
+  return res.status(code)
+    .json({
+      message: message,
     });
-  } else {
-    return res.status(401)
-      .json({
-        message: 'Unauthorized'
-      });
-  }
 };
 
-export default extractJWT;
+const validateToken = (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return validateTokenError(res, 401, 'Unauthorized');
+
+  jwt.verify(token, config.server.token.secret, (err: any, user: any) => {
+    if (err) return validateTokenError(res, 403, 'Forbidden');
+    res.locals.jwt = user;
+    next();
+  });
+};
+
+export default validateToken;
