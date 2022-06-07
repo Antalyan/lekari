@@ -75,6 +75,9 @@ const doctorDetail = async (req: Request, res: Response) => {
         }
       },
       references: {
+        orderBy:{
+          created: "desc"
+        },
         select: {
           rate: true,
           comment: true,
@@ -99,7 +102,7 @@ const doctorDetail = async (req: Request, res: Response) => {
       rate: review.rate / 2,
       comment: review.comment,
       author: review.author,
-      creatDate: review.created.toISOString()
+      createDate: review.created.toISOString()
         .split('T')[0],
       createTime: review.created.toLocaleTimeString()
     };
@@ -396,9 +399,8 @@ const notImplemented = async (req: Request, res: Response) => {
 const reviewSchema = object({
   author: string(),
   rate: number()
-    .min(1)
-    .max(10)
-    .integer()
+    .min(0)
+    .max(5)
     .required(),
   comment: string()
 });
