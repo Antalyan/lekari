@@ -49,7 +49,7 @@ export interface IReview {
     author?: string,
     createDate?: string,
     createTime?: string,
-    rating: number,
+    rating?: number,
     text?: string,
     id?: number
 }

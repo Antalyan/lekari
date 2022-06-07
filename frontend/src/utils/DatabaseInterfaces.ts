@@ -91,7 +91,7 @@ export interface IDatDoctorReservation {
 }
 
 export interface IDatReview {
-    rate: number,
+    rate?: number,
     comment?: string,
     author?: string,
     createDate?: string,

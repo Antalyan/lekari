@@ -2,13 +2,14 @@ import {IDoctorDetailInfo, IReview, IReviewList} from "../../utils/Interfaces";
 import {Divider, Grid, Rating, Stack, Typography} from "@mui/material";
 import * as React from "react";
 import {FormContainer, TextFieldElement} from "react-hook-form-mui";
-import {useForm} from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 import Button from "@mui/material/Button";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {useParams} from "react-router-dom";
 import {IDatDoctorInfo, IDatReview} from "../../utils/DatabaseInterfaces";
 import axios from "axios";
+import {useState} from "react";
 
 function ReviewCreate() {
     const formContext = useForm<IReview>();
@@ -18,7 +19,7 @@ function ReviewCreate() {
         const review: IDatReview = {
             author: formData.author,
             comment: formData.text,
-            rate: formData.rating
+            rate: rating == null ? undefined: rating
         }
 
         // TODO: check and update request
@@ -26,6 +27,9 @@ function ReviewCreate() {
         await axios.post(url, review)
             .then(response => {
                 console.log(response);
+                if (response.data.status === "success") {
+                    window.location.reload();
+                }
             })
             .catch((error) => {
                 console.error(error);
@@ -38,6 +42,8 @@ function ReviewCreate() {
         storeInfo(formData);
     };
 
+    const [rating, setRating] = useState<number | null>(null);
+
     return (<>
         {/*@ts-ignore*/}
         <FormContainer
@@ -49,9 +55,13 @@ function ReviewCreate() {
                             display={"inline"}>
                     Nové hodnocení
                 </Typography>
-                <Rating name="rating" precision={0.5}
-                        sx={{color: "primary.main"}}/>
-                <TextFieldElement name={"name"} label={"Autor"} size="medium"/>
+                <Rating precision={0.5}
+                        sx={{color: "primary.main"}}
+                        onChange={(_, value) => {
+                            setRating(value);
+                        }}
+                />
+                <TextFieldElement name={"author"} label={"Autor"} size="medium"/>
                 <TextFieldElement name={"text"} label={"Text"} size="medium" multiline/>
                 <Grid container justifyContent={"center"}><Button variant='contained' type={'submit'} color={'primary'}>
                     Odeslat recenzi
