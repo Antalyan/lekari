@@ -5,6 +5,9 @@ const getDoctorFromPerson = async (personId: number) => {
     where: {
       deleted: false,
       id: personId,
+      doctor: {
+        deleted: false,
+      }
     },
     include: {
       doctor: {

@@ -4,6 +4,7 @@ import { number, object, string, ValidationError } from 'yup';
 import {doctorRegistrationSchema, doctorUpdateSchema} from './schemas/doctorSchema';
 import personTmpSchema from './schemas/personTmpSchema';
 import reservationSchema from './schemas/reservationSchema';
+import getDoctorFromPerson from '../models/doctorModel';
 import reservationHoursSchema from './schemas/reservationHours';
 import getPerson from '../models/personModel';
 
@@ -35,62 +36,9 @@ const locationList = async (req: Request, res: Response) => {
 const doctorDetail = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
 
-  const doctor = await prisma.doctor.findUnique({
-    where: {
-      id: id,
-    },
-    select: {
-      person: {
-        select: {
-          firstname: true,
-          surname: true,
-          degree: true,
-          deleted: true,
-        }
-      },
-      deleted: true,
-      specialization: true,
-      email: true,
-      phone: true,
-      description: true,
-      link: true,
-      languages: {
-        select: {
-          language: true
-        }
-      },
-      address: {
-        select: {
-          country: true,
-          city: true,
-          postalCode: true,
-          street: true,
-          buildingNumber: true,
-        }
-      },
-      profilePicture: true,
-      actuality: true,
-      openingHours: {
-        select: {
-          day: true,
-          opening: true,
-        }
-      },
-      references: {
-        orderBy:{
-          created: "desc"
-        },
-        select: {
-          rate: true,
-          comment: true,
-          author: true,
-          created: true,
-        }
-      }
-    }
-  });
+  const person = await getDoctorFromPerson(id);
 
-  if (!doctor || doctor.person.deleted || doctor.deleted) {
+  if (!person || !person.doctor) {
     return res.status(404)
       .send({
         status: 'error',
@@ -99,7 +47,7 @@ const doctorDetail = async (req: Request, res: Response) => {
       });
   }
 
-  let reviews = doctor.references.map(function (review) {
+  let reviews = person.doctor.references.map(function (review) {
     return {
       rate: review.rate / 2,
       comment: review.comment,
@@ -110,10 +58,10 @@ const doctorDetail = async (req: Request, res: Response) => {
     };
   });
 
-  let reviewsRatesSum = doctor.references.reduce((a, b) => a + (b.rate / 2), 0);
+  let reviewsRatesSum = person.doctor.references.reduce((a, b) => a + (b.rate / 2), 0);
 
   let opening = new Array<String>(7);
-  doctor.openingHours.slice()
+  person.doctor.openingHours.slice()
     .reverse()
     .forEach(function (x) {
       opening[x.day] = x.opening;
@@ -123,26 +71,26 @@ const doctorDetail = async (req: Request, res: Response) => {
     .json({
       status: 'success',
       data: {
-        degree: doctor.person.degree,
-        firstname: doctor.person.firstname,
-        surname: doctor.person.surname,
-        specialization: doctor.specialization,
-        workEmail: doctor.email,
-        workPhone: doctor.phone,
-        description: doctor.description,
-        link: doctor.link,
-        languages: doctor.languages.map(language => {
+        degree: person.degree,
+        firstname: person.firstname,
+        surname: person.surname,
+        specialization: person.doctor.specialization,
+        workEmail: person.doctor.email,
+        workPhone: person.doctor.phone,
+        description: person.doctor.description,
+        link: person.doctor.link,
+        languages: person.doctor.languages.map(language => {
           return language.language;
         }),
-        workCountry: doctor.address.country,
-        workCity: doctor.address.city,
-        workPostalCode: doctor.address.postalCode,
-        workStreet: doctor.address.street,
-        workBuildingNumber: doctor.address.buildingNumber,
-        profilePicture: doctor.profilePicture,
-        actuality: doctor.actuality,
+        workCountry: person.doctor.address.country,
+        workCity: person.doctor.address.city,
+        workPostalCode: person.doctor.address.postalCode,
+        workStreet: person.doctor.address.street,
+        workBuildingNumber: person.doctor.address.buildingNumber,
+        profilePicture: person.doctor.profilePicture,
+        actuality: person.doctor.actuality,
         openingHours: opening,
-        rateAverage: Math.round((reviewsRatesSum / doctor.references.length) * 2) / 2,
+        rateAverage: Math.round((reviewsRatesSum / person.doctor.references.length) * 2) / 2,
         reviews: reviews
       }
     });
@@ -329,7 +277,7 @@ const doctorSlots = async (req: Request, res: Response) => {
   const nextDay = new Date();
   nextDay.setDate(date.getDate() + 1);
   const day = date.getDay();
-  let today = new Date()
+  let today = new Date();
 
   const reservationHours = await prisma.reservationHours.findMany({
     where: {
@@ -386,7 +334,7 @@ const doctorSlots = async (req: Request, res: Response) => {
 
   return res.send({
     status: 'sucess',
-    data: {slots: timeSlots}
+    data: { slots: timeSlots }
   });
 };
 
