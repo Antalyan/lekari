@@ -1,10 +1,14 @@
 import * as React from "react";
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Link} from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 import Grid from "@mui/material/Grid";
+import axios from "axios";
+import {useRecoilState} from "recoil";
+import {userAtom} from "../../state/LoggedInAtom";
 
 export function DeleteProfileDialog() {
     let navigate = useNavigate();
+    const [user, setUser] = useRecoilState(userAtom);
 
     const [open, setOpen] = React.useState(false);
     const handleClickOpen = () => {
@@ -13,10 +17,24 @@ export function DeleteProfileDialog() {
     const handleClose = () => {
         setOpen(false);
     };
-    const handleDeleteProfile = () => {
-        // TODO: delete profile from database
-        navigate("/")
-    };
+
+    const handleDeleteProfile = async () => {
+        const url = 'http://localhost:4000/' + (user.isDoctor == true ? 'doctor-info' : 'personal-info');
+        console.log(url);
+        await axios.delete(url, {
+            headers: {
+                'Authorization': `Bearer ${user.token}`
+            }})
+            .then(response => {
+                console.log("Deletion succeeded");
+                setUser({});
+                navigate("/");
+            })
+            .catch(error => {
+                console.error(error);
+                alert("Mazání profilu selhalo!\n\n" + error.response.data.message)
+            });
+    }
 
     return <>
         <Grid>
