@@ -41,6 +41,7 @@ const personDetail = async (req: Request, res: Response) => {
           city: true,
           postalCode: true,
           street: true,
+          buildingNumber: true,
         }
       },
       deleted: true,
@@ -70,7 +71,8 @@ const personDetail = async (req: Request, res: Response) => {
       country: person.address.country,
       city: person.address.city,
       postalCode: person.address.postalCode,
-      street: person.address.street
+      street: person.address.street || null,
+      buildingNumber: person.address.buildingNumber,
     }
   });
 };
