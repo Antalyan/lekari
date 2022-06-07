@@ -17,9 +17,9 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
 
   if (!token) return validateTokenError(res, 401, 'Unauthorized');
 
-  jwt.verify(token, config.server.token.secret, (err: any, user: any) => {
+  jwt.verify(token, config.server.token.secret, async (err: any, user: any) => {
     if (err) return validateTokenError(res, 403, 'Forbidden');
-    const person = getPerson({
+    const person = await getPerson({
       email: user.email,
       id: user.id
     });
