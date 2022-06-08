@@ -86,7 +86,6 @@ function ReviewCard({author, createDate, createTime, rating, text, id}: IReview)
                                 color={"text.secondary"}
                                 textAlign={"right"}
                                 display={"inline"}>
-                        {/*TODO: put under each other*/}
                         {createDate}<br/>{createTime}
                     </Typography>
                 </Stack>

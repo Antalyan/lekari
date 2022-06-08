@@ -23,17 +23,16 @@ export function ReservationCardLabels(props: { isPatient: boolean, reservation: 
                 </Typography>
                 <Typography variant="subtitle2"
                             color={"text.secondary"}
+                            textAlign={"right"}
                             display={"inline"}>
-                    {/*TODO: fix date format*/}
-                    {props.reservation.createTime + " " + props.reservation.createDate}
+                    {props.reservation.createDate}<br/>{props.reservation.createTime}
                 </Typography>
             </Stack>
         </Grid>
         <Stack direction="row" spacing={1}>
             <AccessTimeIcon color={"info"}/>
             <Typography>
-                {/*TODO: fix date format*/}
-                {props.reservation.visitTimeFrom + " – " + props.reservation.visitTimeTo + "," + props.reservation.visitDate}
+                {props.reservation.visitTimeFrom + " – " + props.reservation.visitTimeTo}<br/>{props.reservation.visitDate}
             </Typography>
         </Stack>
         {props.isPatient && <Stack direction="row" spacing={1}>

@@ -38,7 +38,6 @@ export function DoctorCardLabels(props: { detailed: boolean, doctor: IDoctorCard
 
 export function DoctorCard(props: { detailed: boolean, doctor: IDoctorCard }) {
     return (
-        // TODO change bgcolor if desired
         <Grid container rowSpacing={1}
               columnSpacing={{xs: 0}}
               marginLeft={{md: "auto"}}
