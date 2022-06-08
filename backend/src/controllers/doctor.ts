@@ -276,7 +276,7 @@ const doctorSlots = async (req: Request, res: Response) => {
   if (!doctor || !doctor.doctor) {
     return res.sendStatus(400);
   }
-  const id = doctor.doctor.id;
+  const doctorId = doctor.doctor.id;
   const date = new Date(req.params.date);
   const nextDay = new Date();
   nextDay.setDate(date.getDate() + 1);
@@ -285,7 +285,7 @@ const doctorSlots = async (req: Request, res: Response) => {
 
   const reservationHours = await prisma.reservationHours.findMany({
     where: {
-      doctorId: id,
+      doctorId: doctorId,
       day: day,
       fromDate: {
         lte: today
@@ -301,7 +301,7 @@ const doctorSlots = async (req: Request, res: Response) => {
 
   const reservations = await prisma.reservation.findMany({
     where: {
-      doctorId: id,
+      doctorId: doctorId,
       fromTime: {
         gte: date,
         lt: nextDay,
