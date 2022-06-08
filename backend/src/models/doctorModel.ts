@@ -26,6 +26,18 @@ const getDoctorFromUserId = async (userId: number) => {
   });
 };
 
+const getDoctorFromUserEmail = async (email: string) => {
+  return await prisma.doctor.findFirst({
+    where: {
+      deleted: false,
+      person: {
+        email: email,
+        deleted: false
+      }
+    },
+  });
+};
+
 const getDoctorIdFromUserId = async (userId: number) => {
   return await prisma.person.findFirst({
     where: {
@@ -50,5 +62,6 @@ const getDoctorIdFromUserId = async (userId: number) => {
 
 export default {
   getDoctorFromUserId,
-  getDoctorIdFromUserId
+  getDoctorIdFromUserId,
+  getDoctorFromUserEmail
 };

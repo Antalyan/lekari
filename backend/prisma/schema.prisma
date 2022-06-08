@@ -110,8 +110,8 @@ model ReservationHours {
   doctorId Int
   doctor   Doctor   @relation(fields: [doctorId], references: [id])
   day      Int
-  fromTime DateTime
-  toTime   DateTime
+  fromTime DateTime?
+  toTime   DateTime?
   fromDate DateTime @default(now())
   interval Int      @default(20)
 

@@ -2,10 +2,10 @@ POST http://localhost:4000/register
 Content-Type: application/json
 
 {
-  "firstname": "Adam",
-  "surname": "Cibule",
+  "firstname": "Tomas",
+  "surname": "Jedno",
   "birthdate": "1970-01-01T00:00:00",
-  "email": "adam@banan.com",
+  "email": "katka@nova.cz",
   "phonePrefix": "+420",
   "phone": 678456765,
   "insuranceNumber": 456788,
@@ -14,8 +14,8 @@ Content-Type: application/json
   "postalCode": 4589,
   "street": "Dejvická",
   "buildingNumber": "45A",
-  "password1": "CUKR",
-  "password2": "CUKR"
+  "password1": "NOVA",
+  "password2": "NOVA"
 }
 
 ###
@@ -24,7 +24,7 @@ POST http://localhost:4000/login
 Content-Type: application/json
 
 {
-  "email": "adam@banan.com",
+  "email": "tomas@jedno.com",
   "password": "CUKR"
 }
 
@@ -73,6 +73,37 @@ Content-Type: application/json
 
 ###
 
+PATCH http://localhost:4000/doctor-info
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYmFuYW4uY29tIiwiaWF0IjoxNjU0NjA3MzgxLCJleHAiOjMzMDk1NzQ3NjIsImlzcyI6ImNvb2xJc3N1ZXIifQ.0mnE68EwYPHEUDGXFfvOwz0TtwvZbDHMfHsQeh8HIiM
+Content-Type: application/json
+
+{
+  "firstname": "Adam",
+  "surname": "Cibule",
+  "birthdate": "1970-01-01T00:00:00",
+  "email": "adam@banan.com",
+  "phonePrefix": "+420",
+  "phone": 678456765,
+  "insuranceNumber": 456788,
+  "country": "Česko",
+  "city": "Praha",
+  "postalCode": 4589,
+  "street": "Dejvická",
+  "buildingNumber": "45A",
+  "oldPassword": "CUKR",
+  "password1": "CIBULE",
+  "password1": "CIBULE",
+  "specialization": "gynekolog",
+  "actuality": "Na dovolené",
+  "workCountry": "Česko",
+  "workCity": "Praha",
+  "workPostalCode": 4589,
+  "workStreet": "Dejvická",
+  "workBuildingNumber": "45A"
+}
+
+###
+
 DELETE http://localhost:4000/personal-info
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYW5hbmFzLmNvbSIsImlhdCI6MTY1NDQ5MzM4MiwiZXhwIjozMzA5MzQ2NzY0LCJpc3MiOiJjb29sSXNzdWVyIn0.yzeFajD_eKWWGwsUVBvlMbQIef41rO3YUPQsQ0nuw0Q
 
@@ -88,6 +119,52 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkY
 
 ###
 
+GET http://localhost:4000/doctor-reservation-hours
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvbWFzQGplZG5vLmNvbSIsImlhdCI6MTY1NDcwNzg1MiwiZXhwIjozMzA5Nzc1NzA0LCJpc3MiOiJjb29sSXNzdWVyIn0.x0zboMfOnmKDrmT8KOFScTTncajzoZO7TLoevzYjfY8
+
+###
+
+POST http://localhost:4000/doctor-reservation-hours
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImthdGthQG5vdmEuY3oiLCJpYXQiOjE2NTQ3MDkyNzgsImV4cCI6MzMwOTc3ODU1NiwiaXNzIjoiY29vbElzc3VlciJ9.3sfWATa5TsInhPuaafeJ9UtSeUuzgM3zECWt5TqMBvo
+Content-Type: application/json
+
+{
+  "fromDate": "2022-06-13T00:00:00",
+  "interval": 30,
+  "slots": [
+    {
+      "fromTime": null,
+      "toTime": null
+    },
+    {
+      "fromTime": "9:30",
+      "toTime": "10:30"
+    },
+    {
+      "fromTime": "9:30",
+      "toTime": "10:30"
+    },
+    {
+      "fromTime": "9:30",
+      "toTime": "10:30"
+    },
+    {
+      "fromTime": "9:30",
+      "toTime": "10:30"
+    },
+    {
+      "fromTime": "9:30",
+      "toTime": "10:30"
+    },
+     {
+      "fromTime": null,
+      "toTime": null
+    }
+  ]
+}
+###
+
+
 GET http://localhost:4000/doctors
 
 ###
@@ -100,15 +177,15 @@ GET http://localhost:4000/doctors/1
 
 ###
 GET http://localhost:4000/doctor-reservations
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AYmFuYW4uY29tIiwiaWF0IjoxNjU0NTI4NDM1LCJleHAiOjMzMDk0MTY4NzAsImlzcyI6ImNvb2xJc3N1ZXIifQ.WIBE8AJD0IE6bhUrmIqV6ckjSMHgxU_T0TqhXjjL1QI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvbWFzQGplZG5vLmNvbSIsImlhdCI6MTY1NDcwNzg1MiwiZXhwIjozMzA5Nzc1NzA0LCJpc3MiOiJjb29sSXNzdWVyIn0.x0zboMfOnmKDrmT8KOFScTTncajzoZO7TLoevzYjfY8
 ###
 POST http://localhost:4000/doctor/1/reservations-registered
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkYW1AY2lidWxlLmNvbSIsImlhdCI6MTY1NDUwMzM5MiwiZXhwIjozMzA5MzY2Nzg0LCJpc3MiOiJjb29sSXNzdWVyIn0.HeTamCA3Un7IkYeK-mBJ9POERx-KetMQk5Pis0K7PR8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvbWFzQGplZG5vLmNvbSIsImlhdCI6MTY1NDYyNDIxNywiZXhwIjozMzA5NjA4NDM0LCJpc3MiOiJjb29sSXNzdWVyIn0.zIrCMOivsCz4G0sEgLK5uTzHdWgjDVKK0TWlzR7FdTw
 Content-Type: application/json
 
 {
-  "date": "2022-06-06T00:00:00",
-  "slotIndex": 8,
+  "date": "2022-06-14T00:00:00",
+  "time": "10:20",
   "comment": "Operace zubu."
 }
 
@@ -130,8 +207,8 @@ Content-Type: application/json
   "postalCode": 56788,
   "street": "Veveří",
   "buildingNumber": "67/B",
-  "date": "2022-06-06T00:00:00",
-  "slotIndex": 7,
+  "date": "2022-06-14T00:00:00",
+  "time": "10:40",
   "comment": "Operace zubu."
 }
 

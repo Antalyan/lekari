@@ -28,6 +28,7 @@ api.get('/doctors/:id(\\d+)', doctor.doctorDetail);
 api.get('/doctor-reservations', auth.validateTokenDoctor, doctor.doctorReservations);
 api.get('/doctors/:id(\\d+)/slots/:date', doctor.doctorSlots);
 api.get('/doctor-info', auth.validateTokenDoctor, doctor.doctorInfoAll);
+api.get('/doctor-reservation-hours', auth.validateTokenDoctor, doctor.reservationHoursGet);
 
 api.post('/signup-doctor', doctor.signUp);
 api.post('/doctors/:id(\\d+)/review', doctor.postReview);
@@ -35,6 +36,7 @@ api.patch('/doctor-info', auth.validateTokenDoctor, doctor.infoUpdate);
 api.delete('/doctor-info', auth.validateTokenDoctor, doctor.doctorDelete);
 api.post('/doctor/:id(\\d+)/reservations-registered', auth.validateToken, doctor.createReservationRegistered);
 api.post('/doctor/:id(\\d+)/reservations-nonregistered', doctor.createReservationNonregistered);
+api.post('/doctor-reservation-hours', auth.validateTokenDoctor, doctor.reservationHoursPost);
 
 api.get('/persons', person.personList);                     // Undocumented
 api.get('/personal-info', auth.validateToken, person.personDetail);
