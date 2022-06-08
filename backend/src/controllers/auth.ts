@@ -24,7 +24,7 @@ const register = async (req: Request, res: Response) => {
   }
   try {
     const data = await personRegistrationSchema.validate(req.body);
-    const hash = hashing.hash(password1);
+    const hash = await hashing.hash(password1);
     const person = await prisma.person.create({
       data: {
         firstname: data.firstname,
@@ -97,7 +97,7 @@ const login = async (req: Request, res: Response) => {
     const person = await getPerson({ email: data.email });
     if (!person) return loginError(res);
 
-    const validPassword = hashing.verify(data.password, person.password);
+    const validPassword = await hashing.verify(data.password, person.password);
     if (!validPassword) return loginError(res);
 
     const accessToken = jwt.sign({

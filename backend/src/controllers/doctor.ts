@@ -336,7 +336,7 @@ const signUp = async (req: Request, res: Response) => {
 
   try {
     const data = await doctorRegistrationSchema.validate(req.body);
-    const hash = hashing.hash(password1);
+    const hash = await hashing.hash(password1);
     const person = await prisma.person.create({
       data: {
         firstname: data.firstname,
@@ -639,12 +639,12 @@ const infoUpdate = async (req: Request, res: Response) => {
       const person = res.locals.jwt;
       if (!person) return results.error(res, 'Can\'t find person.', 400);
 
-      const validPassword = hashing.verify(data.oldPassword, person.password);
+      const validPassword = await hashing.verify(data.oldPassword, person.password);
       if (!validPassword) return results.error(res, 'Old password is not valid.', 400);
 
       if (data.password1 !== data.password2) return results.error(res, 'Passwords don\'t match.', 400);
 
-      const hash = hashing.hash(data.password1);
+      const hash = await hashing.hash(data.password1);
 
       updatedPerson = await prisma.person.update({
         where: {

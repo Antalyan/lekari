@@ -7,23 +7,21 @@ const hash = (password: string) => {
       .toString('hex'),
     iterations: 100000,
   };
-  return encode(password, options);
+  return encode(password, options)
+    .then((result: any) => result, (err: Error) => {
+      throw err;
+    });
 };
 
-const encode = (password, {
+const encode = (password: string, {
   algorithm,
   salt,
   iterations
-}) => {
-  let hash: string;
-  crypt.pbkdf2(password, salt, 100000, 64, 'sha512', (err, derivedKey) => {
-    if (err) throw err;
-    hash = `${algorithm}$${iterations}$${salt}$${derivedKey.toString('hex')}`;
-  });
-  return hash;
+}: any) => {
+  return new Promise((resolve, reject) => crypt.pbkdf2(password, salt, 100000, 64, 'sha512', (err: Error | null, derivedKey: Buffer) => (err ? reject(err) : resolve(`${algorithm}$${iterations}$${salt}$${derivedKey.toString('hex')}`))));
 };
 
-const decode = (encoded) => {
+const decode = (encoded: string) => {
   const [algorithm, iterations, salt, hash] = encoded.split('$');
   return {
     algorithm,
@@ -33,9 +31,9 @@ const decode = (encoded) => {
   };
 };
 
-const verify = (password, encoded) => {
+const verify = async (password: string, encoded: string) => {
   const decoded = decode(encoded);
-  const encodedPassword = encode(password, decoded);
+  const encodedPassword = await encode(password, decoded);
   return encoded === encodedPassword;
 };
 
