@@ -36,14 +36,7 @@ const doctorDetail = async (req: Request, res: Response) => {
 
   const person = await doctorModel.getDoctorFromUserId(id);
 
-  if (!person || !person.doctor) {
-    return res.status(404)
-      .send({
-        status: 'error',
-        data: {},
-        message: 'Person was not found'
-      });
-  }
+  if (!person || !person.doctor) return results.error(res, 'Person was not found', 404);
 
   let reviews = person.doctor.references.map(function (review) {
     return {
@@ -145,14 +138,7 @@ const doctorList = async (req: Request, res: Response) => {
     },
   });
 
-  if (!doctors) {
-    return res.status(404)
-      .send({
-        status: 'error',
-        data: {},
-        message: 'Person was not found'
-      });
-  }
+  if (!doctors) return results.error(res, 'Person was not found', 404);
 
   return res.send({
     status: 'success',
@@ -280,14 +266,8 @@ const doctorSlots = async (req: Request, res: Response) => {
     }
   });
 
-  if (reservationHours.length === 0) {
-    return res.status(404)
-      .send({
-        status: 'error',
-        data: {},
-        message: 'Reservation hours were not found'
-      });
-  }
+  if (reservationHours.length === 0) return results.error(res, 'Reservation hours were not found', 404);
+
   if (reservationHours[0].fromTime && reservationHours[0].toTime) {
     let dateFrom = new Date(date);
     dateFrom.setHours(reservationHours[0].fromTime.getHours());
@@ -352,29 +332,12 @@ const postReview = async (req: Request, res: Response) => {
           message: 'Review saved.'
         });
     } else {
-      return res.status(500)
-        .send({
-          status: 'error',
-          message: '',
-        });
+      return results.error(res, 'Unknown error', 500);
     }
+
   } catch (e) {
-    if (e instanceof ValidationError) {
-      return res.status(400)
-        .send({
-          status: 'error',
-          data: e.errors,
-          message: e.message
-        });
-    }
-    if (e instanceof Error) {
-      return res.status(500)
-        .send({
-          status: 'error',
-          data: e.message,
-          message: 'Something went wrong'
-        });
-    }
+    if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
+    return results.error(res, 'Unknown error', 500);
   }
 };
 
@@ -384,14 +347,8 @@ const signUp = async (req: Request, res: Response) => {
     password2
   } = req.body;
 
-  if (password1 !== password2) {
-    return res.status(400)
-      .send({
-        status: 'error',
-        data: {},
-        message: 'Password doesn\'t match the controll.'
-      });
-  }
+  if (password1 !== password2) return results.error(res, 'Password doesn\'t match the controll.', 400);
+
   try {
     const data = await doctorRegistrationSchema.validate(req.body);
     const hash = await bcryptjs.hash(password1, 10);
@@ -440,29 +397,12 @@ const signUp = async (req: Request, res: Response) => {
           message: 'Person registered.'
         });
     } else {
-      return res.status(500)
-        .send({
-          status: 'error',
-          message: '',
-        });
+      return results.error(res, 'Unknown error', 500);
     }
+
   } catch (e) {
-    if (e instanceof ValidationError) {
-      return res.status(400)
-        .send({
-          status: 'error',
-          data: e.errors,
-          message: e.message
-        });
-    }
-    if (e instanceof Error) {
-      return res.status(500)
-        .send({
-          status: 'error',
-          data: e.message,
-          message: 'Something went wrong'
-        });
-    }
+    if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
+    return results.error(res, 'Unknown error', 500);
   }
 };
 
@@ -484,13 +424,8 @@ const doctorDelete = async (req: Request, res: Response) => {
         message: 'Doctor deleted.',
       });
   } catch (e) {
-    if (e instanceof Error) {
-      return res.status(400)
-        .send({
-          status: 'error',
-          message: e.message
-        });
-    }
+    if (e instanceof Error) return results.error(res, e.message, 500);
+    return results.error(res, 'Unknown error', 500);
   }
 };
 
@@ -520,34 +455,22 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
       }
     });
 
-    if (!reservationHours) {
-      return res.status(500)
-        .send({
-          status: 'error',
-          message: 'Can\'t make reservation for this day.',
-        });
-    }
+    if (!reservationHours) return results.error(res, 'Can\'t make reservation for this day.', 500);
 
     // parseInt parameter 10 for remove leading zeros
     let hours = parseInt(data.time.split(':')[0], 10);
     let minutes = parseInt(data.time.split(':')[1], 10);
-    if (!reservationHours.fromTime || !reservationHours.toTime) {
-      return res.status(500)
-        .send({
-          status: 'error',
-          message: 'Time is out of reservation hours.',
-        });
-    }
+
+    if (!reservationHours.fromTime || !reservationHours.toTime) return results.error(res, 'Time is out of reservation hours.', 500);
+
     let reservationHoursFrom = reservationHours.fromTime.getHours() * 60 + reservationHours.fromTime.getMinutes();
     let reservationHoursTo = reservationHours.toTime.getHours() * 60 + reservationHours.toTime.getMinutes();
+
     if ((hours * 60 + minutes) < reservationHoursFrom ||
       (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
-      return res.status(500)
-        .send({
-          status: 'error',
-          message: 'Time is out of reservation hours.',
-        });
+      return results.error(res, 'Time is out of reservation hours.', 500);
     }
+
     let fromTime = new Date(data.date);
     fromTime.setHours(hours);
     fromTime.setMinutes(minutes);
@@ -561,13 +484,7 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
       },
     });
 
-    if (checkFree.length !== 0) {
-      return res.status(500)
-        .send({
-          status: 'error',
-          message: 'Someone already ordered.',
-        });
-    }
+    if (checkFree.length !== 0) return results.error(res, 'Someone already ordered.', 500);
 
     let reservation: any;
     if (data.country && data.city && data.postalCode && data.buildingNumber) {
@@ -630,29 +547,12 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
           message: 'Reservation saved.'
         });
     } else {
-      return res.status(500)
-        .send({
-          status: 'error',
-          message: '',
-        });
+      return results.error(res, 'Unknown error.', 500);
     }
+
   } catch (e) {
-    if (e instanceof ValidationError) {
-      return res.status(400)
-        .send({
-          status: 'error',
-          data: e.errors,
-          message: e.message
-        });
-    }
-    if (e instanceof Error) {
-      return res.status(500)
-        .send({
-          status: 'error',
-          data: e.message,
-          message: 'Something went wrong'
-        });
-    }
+    if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
+    return results.error(res, 'Unknown error', 500);
   }
 };
 
@@ -682,33 +582,22 @@ const createReservationRegistered = async (req: Request, res: Response) => {
       }
     });
 
-    if (!reservationHours) {
-      return res.status(500)
-        .send({
-          status: 'error',
-          message: 'Can\'t make reservation for this day.',
-        });
-    }
+    if (!reservationHours) return results.error(res, 'Can\'t make reservation for this day.', 500);
+
     // parseInt parameter 10 for remove leading zeros
     let hours = parseInt(data.time.split(':')[0], 10);
     let minutes = parseInt(data.time.split(':')[1], 10);
-    if (!reservationHours.fromTime || !reservationHours.toTime) {
-      return res.status(500)
-        .send({
-          status: 'error',
-          message: 'Time is out of reservation hours.',
-        });
-    }
+
+    if (!reservationHours.fromTime || !reservationHours.toTime) return results.error(res, 'Time is out of reservation hours.', 500);
+
     let reservationHoursFrom = reservationHours.fromTime.getHours() * 60 + reservationHours.fromTime.getMinutes();
     let reservationHoursTo = reservationHours.toTime.getHours() * 60 + reservationHours.toTime.getMinutes();
+
     if ((hours * 60 + minutes) < reservationHoursFrom ||
       (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
-      return res.status(500)
-        .send({
-          status: 'error',
-          message: 'Time is out of reservation hours.',
-        });
+      return results.error(res, 'Time is out of reservation hours.', 500);
     }
+
     let fromTime = new Date(data.date);
     fromTime.setHours(hours);
     fromTime.setMinutes(minutes);
@@ -721,19 +610,14 @@ const createReservationRegistered = async (req: Request, res: Response) => {
       },
     });
 
-    if (checkFree.length !== 0) {
-      return res.status(500)
-        .send({
-          status: 'error',
-          message: 'Someone already ordered.',
-        });
-    }
+    if (checkFree.length !== 0) return results.error(res, 'Someone already ordered.', 500);
 
     const person = await prisma.person.findFirst({
       where: {
         email: res.locals.jwt.email,
       }
     });
+
     if (person) {
       const reservation = await prisma.reservation.create({
         data: {
@@ -752,40 +636,17 @@ const createReservationRegistered = async (req: Request, res: Response) => {
             message: 'Reservation saved.'
           });
       } else {
-        return res.status(500)
-          .send({
-            status: 'error',
-            message: '',
-          });
+        return results.error(res, 'Unknown error.', 500);
       }
     }
   } catch (e) {
-    if (e instanceof ValidationError) {
-      return res.status(400)
-        .send({
-          status: 'error',
-          data: e.errors,
-          message: e.message
-        });
-    }
-    if (e instanceof Error) {
-      return res.status(500)
-        .send({
-          status: 'error',
-          data: e.message,
-          message: 'Something went wrong'
-        });
-    }
+    if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
+    return results.error(res, 'Unknown error', 500);
   }
 };
 
-const passwordError = (res: Response, message: String) => {
-  return res.status(400)
-    .json({
-      status: 'error',
-      data: {},
-      message: message,
-    });
+const passwordError = (res: Response, message: string) => {
+  return results.error(res, message, 400);
 };
 
 const infoUpdate = async (req: Request, res: Response) => {
@@ -795,12 +656,12 @@ const infoUpdate = async (req: Request, res: Response) => {
 
     if (data.oldPassword && data.password1 && data.password2) {
       const person = res.locals.jwt;
-      if (!person) return passwordError(res, 'Can\'t find person.');
+      if (!person) return results.error(res, 'Can\'t find person.', 400);
 
       const validPassword = await bcryptjs.compare(data.oldPassword, person.password);
-      if (!validPassword) return passwordError(res, 'Old password is not valid.');
+      if (!validPassword) return results.error(res, 'Old password is not valid.', 400);
 
-      if (data.password1 !== data.password2) return passwordError(res, 'Passwords don\'t match.');
+      if (data.password1 !== data.password2) return results.error(res, 'Passwords don\'t match.', 400);
 
       const hash = await bcryptjs.hash(data.password1, 10);
 
@@ -886,41 +747,23 @@ const infoUpdate = async (req: Request, res: Response) => {
       });
     }
 
-    if (!updatedPerson) {
-      return res.status(404)
-        .send({
-          status: 'error',
-          data: {},
-          message: 'Person was not found'
-        });
-    }
+    if (!updatedPerson) return results.error(res, 'Person was not found', 400);
 
     return res.send({
       status: 'success',
       data: updatedPerson.id
     });
+
   } catch (e) {
-    if (e instanceof ValidationError) {
-      return res.status(400)
-        .send({
-          status: 'error',
-          data: e.errors,
-          message: e.message
-        });
-    }
+    if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
+    return results.error(res, 'Unknown error', 500);
   }
 };
 
 const doctorInfoAll = async (req: Request, res: Response) => {
   const person = res.locals.jwt;
 
-  if (!person || !person.doctor) {
-    return res.status(404)
-      .send({
-        status: 'error',
-        message: 'Person was not found'
-      });
-  }
+  if (!person || !person.doctor) return results.error(res, 'Person was not found', 404);
 
   let reviews = person.doctor.references.map((review: any) => {
     return {
@@ -1069,14 +912,7 @@ const reservationHoursPost = async (req: Request, res: Response) => {
     const data = await reservationHoursSchema.validate(req.body);
 
     const doctor = await doctorModel.getDoctorFromUserEmail(res.locals.jwt.username);
-    if (!doctor) {
-      return res.status(400)
-        .json({
-          status: 'error',
-          message: 'Doctor was not found.'
-        });
-
-    }
+    if (!doctor) return results.error(res, 'Doctor was not found', 500);
 
     if (data.slots) {
       let preproccesed = data.slots.map(function (value, index) {
@@ -1118,11 +954,7 @@ const reservationHoursPost = async (req: Request, res: Response) => {
           });
           result.push(created);
         } catch (e) {
-          return res.status(200)
-            .json({
-              status: 'error',
-              message: 'Rezervační hodiny od tohoto data už jsou nastaveny.'
-            });
+          return results.error(res, 'Rezervační hodiny od tohoto data už jsou nastaveny.', 400);
         }
       }
 
@@ -1134,17 +966,10 @@ const reservationHoursPost = async (req: Request, res: Response) => {
           }
         });
     }
-    return res.status(400)
-      .json({
-        status: 'error',
-        message: 'Missing attribute slots'
-      });
+    return results.error(res, 'Missing attribute slots', 400);
   } catch (e) {
-    return res.status(500)
-      .json({
-        status: 'error',
-        message: e
-      });
+    if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
+    return results.error(res, 'Unknown error', 500);
   }
 };
 
