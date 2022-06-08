@@ -7,6 +7,7 @@ import reservationSchema from './schemas/reservationSchema';
 import doctorModel from '../models/doctorModel';
 import reservationHoursSchema from './schemas/reservationHoursSchema';
 import results from '../utilities/results';
+import { convertTimeToString, createDatetime,  getTimeInMinutes} from './helperFunctions';
 
 const bcryptjs = require('bcryptjs');
 
@@ -209,16 +210,6 @@ const doctorReservations = async (req: Request, res: Response) => {
   });
 };
 
-const convertTimeToString = (datetime: Date) => {
-  if (datetime) {
-    let splitTime = datetime.toTimeString()
-      .match(/([0-9]+:[0-9]+)/g);
-    if (splitTime) {
-      return splitTime[0];
-    }
-  }
-  return null;
-};
 
 const doctorSlots = async (req: Request, res: Response) => {
   const personId = parseInt(req.params.id);
@@ -453,25 +444,32 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
 
     if (!reservationHours) return results.error(res, 'Can\'t make reservation for this day.', 500);
 
-    // parseInt parameter 10 for remove leading zeros
-    let hours = parseInt(data.time.split(':')[0], 10);
-    let minutes = parseInt(data.time.split(':')[1], 10);
-
-    if (!reservationHours.fromTime || !reservationHours.toTime) return results.error(res, 'Time is out of reservation hours.', 500);
-
-    let reservationHoursFrom = reservationHours.fromTime.getHours() * 60 + reservationHours.fromTime.getMinutes();
-    let reservationHoursTo = reservationHours.toTime.getHours() * 60 + reservationHours.toTime.getMinutes();
-
-    if ((hours * 60 + minutes) < reservationHoursFrom ||
-      (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
-      return results.error(res, 'Time is out of reservation hours.', 500);
-    }
-
-    let fromTime = new Date(data.date);
-    fromTime.setHours(hours);
-    fromTime.setMinutes(minutes);
-    let toTime = new Date(fromTime);
-    toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
+   // parseInt parameter 10 for remove leading zeros
+   let hours = parseInt(data.time.split(':')[0], 10);
+   let minutes = parseInt(data.time.split(':')[1], 10);
+   if(!reservationHours.fromTime || !reservationHours.toTime){
+    return res.status(500)
+    .send({
+      status: 'error',
+      message: 'Time is out of reservation hours.',
+    });
+   }
+   let reservationHoursFrom = getTimeInMinutes(reservationHours.fromTime)
+   let reservationHoursTo = getTimeInMinutes(reservationHours.toTime)
+   if (!reservationHoursFrom || !reservationHoursTo ||
+     (hours * 60 + minutes) < reservationHoursFrom ||
+     (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
+     return res.status(500)
+       .send({
+         status: 'error',
+         message: 'Time is out of reservation hours.',
+       });
+   }
+   let fromTime = new Date(data.date);
+   fromTime.setHours(hours);
+   fromTime.setMinutes(minutes);
+   let toTime = new Date(fromTime);
+   toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
 
     const checkFree = await prisma.reservation.findMany({
       where: {
@@ -583,13 +581,17 @@ const createReservationRegistered = async (req: Request, res: Response) => {
     // parseInt parameter 10 for remove leading zeros
     let hours = parseInt(data.time.split(':')[0], 10);
     let minutes = parseInt(data.time.split(':')[1], 10);
-
-    if (!reservationHours.fromTime || !reservationHours.toTime) return results.error(res, 'Time is out of reservation hours.', 500);
-
-    let reservationHoursFrom = reservationHours.fromTime.getHours() * 60 + reservationHours.fromTime.getMinutes();
-    let reservationHoursTo = reservationHours.toTime.getHours() * 60 + reservationHours.toTime.getMinutes();
-
-    if ((hours * 60 + minutes) < reservationHoursFrom ||
+    if(!reservationHours.fromTime || !reservationHours.toTime){
+      return res.status(500)
+      .send({
+        status: 'error',
+        message: 'Time is out of reservation hours.',
+      });
+     }
+    let reservationHoursFrom = getTimeInMinutes(reservationHours.fromTime)
+    let reservationHoursTo = getTimeInMinutes(reservationHours.toTime)
+    if (!reservationHoursFrom || !reservationHoursTo ||
+      (hours * 60 + minutes) < reservationHoursFrom ||
       (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
       return results.error(res, 'Time is out of reservation hours.', 500);
     }
@@ -888,16 +890,6 @@ const reservationHoursGet = async (req: Request, res: Response) => {
     });
 };
 
-const createDatetime = (date: Date, time: string) => {
-  let splitedTime = time.split(':');
-  if (splitedTime.length === 2) {
-    let datetime = new Date(date);
-    datetime.setHours(parseInt(splitedTime[0]));
-    datetime.setMinutes(parseInt(splitedTime[1]));
-    return datetime;
-  }
-  return null;
-};
 
 const reservationHoursPost = async (req: Request, res: Response) => {
   try {
@@ -935,10 +927,42 @@ const reservationHoursPost = async (req: Request, res: Response) => {
             toTime: null
           };
         }
+      })
+
+      const checkReservations = await prisma.reservation.findMany({
+        where: {
+          doctorId: doctor.id,
+          fromTime:{
+            gt: data.fromDate
+          }
+        },
       });
 
-      let result = [];
+      for(let reservation of checkReservations){
+        let day = reservation.fromTime.getDay()
+        let reservationChange = preproccesed[day]
+        let resTimeFrom = getTimeInMinutes(reservation.fromTime)
+        let resHourTimeFrom = getTimeInMinutes(reservationChange.fromTime)
+        let resTimeTo = getTimeInMinutes(reservation.toTime)
+        let resHourTimeTo = getTimeInMinutes(reservationChange.toTime)
+        if(!resHourTimeFrom || !resHourTimeTo || !resTimeFrom || !resTimeTo){
+          return res.status(400)
+          .json({
+            status: 'error',
+            message: 'V konfliktu s existujícími rezervacemi.',
+          });
+        }
+        if(resTimeFrom < resHourTimeFrom || resTimeTo > resHourTimeTo){
+          return res.status(400)
+          .json({
+            status: 'error',
+            message: 'V konfliktu s existujícími rezervacemi.',
+          });
+        }
+      }
 
+      let result = []
+      
       for (const value of preproccesed) {
         try {
           let created = await prisma.reservationHours.create({
