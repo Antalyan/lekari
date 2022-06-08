@@ -16,7 +16,7 @@ export function DoctorCardLabels(props: { detailed: boolean, doctor: IDoctorCard
             {props.doctor.name}
         </Typography>}
         <Stack direction="row" spacing={1}>
-            <Person/>
+            <Person color={"secondary"}/>
             <Typography>
                 {props.doctor.specialization}
             </Typography>
