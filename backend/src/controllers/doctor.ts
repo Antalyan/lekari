@@ -1,33 +1,31 @@
 import { Request, Response } from 'express';
 import prisma from '../client';
 import { number, object, string, ValidationError } from 'yup';
-import {doctorRegistrationSchema, doctorUpdateSchema} from './schemas/doctorSchema';
+import { doctorRegistrationSchema, doctorUpdateSchema } from './schemas/doctorSchema';
 import personTmpSchema from './schemas/personTmpSchema';
 import reservationSchema from './schemas/reservationSchema';
-import reservationHoursSchema from './schemas/reservationHours';
+import doctorModel from '../models/doctorModel';
 import getPerson from '../models/personModel';
 
 const bcryptjs = require('bcryptjs');
 
 const locationList = async (req: Request, res: Response) => {
-  const locations = await prisma.doctor.findMany({
-    select: {
-      address: {
-        select: {
-          city: true
-        }
+  const cities = await prisma.address.findMany({
+    where: {
+      NOT: {
+        doctor: null,
       }
+    },
+    distinct: ['city'],
+    select: {
+      city: true,
     }
-  });
-
-  let locationsList = locations.map(function (location) {
-    return location.address.city;
   });
 
   return res.status(200)
     .send({
       status: 'success',
-      data: locationsList.filter((v, i, a) => a.indexOf(v) === i),
+      data: cities.map((location) => location.city),
     });
 
 };
@@ -35,62 +33,9 @@ const locationList = async (req: Request, res: Response) => {
 const doctorDetail = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
 
-  const doctor = await prisma.doctor.findUnique({
-    where: {
-      id: id,
-    },
-    select: {
-      person: {
-        select: {
-          firstname: true,
-          surname: true,
-          degree: true,
-          deleted: true,
-        }
-      },
-      deleted: true,
-      specialization: true,
-      email: true,
-      phone: true,
-      description: true,
-      link: true,
-      languages: {
-        select: {
-          language: true
-        }
-      },
-      address: {
-        select: {
-          country: true,
-          city: true,
-          postalCode: true,
-          street: true,
-          buildingNumber: true,
-        }
-      },
-      profilePicture: true,
-      actuality: true,
-      openingHours: {
-        select: {
-          day: true,
-          opening: true,
-        }
-      },
-      references: {
-        orderBy:{
-          created: "desc"
-        },
-        select: {
-          rate: true,
-          comment: true,
-          author: true,
-          created: true,
-        }
-      }
-    }
-  });
+  const person = await doctorModel.getDoctorFromUserId(id);
 
-  if (!doctor || doctor.person.deleted || doctor.deleted) {
+  if (!person || !person.doctor) {
     return res.status(404)
       .send({
         status: 'error',
@@ -99,7 +44,7 @@ const doctorDetail = async (req: Request, res: Response) => {
       });
   }
 
-  let reviews = doctor.references.map(function (review) {
+  let reviews = person.doctor.references.map(function (review) {
     return {
       rate: review.rate / 2,
       comment: review.comment,
@@ -110,10 +55,10 @@ const doctorDetail = async (req: Request, res: Response) => {
     };
   });
 
-  let reviewsRatesSum = doctor.references.reduce((a, b) => a + (b.rate / 2), 0);
+  let reviewsRatesSum = person.doctor.references.reduce((a, b) => a + (b.rate / 2), 0);
 
   let opening = new Array<String>(7);
-  doctor.openingHours.slice()
+  person.doctor.openingHours.slice()
     .reverse()
     .forEach(function (x) {
       opening[x.day] = x.opening;
@@ -123,26 +68,26 @@ const doctorDetail = async (req: Request, res: Response) => {
     .json({
       status: 'success',
       data: {
-        degree: doctor.person.degree,
-        firstname: doctor.person.firstname,
-        surname: doctor.person.surname,
-        specialization: doctor.specialization,
-        workEmail: doctor.email,
-        workPhone: doctor.phone,
-        description: doctor.description,
-        link: doctor.link,
-        languages: doctor.languages.map(language => {
+        degree: person.degree,
+        firstname: person.firstname,
+        surname: person.surname,
+        specialization: person.doctor.specialization,
+        workEmail: person.doctor.email,
+        workPhone: person.doctor.phone,
+        description: person.doctor.description,
+        link: person.doctor.link,
+        languages: person.doctor.languages.map(language => {
           return language.language;
         }),
-        workCountry: doctor.address.country,
-        workCity: doctor.address.city,
-        workPostalCode: doctor.address.postalCode,
-        workStreet: doctor.address.street,
-        workBuildingNumber: doctor.address.buildingNumber,
-        profilePicture: doctor.profilePicture,
-        actuality: doctor.actuality,
+        workCountry: person.doctor.address.country,
+        workCity: person.doctor.address.city,
+        workPostalCode: person.doctor.address.postalCode,
+        workStreet: person.doctor.address.street,
+        workBuildingNumber: person.doctor.address.buildingNumber,
+        profilePicture: person.doctor.profilePicture,
+        actuality: person.doctor.actuality,
         openingHours: opening,
-        rateAverage: Math.round((reviewsRatesSum / doctor.references.length) * 2) / 2,
+        rateAverage: Math.round((reviewsRatesSum / person.doctor.references.length) * 2) / 2,
         reviews: reviews
       }
     });
@@ -156,16 +101,13 @@ const doctorList = async (req: Request, res: Response) => {
   } = req.query;
 
   const doctors = await prisma.doctor.findMany({
-    orderBy: [
-      {
-        specialization: 'asc',
-      },
-      {
-        person: {
-          surname: 'asc',
-        }
-      },
-    ],
+    orderBy: [{
+      specialization: 'asc',
+    }, {
+      person: {
+        surname: 'asc',
+      }
+    },],
     where: {
       person: {
         surname: {
@@ -246,9 +188,9 @@ const doctorReservations = async (req: Request, res: Response) => {
           }
         },
         select: {
-          id: true,
           person: {
             select: {
+              id: true,
               firstname: true,
               surname: true,
               degree: true,
@@ -258,6 +200,7 @@ const doctorReservations = async (req: Request, res: Response) => {
           },
           personTmp: {
             select: {
+              id: true,
               firstname: true,
               surname: true,
               degree: true,
@@ -283,39 +226,37 @@ const doctorReservations = async (req: Request, res: Response) => {
       });
   }
 
-  let data = (reservations[0]).reservations.map(
-    function (reservation) {
-      if (reservation.person) {
-        return {
-          id: reservation.id,
-          personDegree: reservation.person.degree,
-          personFirstname: reservation.person.firstname,
-          personSurname: reservation.person.surname,
-          visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
-          visitTimeTo: reservation.toTime.toLocaleTimeString(),
-          visitDate: reservation.fromTime.toISOString()
-            .split('T')[0],
-          note: reservation.personComment,
-          createTime: reservation.created.toLocaleTimeString(),
-          createDate: reservation.created.toISOString()
-            .split('T')[0],
-        };
-      } else if (reservation.personTmp) {
-        return {
-          id: reservation.id,
-          personDegree: reservation.personTmp.degree,
-          personFirstname: reservation.personTmp.firstname,
-          personSurname: reservation.personTmp.surname,
-          visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
-          visitTimeTo: reservation.toTime.toLocaleTimeString(),
-          visitDate: reservation.fromTime.getDate(),
-          note: reservation.personComment,
-          createTime: reservation.created.toLocaleTimeString(),
-          createDate: reservation.created.toUTCString(),
-        };
-      }
+  let data = (reservations[0]).reservations.map(function (reservation) {
+    if (reservation.person) {
+      return {
+        id: reservation.person.id,
+        personDegree: reservation.person.degree,
+        personFirstname: reservation.person.firstname,
+        personSurname: reservation.person.surname,
+        visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
+        visitTimeTo: reservation.toTime.toLocaleTimeString(),
+        visitDate: reservation.fromTime.toISOString()
+          .split('T')[0],
+        note: reservation.personComment,
+        createTime: reservation.created.toLocaleTimeString(),
+        createDate: reservation.created.toISOString()
+          .split('T')[0],
+      };
+    } else if (reservation.personTmp) {
+      return {
+        id: reservation.personTmp.id,
+        personDegree: reservation.personTmp.degree,
+        personFirstname: reservation.personTmp.firstname,
+        personSurname: reservation.personTmp.surname,
+        visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
+        visitTimeTo: reservation.toTime.toLocaleTimeString(),
+        visitDate: reservation.fromTime.getDate(),
+        note: reservation.personComment,
+        createTime: reservation.created.toLocaleTimeString(),
+        createDate: reservation.created.toUTCString(),
+      };
     }
-  );
+  });
 
   return res.send({
     status: 'sucess',
@@ -324,16 +265,21 @@ const doctorReservations = async (req: Request, res: Response) => {
 };
 
 const doctorSlots = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const personId = parseInt(req.params.id);
+  const doctor = await doctorModel.getDoctorIdFromUserId(personId);
+  if (!doctor || !doctor.doctor) {
+    return res.sendStatus(400);
+  }
+  const doctorId = doctor.doctor.id;
   const date = new Date(req.params.date);
   const nextDay = new Date();
   nextDay.setDate(date.getDate() + 1);
   const day = date.getDay();
-  let today = new Date()
+  let today = new Date();
 
   const reservationHours = await prisma.reservationHours.findMany({
     where: {
-      doctorId: id,
+      doctorId: doctorId,
       day: day,
       fromDate: {
         lte: today
@@ -349,7 +295,7 @@ const doctorSlots = async (req: Request, res: Response) => {
 
   const reservations = await prisma.reservation.findMany({
     where: {
-      doctorId: id,
+      doctorId: doctorId,
       fromTime: {
         gte: date,
         lt: nextDay,
@@ -386,16 +332,8 @@ const doctorSlots = async (req: Request, res: Response) => {
 
   return res.send({
     status: 'sucess',
-    data: {slots: timeSlots}
+    data: { slots: timeSlots }
   });
-};
-
-const notImplemented = async (req: Request, res: Response) => {
-  return res.status(501)
-    .send({
-      status: 'error',
-      message: 'Not implemented yet',
-    });
 };
 
 const reviewSchema = object({
@@ -409,11 +347,16 @@ const reviewSchema = object({
 
 const postReview = async (req: Request, res: Response) => {
   try {
-    const doc_id = parseInt(req.params.id);
+    const personId = parseInt(req.params.id);
+    const doctor = await doctorModel.getDoctorIdFromUserId(personId);
+    if (!doctor || !doctor.doctor) {
+      return res.sendStatus(400);
+    }
+    const doctorId = doctor.doctor.id;
     const data = await reviewSchema.validate(req.body);
     const reference = await prisma.review.create({
       data: {
-        doctorId: doc_id,
+        doctorId: doctorId,
         comment: data.comment,
         rate: data.rate * 2,
         author: data.author || null
@@ -569,16 +512,20 @@ const doctorDelete = async (req: Request, res: Response) => {
   }
 };
 
-
 const createReservationNonregistered = async (req: Request, res: Response) => {
   try {
-    const doc_id: number = parseInt(req.params.id);
+    const personId = parseInt(req.params.id);
+    const doctor = await doctorModel.getDoctorIdFromUserId(personId);
+    if (!doctor || !doctor.doctor) {
+      return res.sendStatus(400);
+    }
+    const doctorId = doctor.doctor.id;
     const data = await personTmpSchema.validate(req.body);
     const day = new Date(data.date).getDay();
     const today = new Date();
     const reservationHours = await prisma.reservationHours.findFirst({
       where: {
-        doctorId: doc_id,
+        doctorId: doctorId,
         day: day,
         fromDate: {
           lte: today
@@ -598,29 +545,25 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
           message: 'Can\'t make reservation for this day.',
         });
     }
+    let fromTime = new Date(data.date);
     // parseInt parameter 10 for remove leading zeros
-    let hours = parseInt(data.time.split(':')[0], 10)
-    let minutes = parseInt(data.time.split(':')[1], 10)
-    let reservationHoursFrom = reservationHours.fromTime.getHours() * 60 + reservationHours.fromTime.getMinutes()
-    let reservationHoursTo = reservationHours.toTime.getHours() * 60 + reservationHours.toTime.getMinutes()
-    if((hours * 60 + minutes) < reservationHoursFrom ||
-     (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo){
+    let hours = parseInt(data.time.split(':')[0], 10);
+    let minutes = parseInt(data.time.split(':')[1], 10);
+    fromTime.setHours(hours);
+    fromTime.setMinutes(minutes);
+    let toTime = new Date(fromTime);
+    toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
+    if (fromTime < reservationHours.fromTime || toTime > reservationHours.toTime) {
       return res.status(500)
         .send({
           status: 'error',
           message: 'Time is out of reservation hours.',
         });
     }
-    let fromTime = new Date(data.date);
-    fromTime.setHours(hours);
-    fromTime.setMinutes(minutes);
-    let toTime = new Date(fromTime);
-    toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
-    let reservation = null;
 
     const checkFree = await prisma.reservation.findMany({
       where: {
-        doctorId: doc_id,
+        doctorId: doctorId,
         fromTime: fromTime
       },
     });
@@ -633,10 +576,11 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
         });
     }
 
+    let reservation: any;
     if (data.country && data.city && data.postalCode && data.buildingNumber) {
       reservation = await prisma.reservation.create({
         data: {
-          doctor: { connect: { id: doc_id } },
+          doctor: { connect: { id: doctorId } },
           personTmp: {
             create: {
               firstname: data.firstname,
@@ -666,7 +610,7 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
     } else {
       reservation = await prisma.reservation.create({
         data: {
-          doctor: { connect: { id: doc_id } },
+          doctor: { connect: { id: doctorId } },
           personTmp: {
             create: {
               firstname: data.firstname,
@@ -721,13 +665,18 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
 
 const createReservationRegistered = async (req: Request, res: Response) => {
   try {
-    const doc_id: number = parseInt(req.params.id);
+    const personId = parseInt(req.params.id);
+    const doctor = await doctorModel.getDoctorIdFromUserId(personId);
+    if (!doctor || !doctor.doctor) {
+      return res.sendStatus(400);
+    }
+    const doctorId = doctor.doctor.id;
     const data = await reservationSchema.validate(req.body);
     const day = new Date(data.date).getDay();
     const today = new Date();
     const reservationHours = await prisma.reservationHours.findFirst({
       where: {
-        doctorId: doc_id,
+        doctorId: doctorId,
         day: day,
         fromDate: {
           lte: today
@@ -768,7 +717,7 @@ const createReservationRegistered = async (req: Request, res: Response) => {
     let reservation = null;
     const checkFree = await prisma.reservation.findMany({
       where: {
-        doctorId: doc_id,
+        doctorId: doctorId,
         fromTime: fromTime
       },
     });
@@ -789,7 +738,7 @@ const createReservationRegistered = async (req: Request, res: Response) => {
     if (person) {
       const reservation = await prisma.reservation.create({
         data: {
-          doctor: { connect: { id: doc_id } },
+          doctor: { connect: { id: doctorId } },
           person: { connect: { id: person.id } },
           fromTime: fromTime,
           toTime: toTime,
@@ -860,16 +809,16 @@ const passwordError = (res: Response, message: String) => {
 const infoUpdate = async (req: Request, res: Response) => {
   try {
     const data = await doctorUpdateSchema.validate(req.body);
-    let updatedPerson = null
+    let updatedPerson = null;
 
-    if(data.oldPassword && data.password1 && data.password2){
+    if (data.oldPassword && data.password1 && data.password2) {
       const person = await getPerson({ email: res.locals.jwt.username });
-      if (!person) return passwordError(res, "Can't find person.");
+      if (!person) return passwordError(res, 'Can\'t find person.');
 
       const validPassword = await bcryptjs.compare(data.oldPassword, person.password);
-      if (!validPassword) return passwordError(res, "Old password is not valid.");
+      if (!validPassword) return passwordError(res, 'Old password is not valid.');
 
-      if (data.password1 !== data.password2) return passwordError(res, "Passwords don't match.");
+      if (data.password1 !== data.password2) return passwordError(res, 'Passwords don\'t match.');
 
       const hash = await bcryptjs.hash(data.password1, 10);
 
@@ -886,7 +835,7 @@ const infoUpdate = async (req: Request, res: Response) => {
           phonePrefix: data.phonePrefix,
           phone: data.phone,
           insuranceNumber: data.insuranceNumber || null,
-          address:{
+          address: {
             update: {
               country: data.country,
               city: data.city,
@@ -896,10 +845,10 @@ const infoUpdate = async (req: Request, res: Response) => {
             }
           },
           doctor: {
-            update:{
+            update: {
               specialization: data.specialization,
               actuality: data.actuality || null,
-              address:{
+              address: {
                 update: {
                   country: data.workCountry,
                   city: data.workCity,
@@ -913,7 +862,7 @@ const infoUpdate = async (req: Request, res: Response) => {
           password: hash
         }
       });
-    } else{
+    } else {
       updatedPerson = await prisma.person.update({
         where: {
           email: res.locals.jwt.username,
@@ -927,7 +876,7 @@ const infoUpdate = async (req: Request, res: Response) => {
           phonePrefix: data.phonePrefix,
           phone: data.phone,
           insuranceNumber: data.insuranceNumber || null,
-          address:{
+          address: {
             update: {
               country: data.country,
               city: data.city,
@@ -937,10 +886,10 @@ const infoUpdate = async (req: Request, res: Response) => {
             }
           },
           doctor: {
-            update:{
+            update: {
               specialization: data.specialization,
               actuality: data.actuality || null,
-              address:{
+              address: {
                 update: {
                   country: data.workCountry,
                   city: data.workCity,
@@ -978,7 +927,7 @@ const infoUpdate = async (req: Request, res: Response) => {
         });
     }
   }
-}
+};
 
 export default {
   locationList,
