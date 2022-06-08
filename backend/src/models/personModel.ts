@@ -6,8 +6,42 @@ const getPerson = async (where: any) => {
       deleted: false, ...where,
     },
     include: {
-      doctor: true,
-    },
+      doctor: {
+        include: {
+          address: true,
+          references: true,
+          languages: true,
+          openingHours: true,
+          reservations: {
+            orderBy: {
+              fromTime: 'asc'
+            },
+            where: {
+              fromTime: {
+                gte: new Date(),
+              }
+            }
+          },
+          reservationHours: {
+            orderBy: [{
+              day: 'asc',
+            },],
+            distinct: ['day']
+          },
+        },
+      },
+      address: true,
+      reservations: {
+        orderBy: {
+          fromTime: 'asc'
+        },
+        where: {
+          fromTime: {
+            gte: new Date(),
+          }
+        }
+      },
+    }
   });
 };
 
