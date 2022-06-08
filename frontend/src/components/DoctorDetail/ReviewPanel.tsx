@@ -27,7 +27,7 @@ function ReviewCreate() {
         await axios.post(url, review)
             .then(response => {
                 console.log(response);
-                if (checkStatus(response.data.status)) {
+                if (checkStatus(response.status)) {
                     window.location.reload();
                 }
             })

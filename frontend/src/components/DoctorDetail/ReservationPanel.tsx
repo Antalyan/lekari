@@ -42,7 +42,7 @@ function ReservationDatePanel() {
             .then(response => {
                 console.log(response);
                 alert("Rezervace vytvořena!")
-                if (checkStatus(response.data.status)) {
+                if (checkStatus(response.status)) {
                     window.location.reload();
                 }
             })

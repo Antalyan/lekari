@@ -23,7 +23,7 @@ export function LoginForm() {
         await axios.post("http://localhost:4000/login", formData)
             .then(response => {
                     console.log(response);
-                if (checkStatus(response.data.status)) {
+                    if (checkStatus(response.status)) {
                         setUser({
                             id: response.data.user.id,
                             firstName: response.data.user.firstName,
