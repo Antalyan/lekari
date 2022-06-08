@@ -3,6 +3,7 @@ import person from './controllers/person';
 import doctor from './controllers/doctor';
 
 import { Request, Response } from 'express';
+import reservation from './controllers/reservation';
 
 const cors = require('cors');
 const express = require('express');
@@ -41,7 +42,7 @@ api.post('/doctor-reservation-hours', auth.validateTokenDoctor, doctor.reservati
 api.get('/persons', person.personList);                     // Undocumented
 api.get('/personal-info', auth.validateToken, person.personDetail);
 api.patch('/personal-info', auth.validateToken, person.personUpdate);
-api.get('/person-reservations', auth.validateToken, person.personReservations);
+api.get('/person-reservations', auth.validateToken, reservation.personReservations);
 api.delete('/personal-info', auth.validateToken, person.personDelete);
 
 api.get('/validate', auth.validateToken, (req: Request, res: Response) => {
