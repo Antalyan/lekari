@@ -641,10 +641,6 @@ const createReservationRegistered = async (req: Request, res: Response) => {
   }
 };
 
-const passwordError = (res: Response, message: string) => {
-  return results.error(res, message, 400);
-};
-
 const infoUpdate = async (req: Request, res: Response) => {
   try {
     const data = await doctorUpdateSchema.validate(req.body);
