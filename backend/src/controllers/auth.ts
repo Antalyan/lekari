@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { ValidationError } from 'yup';
 import prisma from '../client';
 import { loginSchema, personRegistrationSchema } from './schemas/personSchema';
@@ -149,8 +149,34 @@ const logout = async (req: Request, res: Response) => {
   }
 };
 
+const validateTokenError = (res: Response, code: number, message: string) => {
+  return res.status(code)
+    .json({
+      message: message,
+    });
+};
+
+const validateToken = (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return validateTokenError(res, 401, 'Unauthorized');
+
+  jwt.verify(token, config.server.token.secret, async (err: any, user: any) => {
+    if (err) return validateTokenError(res, 403, 'Forbidden');
+    const person = await getPerson({
+      email: user.email,
+      id: user.id
+    });
+    if (!person) return validateTokenError(res, 401, 'Forbidden');
+    res.locals.jwt = person;
+    next();
+  });
+};
+
 export default {
   register,
   login,
-  logout
+  logout,
+  validateToken,
 };
