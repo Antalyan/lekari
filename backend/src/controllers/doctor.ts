@@ -918,66 +918,20 @@ const doctorInfoAll = async (req: Request, res: Response) => {
         email: res.locals.jwt.username
       }
     },
-    select: {
-      person: {
-        select: {
-          firstname: true,
-          surname: true,
-          degree: true,
-          deleted: true,
-        }
-      },
-      deleted: true,
-      specialization: true,
-      email: true,
-      phone: true,
-      description: true,
-      link: true,
-      languages: {
-        select: {
-          language: true
-        }
-      },
-      address: {
-        select: {
-          country: true,
-          city: true,
-          postalCode: true,
-          street: true,
-          buildingNumber: true,
-        }
-      },
-      profilePicture: true,
-      actuality: true,
-      openingHours: {
-        select: {
-          day: true,
-          opening: true,
-        }
-      },
-      references: {
-        select: {
-          rate: true,
-          comment: true,
-          author: true,
-          created: true,
-        }
-      },
+    include: {
+      person: true,
+      languages: true,
+      address: true,
+      openingHours: true,
+      references: true,
       reservationHours: {
         orderBy: [
           {
             day: 'asc',
           },
         ],
-        distinct: ['day'],
-        select: {
-          day: true,
-          fromTime: true,
-          toTime: true,
-          interval: true,
-          fromDate: true,
-        }
-      },
+        distinct: ['day']
+      }
     }
   });
 
@@ -1016,6 +970,11 @@ const doctorInfoAll = async (req: Request, res: Response) => {
         degree: doctor.person.degree,
         firstname: doctor.person.firstname,
         surname: doctor.person.surname,
+        birthdate: doctor.person.birthdate,
+        email: doctor.person.email,
+        phonePrefix: doctor.person.phonePrefix,
+        phone: doctor.person.phone,
+        insuranceNumber: doctor.person.insuranceNumber,
         specialization: doctor.specialization,
         workEmail: doctor.email,
         workPhone: doctor.phone,
