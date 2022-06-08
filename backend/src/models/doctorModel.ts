@@ -1,10 +1,10 @@
 import prisma from '../client';
 
-const getDoctorFromPerson = async (personId: number) => {
+const getDoctorFromUserId = async (userId: number) => {
   return await prisma.person.findFirst({
     where: {
       deleted: false,
-      id: personId,
+      id: userId,
       doctor: {
         deleted: false,
       }
@@ -18,12 +18,37 @@ const getDoctorFromPerson = async (personId: number) => {
           references: {
             orderBy: {
               created: 'desc'
-            }
-          }
+            },
+          },
         }
       },
     },
   });
 };
 
-export default getDoctorFromPerson;
+const getDoctorIdFromUserId = async (userId: number) => {
+  return await prisma.person.findFirst({
+    where: {
+      deleted: false,
+      id: userId,
+      NOT: {
+        doctor: null,
+      },
+      doctor: {
+        deleted: false,
+      }
+    },
+    select: {
+      doctor: {
+        select: {
+          id: true,
+        }
+      }
+    }
+  });
+};
+
+export default {
+  getDoctorFromUserId,
+  getDoctorIdFromUserId
+};

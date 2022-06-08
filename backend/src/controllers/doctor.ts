@@ -4,6 +4,7 @@ import { number, object, string, ValidationError } from 'yup';
 import {doctorRegistrationSchema, doctorUpdateSchema} from './schemas/doctorSchema';
 import personTmpSchema from './schemas/personTmpSchema';
 import reservationSchema from './schemas/reservationSchema';
+import doctorModel from '../models/doctorModel';
 import getDoctorFromPerson from '../models/doctorModel';
 import reservationHoursSchema from './schemas/reservationHours';
 import getPerson from '../models/personModel';
@@ -22,7 +23,7 @@ const locationList = async (req: Request, res: Response) => {
       city: true,
     }
   });
-  
+
   return res.status(200)
     .send({
       status: 'success',
@@ -34,7 +35,7 @@ const locationList = async (req: Request, res: Response) => {
 const doctorDetail = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
 
-  const person = await getDoctorFromPerson(id);
+  const person = await doctorModel.getDoctorFromUserId(id);
 
   if (!person || !person.doctor) {
     return res.status(404)
