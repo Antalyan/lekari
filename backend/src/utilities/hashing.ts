@@ -15,11 +15,31 @@ const encode = (password, {
   salt,
   iterations
 }) => {
-
-  return crypt.pbkdf2(password, salt, 100000, 64, 'sha512', (err, derivedKey) => {
+  let hash: string;
+  crypt.pbkdf2(password, salt, 100000, 64, 'sha512', (err, derivedKey) => {
     if (err) throw err;
-    return `${algorithm}$${iterations}$${salt}$${derivedKey.toString('hex')}`;
+    hash = `${algorithm}$${iterations}$${salt}$${derivedKey.toString('hex')}`;
   });
+  return hash;
 };
 
-export default { hash };
+const decode = (encoded) => {
+  const [algorithm, iterations, salt, hash] = encoded.split('$');
+  return {
+    algorithm,
+    hash,
+    iterations: parseInt(iterations, 10),
+    salt,
+  };
+};
+
+const verify = (password, encoded) => {
+  const decoded = decode(encoded);
+  const encodedPassword = encode(password, decoded);
+  return encoded === encodedPassword;
+};
+
+export default {
+  hash,
+  verify
+};
