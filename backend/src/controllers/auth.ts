@@ -156,7 +156,7 @@ const validateTokenError = (res: Response, code: number, message: string) => {
     });
 };
 
-const validateToken = (req: Request, res: Response, next: NextFunction) => {
+const validateToken = (req: Request, res: Response, next: NextFunction, doctor: boolean = false) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -168,11 +168,14 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
       email: user.email,
       id: user.id
     });
-    if (!person) return validateTokenError(res, 401, 'Forbidden');
+    if (!person || (doctor && !person.doctor)) return validateTokenError(res, 401, 'Forbidden');
     res.locals.jwt = person;
-    console.log(person);
     next();
   });
+};
+
+const validateTokenDoctor = (req: Request, res: Response, next: NextFunction) => {
+  return validateToken(req, res, next, true);
 };
 
 export default {
@@ -180,4 +183,5 @@ export default {
   login,
   logout,
   validateToken,
+  validateTokenDoctor
 };

@@ -25,14 +25,14 @@ api.get('/', (req: any, res: { send: (arg0: { status: string; data: {}; message:
 api.get('/doctors', doctor.doctorList);
 api.get('/doctors-locations', doctor.locationList);
 api.get('/doctors/:id(\\d+)', doctor.doctorDetail);
-api.get('/doctor-reservations', auth.validateToken, doctor.doctorReservations);
+api.get('/doctor-reservations', auth.validateTokenDoctor, doctor.doctorReservations);
 api.get('/doctors/:id(\\d+)/slots/:date', doctor.doctorSlots);
-api.get('/doctor-info', auth.validateToken, doctor.doctorInfoAll);
+api.get('/doctor-info', auth.validateTokenDoctor, doctor.doctorInfoAll);
 
 api.post('/signup-doctor', doctor.signUp);
 api.post('/doctors/:id(\\d+)/review', doctor.postReview);
-api.patch('/doctor-info', auth.validateToken, doctor.infoUpdate);
-api.delete('/doctor-info', auth.validateToken, doctor.doctorDelete);
+api.patch('/doctor-info', auth.validateTokenDoctor, doctor.infoUpdate);
+api.delete('/doctor-info', auth.validateTokenDoctor, doctor.doctorDelete);
 api.post('/doctor/:id(\\d+)/reservations-registered', auth.validateToken, doctor.createReservationRegistered);
 api.post('/doctor/:id(\\d+)/reservations-nonregistered', doctor.createReservationNonregistered);
 
