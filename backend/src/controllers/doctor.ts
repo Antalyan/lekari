@@ -81,7 +81,7 @@ const doctorDetail = async (req: Request, res: Response) => {
     });
 };
 
-const doctorList = async (req: Request, res: Response) => {
+const list = async (req: Request, res: Response) => {
   const {
     surname,
     location,
@@ -610,7 +610,7 @@ const detailsUpdate = async (req: Request, res: Response) => {
 
 export default {
   locationList,
-  doctorList,
+  list,
   doctorDetail,
   doctorDelete,
   detailsUpdate,

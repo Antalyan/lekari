@@ -23,7 +23,7 @@ api.get('/', (req: any, res: { send: (arg0: { status: string; data: {}; message:
  * Resource person
  */
 
-api.get('/doctors', doctor.doctorList);
+api.get('/doctors', doctor.list);
 api.get('/doctors-locations', doctor.locationList);
 api.get('/doctors/:id(\\d+)', doctor.doctorDetail);
 api.get('/doctor-reservations', auth.validateTokenDoctor, reservation.doctorReservations);
