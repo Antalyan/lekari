@@ -6,6 +6,7 @@ import personTmpSchema from './schemas/personTmpSchema';
 import reservationSchema from './schemas/reservationSchema';
 import doctorModel from '../models/doctorModel';
 import reservationHoursSchema from './schemas/reservationHoursSchema';
+import results from '../utilities/results';
 
 const bcryptjs = require('bcryptjs');
 
@@ -186,13 +187,7 @@ const doctorReservations = async (req: Request, res: Response) => {
     }
   });
 
-  if (!reservations || reservations.length == 0) {
-    return res.status(404)
-      .send({
-        status: 'error',
-        message: 'Doctor was not found'
-      });
-  }
+  if (!reservations || reservations.length == 0) return results.error(res, 'Doctor was not found', 404);
 
   let data = reservations.map(function (reservation) {
     if (reservation.person) {
