@@ -442,23 +442,25 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
 
     if (!reservationHours) return results.error(res, 'Can\'t make reservation for this day.', 500);
 
-   // parseInt parameter 10 for remove leading zeros
-   let hours = parseInt(data.time.split(':')[0], 10);
-   let minutes = parseInt(data.time.split(':')[1], 10);
-   if(!reservationHours.fromTime || !reservationHours.toTime)
-    return results.error(res,'Time is out of reservation hours.', 500);
+    // parseInt parameter 10 for remove leading zeros
+    let hours = parseInt(data.time.split(':')[0], 10);
+    let minutes = parseInt(data.time.split(':')[1], 10);
+    if (!reservationHours.fromTime || !reservationHours.toTime) {
+      return results.error(res, 'Time is out of reservation hours.', 500);
+    }
 
-   let reservationHoursFrom = getTimeInMinutes(reservationHours.fromTime)
-   let reservationHoursTo = getTimeInMinutes(reservationHours.toTime)
-   if (!reservationHoursFrom || !reservationHoursTo ||
-     (hours * 60 + minutes) < reservationHoursFrom ||
-     (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo)
-      return results.error(res,'Time is out of reservation hours.', 500);
-   let fromTime = new Date(data.date);
-   fromTime.setHours(hours);
-   fromTime.setMinutes(minutes);
-   let toTime = new Date(fromTime);
-   toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
+    let reservationHoursFrom = getTimeInMinutes(reservationHours.fromTime);
+    let reservationHoursTo = getTimeInMinutes(reservationHours.toTime);
+    if (!reservationHoursFrom || !reservationHoursTo ||
+      (hours * 60 + minutes) < reservationHoursFrom ||
+      (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
+      return results.error(res, 'Time is out of reservation hours.', 500);
+    }
+    let fromTime = new Date(data.date);
+    fromTime.setHours(hours);
+    fromTime.setMinutes(minutes);
+    let toTime = new Date(fromTime);
+    toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
 
     const checkFree = await prisma.reservation.findMany({
       where: {
@@ -570,10 +572,11 @@ const createReservationRegistered = async (req: Request, res: Response) => {
     // parseInt parameter 10 for remove leading zeros
     let hours = parseInt(data.time.split(':')[0], 10);
     let minutes = parseInt(data.time.split(':')[1], 10);
-    if(!reservationHours.fromTime || !reservationHours.toTime)
+    if (!reservationHours.fromTime || !reservationHours.toTime) {
       return results.error(res, 'Time is out of reservation hours.', 500);
-    let reservationHoursFrom = getTimeInMinutes(reservationHours.fromTime)
-    let reservationHoursTo = getTimeInMinutes(reservationHours.toTime)
+    }
+    let reservationHoursFrom = getTimeInMinutes(reservationHours.fromTime);
+    let reservationHoursTo = getTimeInMinutes(reservationHours.toTime);
     if (!reservationHoursFrom || !reservationHoursTo ||
       (hours * 60 + minutes) < reservationHoursFrom ||
       (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
@@ -921,17 +924,19 @@ const reservationHoursPost = async (req: Request, res: Response) => {
         },
       });
 
-      for(let reservation of checkReservations){
-        let day = reservation.fromTime.getDay()
-        let reservationChange = preproccesed[day]
-        let resTimeFrom = getTimeInMinutes(reservation.fromTime)
-        let resHourTimeFrom = getTimeInMinutes(reservationChange.fromTime)
-        let resTimeTo = getTimeInMinutes(reservation.toTime)
-        let resHourTimeTo = getTimeInMinutes(reservationChange.toTime)
-        if(!resHourTimeFrom || !resHourTimeTo || !resTimeFrom || !resTimeTo)
+      for (let reservation of checkReservations) {
+        let day = reservation.fromTime.getDay();
+        let reservationChange = preproccesed[day];
+        let resTimeFrom = getTimeInMinutes(reservation.fromTime);
+        let resHourTimeFrom = getTimeInMinutes(reservationChange.fromTime);
+        let resTimeTo = getTimeInMinutes(reservation.toTime);
+        let resHourTimeTo = getTimeInMinutes(reservationChange.toTime);
+        if (!resHourTimeFrom || !resHourTimeTo || !resTimeFrom || !resTimeTo) {
           return results.error(res, 'V konfliktu s existujícími rezervacemi.', 409);
-        if(resTimeFrom < resHourTimeFrom || resTimeTo > resHourTimeTo)
+        }
+        if (resTimeFrom < resHourTimeFrom || resTimeTo > resHourTimeTo) {
           return results.error(res, 'V konfliktu s existujícími rezervacemi.', 409);
+        }
       }
 
       let result = [];
