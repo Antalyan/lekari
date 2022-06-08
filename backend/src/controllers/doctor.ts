@@ -529,13 +529,18 @@ const doctorDelete = async (req: Request, res: Response) => {
 
 const createReservationNonregistered = async (req: Request, res: Response) => {
   try {
-    const doc_id: number = parseInt(req.params.id);
+    const personId = parseInt(req.params.id);
+    const doctor = await doctorModel.getDoctorIdFromUserId(personId);
+    if (!doctor || !doctor.doctor) {
+      return res.sendStatus(400);
+    }
+    const doctorId = doctor.doctor.id;
     const data = await personTmpSchema.validate(req.body);
     const day = new Date(data.date).getDay();
     const today = new Date();
     const reservationHours = await prisma.reservationHours.findFirst({
       where: {
-        doctorId: doc_id,
+        doctorId: doctorId,
         day: day,
         fromDate: {
           lte: today
@@ -570,11 +575,10 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
           message: 'Time is out of reservation hours.',
         });
     }
-    let reservation = null;
 
     const checkFree = await prisma.reservation.findMany({
       where: {
-        doctorId: doc_id,
+        doctorId: doctorId,
         fromTime: fromTime
       },
     });
@@ -587,10 +591,11 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
         });
     }
 
+    let reservation: any;
     if (data.country && data.city && data.postalCode && data.buildingNumber) {
       reservation = await prisma.reservation.create({
         data: {
-          doctor: { connect: { id: doc_id } },
+          doctor: { connect: { id: doctorId } },
           personTmp: {
             create: {
               firstname: data.firstname,
@@ -620,7 +625,7 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
     } else {
       reservation = await prisma.reservation.create({
         data: {
-          doctor: { connect: { id: doc_id } },
+          doctor: { connect: { id: doctorId } },
           personTmp: {
             create: {
               firstname: data.firstname,
