@@ -170,50 +170,19 @@ const doctorList = async (req: Request, res: Response) => {
 };
 
 const doctorReservations = async (req: Request, res: Response) => {
-  const date = new Date();
-  const reservations = await prisma.doctor.findMany({
+  const reservations = await prisma.reservation.findMany({
     where: {
-      person: {
-        email: res.locals.jwt.email
+      doctorId: res.locals.jwt.doctor.id,
+      fromTime: {
+        gte: new Date(),
       }
     },
-    select: {
-      reservations: {
-        orderBy: {
-          fromTime: 'asc'
-        },
-        where: {
-          fromTime: {
-            gte: date,
-          }
-        },
-        select: {
-          person: {
-            select: {
-              id: true,
-              firstname: true,
-              surname: true,
-              degree: true,
-              email: true,
-              phone: true
-            }
-          },
-          personTmp: {
-            select: {
-              id: true,
-              firstname: true,
-              surname: true,
-              degree: true,
-              email: true,
-              phone: true
-            }
-          },
-          fromTime: true,
-          toTime: true,
-          personComment: true,
-          created: true
-        }
-      }
+    orderBy: {
+      fromTime: 'asc'
+    },
+    include: {
+      person: true,
+      personTmp: true,
     }
   });
 
@@ -221,12 +190,11 @@ const doctorReservations = async (req: Request, res: Response) => {
     return res.status(404)
       .send({
         status: 'error',
-        data: {},
         message: 'Doctor was not found'
       });
   }
 
-  let data = (reservations[0]).reservations.map(function (reservation) {
+  let data = reservations.map(function (reservation) {
     if (reservation.person) {
       return {
         id: reservation.person.id,
@@ -265,14 +233,15 @@ const doctorReservations = async (req: Request, res: Response) => {
 };
 
 const convertTimeToString = (datetime: Date) => {
-  if(datetime){
-    let splitTime = datetime.toTimeString().match(/([0-9]+:[0-9]+)/g);
-    if(splitTime){
-      return splitTime[0]
+  if (datetime) {
+    let splitTime = datetime.toTimeString()
+      .match(/([0-9]+:[0-9]+)/g);
+    if (splitTime) {
+      return splitTime[0];
     }
   }
-  return null
-}
+  return null;
+};
 
 const doctorSlots = async (req: Request, res: Response) => {
   const personId = parseInt(req.params.id);
@@ -324,7 +293,7 @@ const doctorSlots = async (req: Request, res: Response) => {
         message: 'Reservation hours were not found'
       });
   }
-  if (reservationHours[0].fromTime && reservationHours[0].toTime){
+  if (reservationHours[0].fromTime && reservationHours[0].toTime) {
     let dateFrom = new Date(date);
     dateFrom.setHours(reservationHours[0].fromTime.getHours());
     dateFrom.setMinutes(reservationHours[0].fromTime.getMinutes());
@@ -333,7 +302,7 @@ const doctorSlots = async (req: Request, res: Response) => {
     let lastTime = new Date(dateFrom);
     for (let i = 0; i < (((time / 60) / reservationHours[0].interval) / 1000); i++) {
       // regex split by second :
-      let timeString = convertTimeToString(new Date(lastTime))
+      let timeString = convertTimeToString(new Date(lastTime));
       allTimeSlots.push(timeString);
       lastTime.setMinutes(lastTime.getMinutes() + reservationHours[0].interval);
     }
@@ -564,31 +533,31 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
         });
     }
 
-   // parseInt parameter 10 for remove leading zeros
-   let hours = parseInt(data.time.split(':')[0], 10);
-   let minutes = parseInt(data.time.split(':')[1], 10);
-   if(!reservationHours.fromTime || !reservationHours.toTime){
-    return res.status(500)
-    .send({
-      status: 'error',
-      message: 'Time is out of reservation hours.',
-    });
-   }
-   let reservationHoursFrom = reservationHours.fromTime.getHours() * 60 + reservationHours.fromTime.getMinutes();
-   let reservationHoursTo = reservationHours.toTime.getHours() * 60 + reservationHours.toTime.getMinutes();
-   if ((hours * 60 + minutes) < reservationHoursFrom ||
-     (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
-     return res.status(500)
-       .send({
-         status: 'error',
-         message: 'Time is out of reservation hours.',
-       });
-   }
-   let fromTime = new Date(data.date);
-   fromTime.setHours(hours);
-   fromTime.setMinutes(minutes);
-   let toTime = new Date(fromTime);
-   toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
+    // parseInt parameter 10 for remove leading zeros
+    let hours = parseInt(data.time.split(':')[0], 10);
+    let minutes = parseInt(data.time.split(':')[1], 10);
+    if (!reservationHours.fromTime || !reservationHours.toTime) {
+      return res.status(500)
+        .send({
+          status: 'error',
+          message: 'Time is out of reservation hours.',
+        });
+    }
+    let reservationHoursFrom = reservationHours.fromTime.getHours() * 60 + reservationHours.fromTime.getMinutes();
+    let reservationHoursTo = reservationHours.toTime.getHours() * 60 + reservationHours.toTime.getMinutes();
+    if ((hours * 60 + minutes) < reservationHoursFrom ||
+      (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
+      return res.status(500)
+        .send({
+          status: 'error',
+          message: 'Time is out of reservation hours.',
+        });
+    }
+    let fromTime = new Date(data.date);
+    fromTime.setHours(hours);
+    fromTime.setMinutes(minutes);
+    let toTime = new Date(fromTime);
+    toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
 
     const checkFree = await prisma.reservation.findMany({
       where: {
@@ -728,13 +697,13 @@ const createReservationRegistered = async (req: Request, res: Response) => {
     // parseInt parameter 10 for remove leading zeros
     let hours = parseInt(data.time.split(':')[0], 10);
     let minutes = parseInt(data.time.split(':')[1], 10);
-    if(!reservationHours.fromTime || !reservationHours.toTime){
+    if (!reservationHours.fromTime || !reservationHours.toTime) {
       return res.status(500)
-      .send({
-        status: 'error',
-        message: 'Time is out of reservation hours.',
-      });
-     }
+        .send({
+          status: 'error',
+          message: 'Time is out of reservation hours.',
+        });
+    }
     let reservationHoursFrom = reservationHours.fromTime.getHours() * 60 + reservationHours.fromTime.getMinutes();
     let reservationHoursTo = reservationHours.toTime.getHours() * 60 + reservationHours.toTime.getMinutes();
     if ((hours * 60 + minutes) < reservationHoursFrom ||
@@ -1019,7 +988,7 @@ const doctorInfoAll = async (req: Request, res: Response) => {
 };
 
 const reservationHoursGet = async (req: Request, res: Response) => {
-  const today = new Date()
+  const today = new Date();
   const reservationHours = await prisma.reservationHours.findMany({
     orderBy: [
       {
@@ -1030,7 +999,7 @@ const reservationHoursGet = async (req: Request, res: Response) => {
       },
     ],
     where: {
-      doctor:{
+      doctor: {
         person: {
           email: res.locals.jwt.username
         },
@@ -1046,34 +1015,35 @@ const reservationHoursGet = async (req: Request, res: Response) => {
       fromTime: true,
       toTime: true,
       interval: true,
-      },
-      distinct: ['day'],
+    },
+    distinct: ['day'],
   });
 
-  let hours = Array<any>(7)
+  let hours = Array<any>(7);
 
-  if(reservationHours.length === 0){
+  if (reservationHours.length === 0) {
     return res.status(200)
-    .json({
-      status: 'success',
-      data: {
-        fromDate: null,
-        interval: null,
-        slots: hours
-      }});
+      .json({
+        status: 'success',
+        data: {
+          fromDate: null,
+          interval: null,
+          slots: hours
+        }
+      });
   }
 
   reservationHours.forEach(function (value) {
-    if(!value.fromTime || !value.toTime){
+    if (!value.fromTime || !value.toTime) {
       hours[value.day] = {
         fromTime: null,
         toTime: null
-      }
-    } else{
+      };
+    } else {
       hours[value.day] = {
         fromTime: convertTimeToString(value.fromTime),
         toTime: convertTimeToString(value.toTime)
-      }
+      };
     }
   });
 
@@ -1084,48 +1054,51 @@ const reservationHoursGet = async (req: Request, res: Response) => {
         fromDate: reservationHours[0].fromDate,
         interval: reservationHours[0].interval,
         slots: hours
-      }});
+      }
+    });
 };
 
 const createDatetime = (date: Date, time: string) => {
-  let splitedTime = time.split(':')
-  if(splitedTime.length === 2){
-    let datetime = new Date(date)
-    datetime.setHours(parseInt(splitedTime[0]))
-    datetime.setMinutes(parseInt(splitedTime[1]))
-    return datetime
+  let splitedTime = time.split(':');
+  if (splitedTime.length === 2) {
+    let datetime = new Date(date);
+    datetime.setHours(parseInt(splitedTime[0]));
+    datetime.setMinutes(parseInt(splitedTime[1]));
+    return datetime;
   }
-  return null
-}
+  return null;
+};
 
 const reservationHoursPost = async (req: Request, res: Response) => {
-  try{
+  try {
     const data = await reservationHoursSchema.validate(req.body);
 
     const doctor = await doctorModel.getDoctorFromUserEmail(res.locals.jwt.username);
-      if (!doctor) {
-        return res.status(400).json({
+    if (!doctor) {
+      return res.status(400)
+        .json({
           status: 'error',
-          message:"Doctor was not found."
-        });;
-      }
-  
-    if(data.slots){
+          message: 'Doctor was not found.'
+        });
+
+    }
+
+    if (data.slots) {
       let preproccesed = data.slots.map(function (value, index) {
-        if(value.fromTime && value.toTime){
-            return {
-              doctor: {
-                connect: {
-                  id: doctor.id
-                }
-              },
-              day: index,
-              fromDate: data.fromDate,
-              interval: data.interval,
-              fromTime: createDatetime(data.fromDate, value.fromTime),
-              toTime: createDatetime(data.fromDate, value.toTime)
-            }
-        } else{
+        if (value.fromTime && value.toTime) {
+          return {
+            doctor: {
+              connect: {
+                id: doctor.id
+              }
+            },
+            day: index,
+            fromDate: data.fromDate,
+            interval: data.interval,
+            fromTime: createDatetime(data.fromDate, value.fromTime),
+            toTime: createDatetime(data.fromDate, value.toTime)
+          };
+        } else {
           return {
             doctor: {
               connect: {
@@ -1137,45 +1110,46 @@ const reservationHoursPost = async (req: Request, res: Response) => {
             interval: data.interval,
             fromTime: null,
             toTime: null
-          }
+          };
         }
-      })
-  
-      let result = []
-  
+      });
+
+      let result = [];
+
       for (const value of preproccesed) {
-        try{
+        try {
           let created = await prisma.reservationHours.create({
             data: value
-          })
-          result.push(created)
-        } catch(e){
+          });
+          result.push(created);
+        } catch (e) {
           return res.status(200)
-              .json({
-                status: 'error',
-                message: "Rezervační hodiny od tohoto data už jsou nastaveny."
-                });
+            .json({
+              status: 'error',
+              message: 'Rezervační hodiny od tohoto data už jsou nastaveny.'
+            });
         }
       }
-  
+
       return res.status(200)
-      .json({
-        status: 'success',
-        data: {
-          reservationHours: result
-      }});
+        .json({
+          status: 'success',
+          data: {
+            reservationHours: result
+          }
+        });
     }
     return res.status(400)
       .json({
         status: 'error',
         message: 'Missing attribute slots'
       });
-  } catch(e){
+  } catch (e) {
     return res.status(500)
-    .json({
-      status: 'error',
-      message: e
-    });
+      .json({
+        status: 'error',
+        message: e
+      });
   }
 };
 
