@@ -2,7 +2,7 @@ import {FormContainer, PasswordElement} from "react-hook-form-mui";
 import {Box, Button, Grid, IconButton, Stack, styled, Typography} from "@mui/material";
 import {useFormContext} from "react-hook-form";
 import * as React from "react";
-import {IEditable, IFormPerson, IFormRes} from "../../utils/Interfaces";
+import {IEditable, IFormPerson, IFormRes, IGlobalProfileInfo} from "../../utils/Interfaces";
 import {
     COUNTRIES,
     findCountryIndex,
@@ -79,8 +79,11 @@ async function completeRegistration(url: string, subject: any, navigate: Navigat
         });
 }
 
-async function updateProfile(url: string, subject: any, navigate: NavigateFunction) {
-    await axios.patch(url, subject)
+async function updateProfile(url: string, subject: any, navigate: NavigateFunction, user: IGlobalProfileInfo) {
+    await axios.patch(url, subject, {
+        headers: {
+            'Authorization': `Bearer ${user.token}`
+        }})
         .then(response => {
             console.log(response);
             if (response.data.status === "success") {
@@ -145,11 +148,10 @@ export function UserDataFormPage({type, isEdit}: IForm) {
     }
 
     const location = useLocation();
-    const id = user.id;
+    const resDoctId = useParams().id;
 
     // TODO: check edit after API restored
     const url = 'http://localhost:4000/' + (type == DataFormType.Doctor ? 'doctor-info' : 'personal-info');
-    console.log(url);
     const {data, error} = useSWR(isEdit ? [url, user.token] : null, fetcherWithToken);
     let defaultValues = {};
     if (isEdit) {
@@ -179,7 +181,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
         }
         if (isEdit) {
             // TODO: edit url
-            await updateProfile('http://localhost:4000/personal-info', patient, navigate);
+            await updateProfile('http://localhost:4000/personal-info', patient, navigate, user);
         } else {
             await completeRegistration('http://localhost:4000/register', patient, navigate);
         }
@@ -209,7 +211,9 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                 time: location.state.reservationTime
             }
             // TODO: finish update reservation - send to db
-            await completeReservation(`http://localhost:4000/doctor/${id}/reservations-nonregistered`, res, navigate, id);
+            const url = `http://localhost:4000/doctor/${resDoctId}/reservations-nonregistered`;
+            console.log(url);
+            await completeReservation(url, res, navigate, user.id);
     };
 
     // TODO: check storing address doctor attributes when API impl finished
@@ -240,7 +244,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
         }
         if (isEdit) {
             // TODO: edit url
-            await updateProfile('http://localhost:4000/personal-info', doctor, navigate);
+            await updateProfile('http://localhost:4000/personal-info', doctor, navigate, user);
         } else {
             await completeRegistration('http://localhost:4000/signup-doctor', doctor, navigate);
         }

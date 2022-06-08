@@ -170,8 +170,7 @@ export function InfoPanel(info: IDoctorDetailInfo) {
 
         // TODO: check and update request, update url
         const url = "";
-        await axios.put(url, {
-            detail,
+        await axios.put(url, detail, {
             headers: {
                 'Authorization': `Bearer ${user.token}`
             }})
