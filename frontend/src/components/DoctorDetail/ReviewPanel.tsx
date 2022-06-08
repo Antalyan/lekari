@@ -76,7 +76,7 @@ function ReviewCard({author, createDate, createTime, rating, text, id}: IReview)
         <Divider/>
         <Grid container justifyContent={"space-between"} spacing={1}>
             <Grid item xs={12}>
-                <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+                <Stack direction={"row"} justifyContent={"space-between"}>
                     <Typography variant="h6"
                                 color={"primary.main"}
                                 display={"inline"}>
@@ -84,9 +84,10 @@ function ReviewCard({author, createDate, createTime, rating, text, id}: IReview)
                     </Typography>
                     <Typography variant="subtitle2"
                                 color={"text.secondary"}
+                                textAlign={"right"}
                                 display={"inline"}>
                         {/*TODO: put under each other*/}
-                        {createDate + ", " + createTime}
+                        {createDate}<br/>{createTime}
                     </Typography>
                 </Stack>
             </Grid>
