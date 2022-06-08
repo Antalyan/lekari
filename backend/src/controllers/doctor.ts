@@ -7,9 +7,8 @@ import reservationSchema from './schemas/reservationSchema';
 import doctorModel from '../models/doctorModel';
 import reservationHoursSchema from './schemas/reservationHoursSchema';
 import results from '../utilities/results';
-import { convertTimeToString, createDatetime,  getTimeInMinutes} from './helperFunctions';
-
-const bcryptjs = require('bcryptjs');
+import { convertTimeToString, createDatetime, getTimeInMinutes } from './helperFunctions';
+import hashing from '../utilities/hashing';
 
 const locationList = async (req: Request, res: Response) => {
   const cities = await prisma.address.findMany({
@@ -210,7 +209,6 @@ const doctorReservations = async (req: Request, res: Response) => {
   });
 };
 
-
 const doctorSlots = async (req: Request, res: Response) => {
   const personId = parseInt(req.params.id);
   const doctor = await doctorModel.getDoctorIdFromUserId(personId);
@@ -338,7 +336,7 @@ const signUp = async (req: Request, res: Response) => {
 
   try {
     const data = await doctorRegistrationSchema.validate(req.body);
-    const hash = await bcryptjs.hash(password1, 10);
+    const hash = hashing.hash(password1);
     const person = await prisma.person.create({
       data: {
         firstname: data.firstname,
@@ -638,12 +636,12 @@ const infoUpdate = async (req: Request, res: Response) => {
       const person = res.locals.jwt;
       if (!person) return results.error(res, 'Can\'t find person.', 400);
 
-      const validPassword = await bcryptjs.compare(data.oldPassword, person.password);
+      const validPassword = hashing.verify(data.oldPassword, person.password);
       if (!validPassword) return results.error(res, 'Old password is not valid.', 400);
 
       if (data.password1 !== data.password2) return results.error(res, 'Passwords don\'t match.', 400);
 
-      const hash = await bcryptjs.hash(data.password1, 10);
+      const hash = hashing.hash(data.password1);
 
       updatedPerson = await prisma.person.update({
         where: {
@@ -876,7 +874,6 @@ const reservationHoursGet = async (req: Request, res: Response) => {
     });
 };
 
-
 const reservationHoursPost = async (req: Request, res: Response) => {
   try {
     const data = await reservationHoursSchema.validate(req.body);
@@ -913,12 +910,12 @@ const reservationHoursPost = async (req: Request, res: Response) => {
             toTime: null
           };
         }
-      })
+      });
 
       const checkReservations = await prisma.reservation.findMany({
         where: {
           doctorId: doctor.id,
-          fromTime:{
+          fromTime: {
             gt: data.fromDate
           }
         },
@@ -937,8 +934,8 @@ const reservationHoursPost = async (req: Request, res: Response) => {
           return results.error(res, 'V konfliktu s existujícími rezervacemi.', 409);
       }
 
-      let result = []
-      
+      let result = [];
+
       for (const value of preproccesed) {
         try {
           let created = await prisma.reservationHours.create({

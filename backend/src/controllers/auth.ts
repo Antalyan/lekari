@@ -4,8 +4,8 @@ import prisma from '../client';
 import { loginSchema, personRegistrationSchema } from './schemas/personSchema';
 import getPerson from '../models/personModel';
 import config from '../config/config';
+import hashing from '../utilities/hashing';
 
-const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const register = async (req: Request, res: Response) => {
@@ -24,7 +24,7 @@ const register = async (req: Request, res: Response) => {
   }
   try {
     const data = await personRegistrationSchema.validate(req.body);
-    const hash = await bcryptjs.hash(password1, 10);
+    const hash = hashing.hash(password1);
     const person = await prisma.person.create({
       data: {
         firstname: data.firstname,
@@ -97,7 +97,7 @@ const login = async (req: Request, res: Response) => {
     const person = await getPerson({ email: data.email });
     if (!person) return loginError(res);
 
-    const validPassword = await bcryptjs.compare(data.password, person.password);
+    const validPassword = hashing.verify(data.password, person.password);
     if (!validPassword) return loginError(res);
 
     const accessToken = jwt.sign({
