@@ -447,24 +447,15 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
    // parseInt parameter 10 for remove leading zeros
    let hours = parseInt(data.time.split(':')[0], 10);
    let minutes = parseInt(data.time.split(':')[1], 10);
-   if(!reservationHours.fromTime || !reservationHours.toTime){
-    return res.status(500)
-    .send({
-      status: 'error',
-      message: 'Time is out of reservation hours.',
-    });
-   }
+   if(!reservationHours.fromTime || !reservationHours.toTime)
+    return results.error(res,'Time is out of reservation hours.', 500);
+
    let reservationHoursFrom = getTimeInMinutes(reservationHours.fromTime)
    let reservationHoursTo = getTimeInMinutes(reservationHours.toTime)
    if (!reservationHoursFrom || !reservationHoursTo ||
      (hours * 60 + minutes) < reservationHoursFrom ||
-     (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
-     return res.status(500)
-       .send({
-         status: 'error',
-         message: 'Time is out of reservation hours.',
-       });
-   }
+     (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo)
+      return results.error(res,'Time is out of reservation hours.', 500);
    let fromTime = new Date(data.date);
    fromTime.setHours(hours);
    fromTime.setMinutes(minutes);
@@ -581,13 +572,8 @@ const createReservationRegistered = async (req: Request, res: Response) => {
     // parseInt parameter 10 for remove leading zeros
     let hours = parseInt(data.time.split(':')[0], 10);
     let minutes = parseInt(data.time.split(':')[1], 10);
-    if(!reservationHours.fromTime || !reservationHours.toTime){
-      return res.status(500)
-      .send({
-        status: 'error',
-        message: 'Time is out of reservation hours.',
-      });
-     }
+    if(!reservationHours.fromTime || !reservationHours.toTime)
+      return results.error(res, 'Time is out of reservation hours.', 500);
     let reservationHoursFrom = getTimeInMinutes(reservationHours.fromTime)
     let reservationHoursTo = getTimeInMinutes(reservationHours.toTime)
     if (!reservationHoursFrom || !reservationHoursTo ||
@@ -945,20 +931,10 @@ const reservationHoursPost = async (req: Request, res: Response) => {
         let resHourTimeFrom = getTimeInMinutes(reservationChange.fromTime)
         let resTimeTo = getTimeInMinutes(reservation.toTime)
         let resHourTimeTo = getTimeInMinutes(reservationChange.toTime)
-        if(!resHourTimeFrom || !resHourTimeTo || !resTimeFrom || !resTimeTo){
-          return res.status(400)
-          .json({
-            status: 'error',
-            message: 'V konfliktu s existujícími rezervacemi.',
-          });
-        }
-        if(resTimeFrom < resHourTimeFrom || resTimeTo > resHourTimeTo){
-          return res.status(400)
-          .json({
-            status: 'error',
-            message: 'V konfliktu s existujícími rezervacemi.',
-          });
-        }
+        if(!resHourTimeFrom || !resHourTimeTo || !resTimeFrom || !resTimeTo)
+          return results.error(res, 'V konfliktu s existujícími rezervacemi.', 409);
+        if(resTimeFrom < resHourTimeFrom || resTimeTo > resHourTimeTo)
+          return results.error(res, 'V konfliktu s existujícími rezervacemi.', 409);
       }
 
       let result = []
