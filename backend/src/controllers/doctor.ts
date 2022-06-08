@@ -6,6 +6,7 @@ import personTmpSchema from './schemas/personTmpSchema';
 import reservationSchema from './schemas/reservationSchema';
 import doctorModel from '../models/doctorModel';
 import reservationHoursSchema from './schemas/reservationHoursSchema';
+import doctorDetailsSchema from './schemas/doctorDetailsSchema';
 import results from '../utilities/results';
 import { convertTimeToString, createDatetime, getTimeInMinutes } from './helperFunctions';
 import hashing from '../utilities/hashing';
@@ -47,7 +48,7 @@ const doctorDetail = async (req: Request, res: Response) => {
 
   let reviewsRatesSum = person.doctor.references.reduce((a, b) => a + (b.rate / 2), 0);
 
-  let opening = new Array<String>(7);
+  let opening = new Array<String|null>(7);
   person.doctor.openingHours.slice()
     .reverse()
     .forEach(function (x) {
@@ -967,12 +968,90 @@ const reservationHoursPost = async (req: Request, res: Response) => {
   }
 };
 
+const detailsUpdate = async (req: Request, res: Response) => {
+  try {
+    const data = await doctorDetailsSchema.validate(req.body);
+      const doctor = await doctorModel.getDoctorFromUserEmail(res.locals.jwt.username);
+      if(!doctor) return results.error(res, 'Doctor was not found', 404);
+      const updatedDoctor = await prisma.doctor.update({
+        where: {
+          id: doctor.id
+        },
+        data: {
+          email: data.email || null,
+          phone: data.phone || null,
+          description: data.description || null,
+          link: data.link || null,
+        }
+      });
+    if (!updatedDoctor) return results.error(res, 'Doctor was not found', 404);
+    if(data.languages){
+      for(let language of data.languages){
+        if(language){
+          await prisma.doctorLanguage.upsert({
+            where: {
+              doctorId_language: {
+                doctorId: doctor.id,
+                language: language
+              }
+            },
+            update: {},
+            create: {
+              doctor: {
+                connect: {
+                  id: doctor.id
+                }
+              },
+              language: language
+            }
+          })
+        }
+      }
+    }
+    let day = 0;
+    if(data.openingHours){
+      for(let hour of data.openingHours){
+        await prisma.openingHours.upsert({
+          where: {
+            doctorId_day: {
+              doctorId: doctor.id,
+              day: day
+            }
+          },
+          update: {
+            opening: hour
+          },
+          create: {
+            doctor: {
+              connect:{
+                id: doctor.id,
+              }
+            },
+            day: day,
+            opening: hour
+          }
+        })
+        day++
+      }
+    }
+    return res.send({
+      status: 'success',
+      data: updatedDoctor.id
+    });
+
+  } catch (e) {
+    if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
+    return results.error(res, 'Unknown error', 500);
+  }
+};
+
 export default {
   locationList,
   doctorList,
   doctorDetail,
   doctorDelete,
   doctorReservations,
+  detailsUpdate,
   doctorSlots,
   postReview,
   signUp,

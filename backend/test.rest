@@ -139,7 +139,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imthd
 Content-Type: application/json
 
 {
-  "fromDate": "2022-06-08T00:00:00",
+  "fromDate": "2022-06-20T00:00:00",
   "interval": 30,
   "slots": [
     {
@@ -189,12 +189,35 @@ GET http://localhost:4000/doctors/1
 GET http://localhost:4000/doctor-reservations
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvbWFzQGplZG5vLmNvbSIsImlhdCI6MTY1NDcwNzg1MiwiZXhwIjozMzA5Nzc1NzA0LCJpc3MiOiJjb29sSXNzdWVyIn0.x0zboMfOnmKDrmT8KOFScTTncajzoZO7TLoevzYjfY8
 ###
+PUT http://localhost:4000/doctor-details
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJrYXRrYUBub3ZhLmN6IiwiaWF0IjoxNjU0NzMwMDIzLCJleHAiOjE2NTQ3MzA2MjN9.f7fTb8-Ah3xWzMTXt-fRA-tTUotYNHyI0XTUx0UwzE4
+Content-Type: application/json
+
+{
+  "openingHours": [
+    "zavřeno",
+    null,
+    null,
+    null,
+    null,
+    "zavřeno"
+  ],
+  "languages": [
+    "Česky",
+    "Anglicky"
+  ]
+  "email": "muj@mail.cz",
+  "phone": "506457894",
+  "link": "https://idp.abo.fi/idp/profile/SAML2/Redirect/SSO?execution=e1s1",
+  "description": "Můj popis."
+}
+###
 POST http://localhost:4000/doctor/1/reservations-registered
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvbWFzQGplZG5vLmNvbSIsImlhdCI6MTY1NDYyNDIxNywiZXhwIjozMzA5NjA4NDM0LCJpc3MiOiJjb29sSXNzdWVyIn0.zIrCMOivsCz4G0sEgLK5uTzHdWgjDVKK0TWlzR7FdTw
 Content-Type: application/json
 
 {
-  "date": "2022-06-14T00:00:00",
+  "date": "2022-06-27T00:00:00",
   "time": "10:00",
   "comment": "Operace zubu."
 }
