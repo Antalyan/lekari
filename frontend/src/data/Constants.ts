@@ -19,6 +19,6 @@ export const validateUrl = {
 }
 
 // key for choosing values: value | 60 (to avoid hours overflows) && value >= 10 (sufficiently big)
-export const INTERVALS = [10, 15, 20, 30, 60].map((val, index) => {
-    return {id: index, title: val}
+export const INTERVALS = [10, 15, 20, 30, 60].map((val) => {
+    return {id: val, title: val}
 })

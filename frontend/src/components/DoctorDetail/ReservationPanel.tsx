@@ -18,20 +18,6 @@ import fetcher from "../../utils/fetcher";
 import axios from "axios";
 import {IDatResCreate} from "../../utils/DatabaseInterfaces";
 
-// interval | 60
-function countIntervals(interval: number) {
-    let result = [];
-    let start = new Date(1971, 0, 1);
-    start.setHours(RESERVATION_INTERVAL_BOUNDS[0]);
-    while (start.getHours() < RESERVATION_INTERVAL_BOUNDS[1]) {
-        result.push(start.getHours() + ":" + start.getMinutes() + (start.getMinutes() == 0 ? "0" : ""));
-        start.setMinutes(start.getMinutes() + interval);
-
-    }
-    return result.map((val: string, index) => {
-        return {id: index, title: val}
-    });
-}
 
 function ReservationDatePanel() {
     const formContext = useForm<IReservationBasic>();
@@ -78,7 +64,6 @@ function ReservationDatePanel() {
                     reservationNote: formData.reservationNote
                 }
             })
-            // TODO: pass <formData>: https://reactnavigation.org/docs/params/
         }
     })
 
@@ -160,8 +145,21 @@ function ReservationSlots() {
         }))
     };
 
-    const [intervalState, setIntervalState] = useState(INTERVALS[3]);
-    const [fromDateState, setFromDateState] = useState<Date>();
+    // TODO: load value from user
+    const [intervalState, setIntervalState] = useState(20);
+    // interval | 60
+    const countIntervals = () => {
+        let result = [];
+        let start = new Date(1971, 0, 1);
+        start.setHours(RESERVATION_INTERVAL_BOUNDS[0]);
+        while (start.getHours() < RESERVATION_INTERVAL_BOUNDS[1]) {
+            result.push(start.getHours() + ":" + start.getMinutes() + (start.getMinutes() == 0 ? "0" : ""));
+            start.setMinutes(start.getMinutes() + intervalState);
+        }
+        return result.map((val: string) => {
+            return {id: val, title: val}
+        });
+    }
 
     return <>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -176,15 +174,15 @@ function ReservationSlots() {
                         display="inline"
                     > Nastavení rezervačních slotů
                     </Typography>
-                    <Grid container>
-                        <Grid item xs={6} container direction={"row"} paddingRight={2}>
-                            <DatePickerElement name={'fromDate'} label={'Od'} required
-                                               onAccept={(date) => {
-                                                   date instanceof Date && setFromDateState(date)
-                                               }}/>
+                    <Grid container justifyContent={"space-between"} paddingBottom={2}>
+                        <Grid item xs={3}>
+                            <DatePickerElement name={'fromDate'} label={'Od'} required/>
                         </Grid>
-                        <Grid item xs={6} container justifyContent={"right"} direction={"row"}>
-                            <DatePickerElement name={'toDate'} label={'Do'} required minDate={fromDateState}/>
+                        <Grid item xs={6}>
+                            <SelectElement name={'interval'} label={'Délka intervalu rezervací'} required
+                                           options={INTERVALS} fullWidth={true} onChange={(value) => {
+                                setIntervalState(value)
+                            }}/>
                         </Grid>
                     </Grid>
                     <FormGroup>
@@ -199,14 +197,14 @@ function ReservationSlots() {
                                 </Grid>
                                 <Grid item xs={3}>
                                     <SelectElement name={'timeFrom' + index} label={'Od'} required={daysState[index]}
-                                                   options={countIntervals(intervalState.title)} fullWidth={true}
+                                                   options={countIntervals()} fullWidth={true}
                                                    size={"small"}
                                                    disabled={!daysState[index]}
                                     />
                                 </Grid>
                                 <Grid item xs={3}>
                                     <SelectElement name={'timeTo' + index} label={'Do'} required={daysState[index]}
-                                                   options={countIntervals(intervalState.title)} fullWidth={true}
+                                                   options={countIntervals()} fullWidth={true}
                                                    size={"small"}
                                                    disabled={!daysState[index]}
                                     />
@@ -214,10 +212,6 @@ function ReservationSlots() {
                             </Grid>)
                         })}
                     </FormGroup>
-                    <SelectElement name={'interval'} label={'Délka intervalu rezervací'} required
-                                   options={INTERVALS} fullWidth={true} onChange={(index) => {
-                        setIntervalState(INTERVALS[index])
-                    }}/>
                     <Grid container justifyContent={"center"}>
                         <Button variant='contained' size={"large"} type={'submit'} color={'primary'}
                                 onSubmit={onSubmit}>
