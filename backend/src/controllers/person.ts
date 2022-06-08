@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { ValidationError } from 'yup';
 import prisma from '../client';
-import { personRegistrationSchema, personUpdateSchema } from './schemas/personSchema';
-import registrationSchema from './schemas/reservationSchema';
+import { personUpdateSchema } from './schemas/personSchema';
 import getPerson from '../models/personModel';
 
 const bcryptjs = require('bcryptjs');
@@ -89,16 +88,16 @@ const passwordError = (res: Response, message: String) => {
 const personUpdate = async (req: Request, res: Response) => {
   try {
     const data = await personUpdateSchema.validate(req.body);
-    let updatedPerson = null
+    let updatedPerson = null;
 
-    if(data.oldPassword && data.password1 && data.password2){
+    if (data.oldPassword && data.password1 && data.password2) {
       const person = await getPerson({ email: res.locals.jwt.username });
-      if (!person) return passwordError(res, "Can't find person.");
+      if (!person) return passwordError(res, 'Can\'t find person.');
 
       const validPassword = await bcryptjs.compare(data.oldPassword, person.password);
-      if (!validPassword) return passwordError(res, "Old password is not valid.");
+      if (!validPassword) return passwordError(res, 'Old password is not valid.');
 
-      if (data.password1 !== data.password2) return passwordError(res, "Passwords don't match.");
+      if (data.password1 !== data.password2) return passwordError(res, 'Passwords don\'t match.');
 
       const hash = await bcryptjs.hash(data.password1, 10);
 
@@ -115,7 +114,7 @@ const personUpdate = async (req: Request, res: Response) => {
           phonePrefix: data.phonePrefix,
           phone: data.phone,
           insuranceNumber: data.insuranceNumber || null,
-          address:{
+          address: {
             update: {
               country: data.country,
               city: data.city,
@@ -127,7 +126,7 @@ const personUpdate = async (req: Request, res: Response) => {
           password: hash
         }
       });
-    } else{
+    } else {
       updatedPerson = await prisma.person.update({
         where: {
           email: res.locals.jwt.username,
@@ -141,7 +140,7 @@ const personUpdate = async (req: Request, res: Response) => {
           phonePrefix: data.phonePrefix,
           phone: data.phone,
           insuranceNumber: data.insuranceNumber || null,
-          address:{
+          address: {
             update: {
               country: data.country,
               city: data.city,
@@ -188,13 +187,13 @@ const personReservations = async (req: Request, res: Response) => {
     },
     select: {
       reservations: {
-        where:{
+        where: {
           fromTime: {
             gte: date,
           }
         },
         orderBy: {
-          fromTime: "asc"
+          fromTime: 'asc'
         },
         select: {
           id: true,
@@ -207,7 +206,7 @@ const personReservations = async (req: Request, res: Response) => {
                   degree: true,
                 }
               },
-              address:{
+              address: {
                 select: {
                   city: true,
                   street: true,
@@ -237,7 +236,7 @@ const personReservations = async (req: Request, res: Response) => {
   }
 
   let data = (reservations[0]).reservations.map(
-    function(reservation, index){
+    function (reservation) {
       return {
         id: reservation.id,
         doctorDegree: reservation.doctor.person.degree,
@@ -245,20 +244,22 @@ const personReservations = async (req: Request, res: Response) => {
         doctorSurname: reservation.doctor.person.surname,
         visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
         visitTimeTo: reservation.toTime.toLocaleTimeString(),
-        visitDate: reservation.fromTime.toISOString().split('T')[0],
+        visitDate: reservation.fromTime.toISOString()
+          .split('T')[0],
         note: reservation.personComment,
         createTime: reservation.created.toLocaleTimeString(),
-        createDate: reservation.created.toISOString().split('T')[0],
-        workStreet:  reservation.doctor.address.street,
+        createDate: reservation.created.toISOString()
+          .split('T')[0],
+        workStreet: reservation.doctor.address.street,
         workBuildingNumber: reservation.doctor.address.buildingNumber,
         workCity: reservation.doctor.address.city,
-      }
+      };
     }
-  )
+  );
 
   return res.send({
     status: 'sucess',
-    data: {reservations: data}
+    data: { reservations: data }
   });
 };
 
