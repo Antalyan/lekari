@@ -57,7 +57,7 @@ const personDetail = async (req: Request, res: Response) => {
   }
 
   return res.send({
-    status: 'sucess',
+    status: 'success',
     data: {
       firstname: person.firstname,
       surname: person.surname,
@@ -163,7 +163,7 @@ const personUpdate = async (req: Request, res: Response) => {
     }
 
     return res.send({
-      status: 'sucess',
+      status: 'success',
       data: updatedPerson.id
     });
   } catch (e) {
@@ -258,7 +258,7 @@ const personReservations = async (req: Request, res: Response) => {
   );
 
   return res.send({
-    status: 'sucess',
+    status: 'success',
     data: { reservations: data }
   });
 };
