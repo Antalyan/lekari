@@ -3,9 +3,10 @@ import prisma from '../client';
 import results from '../utilities/results';
 import doctorModel from '../models/doctorModel';
 import reservationSchema from './schemas/reservationSchema';
-import { convertTimeToString, getTimeInMinutes } from './helperFunctions';
+import { convertTimeToString, createDatetime, getTimeInMinutes } from './helperFunctions';
 import { ValidationError } from 'yup';
 import personTmpSchema from './schemas/personTmpSchema';
+import reservationHoursSchema from './schemas/reservationHoursSchema';
 
 export const personReservations = async (req: Request, res: Response) => {
   const date = new Date();
@@ -436,10 +437,101 @@ const reservationHoursGet = async (req: Request, res: Response) => {
     });
 };
 
+const reservationHoursPost = async (req: Request, res: Response) => {
+  try {
+    const data = await reservationHoursSchema.validate(req.body);
+
+    const doctor = await doctorModel.getDoctorFromUserEmail(res.locals.jwt.username);
+    if (!doctor) return results.error(res, 'Doctor was not found', 500);
+
+    if (data.slots) {
+      let preproccesed = data.slots.map(function (value, index) {
+        if (value.fromTime && value.toTime) {
+          return {
+            doctor: {
+              connect: {
+                id: doctor.id
+              }
+            },
+            day: index,
+            fromDate: data.fromDate,
+            interval: data.interval,
+            fromTime: createDatetime(data.fromDate, value.fromTime),
+            toTime: createDatetime(data.fromDate, value.toTime)
+          };
+        } else {
+          return {
+            doctor: {
+              connect: {
+                id: doctor.id
+              }
+            },
+            day: index,
+            fromDate: data.fromDate,
+            interval: data.interval,
+            fromTime: null,
+            toTime: null
+          };
+        }
+      });
+
+      const checkReservations = await prisma.reservation.findMany({
+        where: {
+          doctorId: doctor.id,
+          fromTime: {
+            gt: data.fromDate
+          }
+        },
+      });
+
+      for (let reservation of checkReservations) {
+        let day = reservation.fromTime.getDay();
+        let reservationChange = preproccesed[day];
+        let resTimeFrom = getTimeInMinutes(reservation.fromTime);
+        let resHourTimeFrom = getTimeInMinutes(reservationChange.fromTime);
+        let resTimeTo = getTimeInMinutes(reservation.toTime);
+        let resHourTimeTo = getTimeInMinutes(reservationChange.toTime);
+        if (!resHourTimeFrom || !resHourTimeTo || !resTimeFrom || !resTimeTo) {
+          return results.error(res, 'V konfliktu s existujícími rezervacemi.', 409);
+        }
+        if (resTimeFrom < resHourTimeFrom || resTimeTo > resHourTimeTo) {
+          return results.error(res, 'V konfliktu s existujícími rezervacemi.', 409);
+        }
+      }
+
+      let result = [];
+
+      for (const value of preproccesed) {
+        try {
+          let created = await prisma.reservationHours.create({
+            data: value
+          });
+          result.push(created);
+        } catch (e) {
+          return results.error(res, 'Rezervační hodiny od tohoto data už jsou nastaveny.', 400);
+        }
+      }
+
+      return res.status(200)
+        .json({
+          status: 'success',
+          data: {
+            reservationHours: result
+          }
+        });
+    }
+    return results.error(res, 'Missing attribute slots', 400);
+  } catch (e) {
+    if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
+    return results.error(res, 'Unknown error', 500);
+  }
+};
+
 export default {
   personReservations,
   doctorReservations,
   createReservationRegistered,
   createReservationNonregistered,
   reservationHoursGet,
+  reservationHoursPost,
 };
