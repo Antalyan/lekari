@@ -271,7 +271,12 @@ const doctorReservations = async (req: Request, res: Response) => {
 };
 
 const doctorSlots = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const personId = parseInt(req.params.id);
+  const doctor = await doctorModel.getDoctorIdFromUserId(personId);
+  if (!doctor || !doctor.doctor) {
+    return res.sendStatus(400);
+  }
+  const id = doctor.doctor.id;
   const date = new Date(req.params.date);
   const nextDay = new Date();
   nextDay.setDate(date.getDate() + 1);
