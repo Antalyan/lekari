@@ -1,20 +1,12 @@
-import { Request, Response } from 'express';
-import signJWT from '../functions/signJWT';
+import { NextFunction, Request, Response } from 'express';
 import { ValidationError } from 'yup';
 import prisma from '../client';
 import { loginSchema, personRegistrationSchema } from './schemas/personSchema';
 import getPerson from '../models/personModel';
+import config from '../config/config';
 
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
-const validateToken = (req: Request, res: Response) => {
-  return res.status(200)
-    .json({
-      status: 'success',
-      message: 'Token(s) validated'
-    });
-};
 
 const register = async (req: Request, res: Response) => {
   let {
@@ -108,27 +100,22 @@ const login = async (req: Request, res: Response) => {
     const validPassword = await bcryptjs.compare(data.password, person.password);
     if (!validPassword) return loginError(res);
 
-    signJWT(person, (_error, token) => {
-      if (_error) {
-        return res.status(401)
-          .json({
-            message: 'Unable to Sign JWT',
-            error: _error
-          });
-      } else if (token) {
-        return res.status(200)
-          .json({
-            message: 'Auth Successful',
-            user: {
-              id: person.id,
-              firstName: person.firstname,
-              surname: person.surname,
-              token: token,
-              isDoctor: (person.doctor !== null && !person.doctor.deleted)
-            }
-          });
-      }
-    });
+    const accessToken = jwt.sign({
+      id: person.id,
+      email: person.email,
+    }, config.server.token.secret, { expiresIn: config.server.token.expiration });
+
+    return res.status(200)
+      .json({
+        message: 'Auth Successful',
+        user: {
+          id: person.id,
+          firstName: person.firstname,
+          surname: person.surname,
+          token: accessToken,
+          isDoctor: (person.doctor !== null && !person.doctor.deleted)
+        }
+      });
 
   } catch (e) {
     if (e instanceof ValidationError) {
@@ -162,9 +149,39 @@ const logout = async (req: Request, res: Response) => {
   }
 };
 
+const validateTokenError = (res: Response, code: number, message: string) => {
+  return res.status(code)
+    .json({
+      message: message,
+    });
+};
+
+const validateToken = (req: Request, res: Response, next: NextFunction, doctor: boolean = false) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return validateTokenError(res, 401, 'Unauthorized');
+
+  jwt.verify(token, config.server.token.secret, async (err: any, user: any) => {
+    if (err) return validateTokenError(res, 403, 'Forbidden');
+    const person = await getPerson({
+      email: user.email,
+      id: user.id
+    });
+    if (!person || (doctor && !person.doctor)) return validateTokenError(res, 401, 'Forbidden');
+    res.locals.jwt = person;
+    next();
+  });
+};
+
+const validateTokenDoctor = (req: Request, res: Response, next: NextFunction) => {
+  return validateToken(req, res, next, true);
+};
+
 export default {
-  validateToken,
   register,
   login,
-  logout
+  logout,
+  validateToken,
+  validateTokenDoctor
 };

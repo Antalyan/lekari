@@ -5,7 +5,6 @@ import { doctorRegistrationSchema, doctorUpdateSchema } from './schemas/doctorSc
 import personTmpSchema from './schemas/personTmpSchema';
 import reservationSchema from './schemas/reservationSchema';
 import doctorModel from '../models/doctorModel';
-import getPerson from '../models/personModel';
 
 const bcryptjs = require('bcryptjs');
 
@@ -174,7 +173,7 @@ const doctorReservations = async (req: Request, res: Response) => {
   const reservations = await prisma.doctor.findMany({
     where: {
       person: {
-        email: res.locals.jwt.username
+        email: res.locals.jwt.email
       }
     },
     select: {
@@ -501,7 +500,7 @@ const doctorDelete = async (req: Request, res: Response) => {
     await prisma.doctor.updateMany({
       where: {
         person: {
-          email: res.locals.jwt.username
+          email: res.locals.jwt.email
         }
       },
       data: {
@@ -557,7 +556,7 @@ const createReservationNonregistered = async (req: Request, res: Response) => {
           message: 'Can\'t make reservation for this day.',
         });
     }
-    
+
    // parseInt parameter 10 for remove leading zeros
    let hours = parseInt(data.time.split(':')[0], 10);
    let minutes = parseInt(data.time.split(':')[1], 10);
@@ -747,7 +746,7 @@ const createReservationRegistered = async (req: Request, res: Response) => {
 
     const person = await prisma.person.findFirst({
       where: {
-        email: res.locals.jwt.username,
+        email: res.locals.jwt.email,
       }
     });
     if (person) {
@@ -810,7 +809,7 @@ const infoUpdate = async (req: Request, res: Response) => {
     let updatedPerson = null;
 
     if (data.oldPassword && data.password1 && data.password2) {
-      const person = await getPerson({ email: res.locals.jwt.username });
+      const person = res.locals.jwt;
       if (!person) return passwordError(res, 'Can\'t find person.');
 
       const validPassword = await bcryptjs.compare(data.oldPassword, person.password);
@@ -822,7 +821,7 @@ const infoUpdate = async (req: Request, res: Response) => {
 
       updatedPerson = await prisma.person.update({
         where: {
-          email: res.locals.jwt.username,
+          email: res.locals.jwt.email,
         },
         data: {
           firstname: data.firstname,
@@ -863,7 +862,7 @@ const infoUpdate = async (req: Request, res: Response) => {
     } else {
       updatedPerson = await prisma.person.update({
         where: {
-          email: res.locals.jwt.username,
+          email: res.locals.jwt.email,
         },
         data: {
           firstname: data.firstname,
@@ -928,39 +927,17 @@ const infoUpdate = async (req: Request, res: Response) => {
 };
 
 const doctorInfoAll = async (req: Request, res: Response) => {
-  const doctor = await prisma.doctor.findFirst({
-    where: {
-      person: {
-        email: res.locals.jwt.username
-      }
-    },
-    include: {
-      person: true,
-      languages: true,
-      address: true,
-      openingHours: true,
-      references: true,
-      reservationHours: {
-        orderBy: [
-          {
-            day: 'asc',
-          },
-        ],
-        distinct: ['day']
-      }
-    }
-  });
+  const person = res.locals.jwt;
 
-  if (!doctor || doctor.person.deleted || doctor.deleted) {
+  if (!person || !person.doctor) {
     return res.status(404)
       .send({
         status: 'error',
-        data: {},
         message: 'Person was not found'
       });
   }
 
-  let reviews = doctor.references.map(function (review) {
+  let reviews = person.doctor.references.map((review: any) => {
     return {
       rate: review.rate / 2,
       comment: review.comment,
@@ -970,12 +947,12 @@ const doctorInfoAll = async (req: Request, res: Response) => {
     };
   });
 
-  let reviewsRatesSum = doctor.references.reduce((a, b) => a + b.rate, 0);
+  const reviewsRatesSum = person.doctor.references.reduce((a: number, b: any) => a + b.rate, 0);
 
-  let opening = new Array<String>(7);
-  doctor.openingHours.slice()
+  const opening = new Array<String>(7);
+  person.doctor.openingHours.slice()
     .reverse()
-    .forEach(function (x) {
+    .forEach(function (x: any) {
       opening[x.day] = x.opening;
     });
 
@@ -983,38 +960,39 @@ const doctorInfoAll = async (req: Request, res: Response) => {
     .json({
       status: 'success',
       data: {
-        degree: doctor.person.degree,
-        firstname: doctor.person.firstname,
-        surname: doctor.person.surname,
-        birthdate: doctor.person.birthdate,
-        email: doctor.person.email,
-        phonePrefix: doctor.person.phonePrefix,
-        phone: doctor.person.phone,
-        insuranceNumber: doctor.person.insuranceNumber,
-        specialization: doctor.specialization,
-        workEmail: doctor.email,
-        workPhone: doctor.phone,
-        description: doctor.description,
-        link: doctor.link,
-        languages: doctor.languages.map(language => {
+        degree: person.degree,
+        firstname: person.firstname,
+        surname: person.surname,
+        birthdate: person.birthdate,
+        email: person.email,
+        phonePrefix: person.phonePrefix,
+        phone: person.phone,
+        insuranceNumber: person.insuranceNumber,
+        specialization: person.doctor.specialization,
+        country: person.address.country,
+        city: person.address.city,
+        postalCode: person.address.postalCode,
+        street: person.address.street,
+        buildingNumber: person.address.buildingNumber,
+
+        workEmail: person.doctor.email,
+        workPhone: person.doctor.phone,
+        description: person.doctor.description,
+        link: person.doctor.link,
+        languages: person.doctor.languages.map((language: { language: string }) => {
           return language.language;
         }),
-        country: doctor.address.country,
-        city: doctor.address.city,
-        postalCode: doctor.address.postalCode,
-        street: doctor.address.street,
-        buildingNumber: doctor.address.buildingNumber,
-        workCountry: doctor.address.country,
-        workCity: doctor.address.city,
-        workPostalCode: doctor.address.postalCode,
-        workStreet: doctor.address.street,
-        workBuildingNumber: doctor.address.buildingNumber,
-        profilePicture: doctor.profilePicture,
-        actuality: doctor.actuality,
+        workCountry: person.doctor.address.country,
+        workCity: person.doctor.address.city,
+        workPostalCode: person.doctor.address.postalCode,
+        workStreet: person.doctor.address.street,
+        workBuildingNumber: person.doctor.address.buildingNumber,
+        profilePicture: person.doctor.profilePicture,
+        actuality: person.doctor.actuality,
         openingHours: opening,
-        rateAverage: reviewsRatesSum / doctor.references.length,
+        rateAverage: reviewsRatesSum / person.doctor.references.length,
         reviews: reviews,
-        reservationHours: doctor.reservationHours,
+        reservationHours: person.doctor.reservationHours,
       }
     });
 };
