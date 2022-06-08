@@ -48,7 +48,7 @@ const doctorDetail = async (req: Request, res: Response) => {
 
   let reviewsRatesSum = person.doctor.references.reduce((a, b) => a + (b.rate / 2), 0);
 
-  let opening = new Array<String|null>(7);
+  let opening = new Array<String | null>(7);
   person.doctor.openingHours.slice()
     .reverse()
     .forEach(function (x) {
@@ -150,63 +150,6 @@ const doctorList = async (req: Request, res: Response) => {
         actuality: doctor.actuality
       };
     })
-  });
-};
-
-const doctorReservations = async (req: Request, res: Response) => {
-  const reservations = await prisma.reservation.findMany({
-    where: {
-      doctorId: res.locals.jwt.doctor.id,
-      fromTime: {
-        gte: new Date(),
-      }
-    },
-    orderBy: {
-      fromTime: 'asc'
-    },
-    include: {
-      person: true,
-      personTmp: true,
-    }
-  });
-
-  if (!reservations || reservations.length == 0) return results.error(res, 'Doctor was not found', 404);
-
-  let data = reservations.map(function (reservation) {
-    if (reservation.person) {
-      return {
-        id: reservation.person.id,
-        personDegree: reservation.person.degree,
-        personFirstname: reservation.person.firstname,
-        personSurname: reservation.person.surname,
-        visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
-        visitTimeTo: reservation.toTime.toLocaleTimeString(),
-        visitDate: reservation.fromTime.toISOString()
-          .split('T')[0],
-        note: reservation.personComment,
-        createTime: reservation.created.toLocaleTimeString(),
-        createDate: reservation.created.toISOString()
-          .split('T')[0],
-      };
-    } else if (reservation.personTmp) {
-      return {
-        id: reservation.personTmp.id,
-        personDegree: reservation.personTmp.degree,
-        personFirstname: reservation.personTmp.firstname,
-        personSurname: reservation.personTmp.surname,
-        visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
-        visitTimeTo: reservation.toTime.toLocaleTimeString(),
-        visitDate: reservation.fromTime.getDate(),
-        note: reservation.personComment,
-        createTime: reservation.created.toLocaleTimeString(),
-        createDate: reservation.created.toUTCString(),
-      };
-    }
-  });
-
-  return res.send({
-    status: 'success',
-    data: { reservations: data },
   });
 };
 
@@ -971,23 +914,23 @@ const reservationHoursPost = async (req: Request, res: Response) => {
 const detailsUpdate = async (req: Request, res: Response) => {
   try {
     const data = await doctorDetailsSchema.validate(req.body);
-      const doctor = await doctorModel.getDoctorFromUserEmail(res.locals.jwt.username);
-      if(!doctor) return results.error(res, 'Doctor was not found', 404);
-      const updatedDoctor = await prisma.doctor.update({
-        where: {
-          id: doctor.id
-        },
-        data: {
-          email: data.email || null,
-          phone: data.phone || null,
-          description: data.description || null,
-          link: data.link || null,
-        }
-      });
+    const doctor = await doctorModel.getDoctorFromUserEmail(res.locals.jwt.username);
+    if (!doctor) return results.error(res, 'Doctor was not found', 404);
+    const updatedDoctor = await prisma.doctor.update({
+      where: {
+        id: doctor.id
+      },
+      data: {
+        email: data.email || null,
+        phone: data.phone || null,
+        description: data.description || null,
+        link: data.link || null,
+      }
+    });
     if (!updatedDoctor) return results.error(res, 'Doctor was not found', 404);
-    if(data.languages){
-      for(let language of data.languages){
-        if(language){
+    if (data.languages) {
+      for (let language of data.languages) {
+        if (language) {
           await prisma.doctorLanguage.upsert({
             where: {
               doctorId_language: {
@@ -1004,13 +947,13 @@ const detailsUpdate = async (req: Request, res: Response) => {
               },
               language: language
             }
-          })
+          });
         }
       }
     }
     let day = 0;
-    if(data.openingHours){
-      for(let hour of data.openingHours){
+    if (data.openingHours) {
+      for (let hour of data.openingHours) {
         await prisma.openingHours.upsert({
           where: {
             doctorId_day: {
@@ -1023,15 +966,15 @@ const detailsUpdate = async (req: Request, res: Response) => {
           },
           create: {
             doctor: {
-              connect:{
+              connect: {
                 id: doctor.id,
               }
             },
             day: day,
             opening: hour
           }
-        })
-        day++
+        });
+        day++;
       }
     }
     return res.send({
@@ -1050,7 +993,6 @@ export default {
   doctorList,
   doctorDetail,
   doctorDelete,
-  doctorReservations,
   detailsUpdate,
   doctorSlots,
   postReview,
