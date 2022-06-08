@@ -22,7 +22,7 @@ export function DoctorCardLabels(props: { detailed: boolean, doctor: IDoctorCard
             </Typography>
         </Stack>
         <Stack direction="row" spacing={1}>
-            <LocationOn color={"secondary"}/>
+            <LocationOn color={"primary"}/>
             <Typography>
                 {props.doctor.location}
             </Typography>

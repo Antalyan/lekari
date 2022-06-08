@@ -30,7 +30,7 @@ export function FormTextField({
         return <TextFieldElement name={name} label={label} required={required} fullWidth={fullWidth}
                                  validation={validation}
                                  type={type}
-                                 disabled={!editingState} variant={editingState ? "outlined" : "outlined"}
+                                 disabled={!editingState} variant={"outlined"}
                                  InputProps={{
                                      endAdornment:
                                          <IconButton onClick={() => setEditingState(!editingState)}>
@@ -55,7 +55,7 @@ export function FormSelect({
     if (isEdit) {
         return <SelectElement name={name} label={label} required={required} fullWidth={fullWidth}
                               options={options}
-                              disabled={!editingState} variant={editingState ? "outlined" : "outlined"}
+                              disabled={!editingState} variant={"outlined"}
                               InputProps={{
                                   endAdornment:
                                       <IconButton onClick={() => setEditingState(!editingState)}>

@@ -70,7 +70,7 @@ export function MainPage() {
         <Header/>
         <Box
             sx={{
-                minHeight: `calc(100vh - ${theme.spacing(20)})`,
+                minHeight: `calc(100vh - ${theme.spacing(20.7)})`,
             }}
         >
             <Grid container rowSpacing={0} columnSpacing={{xs: 1}} marginLeft={{md: "auto"}}

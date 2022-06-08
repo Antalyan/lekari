@@ -10,6 +10,8 @@ import {fetcherWithToken} from "../../utils/fetcher";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {IDatDoctorReservation, IDatPersonReservation} from "../../utils/DatabaseInterfaces";
+import {createTheme} from "@mui/material/styles";
+import Box from "@mui/material/Box";
 
 export function MyReservationPage(props: { isPatient: boolean }) {
     const user = useRecoilValue(userAtom)
@@ -52,10 +54,14 @@ export function MyReservationPage(props: { isPatient: boolean }) {
                     visitTimeTo: reservation.visitTimeTo,
                     note: reservation.note
                 }});
-
+    const theme = createTheme();
     return <>
         <Header/>
-
+        <Box
+            sx={{
+                minHeight: `calc(100vh - ${theme.spacing(22.7)})`,
+            }}
+        >
         <Typography sx={{m: 2}}
                     component="h2"
                     variant="h3"
@@ -66,7 +72,6 @@ export function MyReservationPage(props: { isPatient: boolean }) {
         >
             {props.isPatient ? "Moje rezervace" : "Rezervace pacientů"}
         </Typography>
-
         <Grid container rowSpacing={1} columnSpacing={{xs: 1}} marginLeft={{md: "auto"}}
               marginRight={{md: "auto"}}
               maxWidth={{md: 960}}>
@@ -76,7 +81,7 @@ export function MyReservationPage(props: { isPatient: boolean }) {
                 </Grid>
             ))}
         </Grid>
-
+        </Box>
         <Footer/>
     </>
 }

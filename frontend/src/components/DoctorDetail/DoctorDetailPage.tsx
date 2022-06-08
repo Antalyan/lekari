@@ -13,6 +13,7 @@ import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
 import {IDatDoctorDetail, IDatPersonReservation, IDatReview} from "../../utils/DatabaseInterfaces";
 import {IDoctorCard, IDoctorDetailInfo, IReview, IReviewList} from "../../utils/Interfaces";
+import {createTheme} from "@mui/material/styles";
 
 
 interface TabPanelProps {
@@ -105,10 +106,14 @@ export function DoctorDetailPage() {
             text: datReview.comment,
         }
     });
-
+    const theme = createTheme();
     return <>
         <Header/>
-
+        <Box
+            sx={{
+                minHeight: `calc(100vh - ${theme.spacing(19.7)})`,
+            }}
+        >
         <Box width={"100vw"} marginLeft={{md: "auto"}}
              marginRight={{md: "auto"}}
              maxWidth={{md: 960}}>
@@ -137,7 +142,7 @@ export function DoctorDetailPage() {
                 </TabPanel>
             </Box>
         </Box>
-
+        </Box>
         <Footer/>
     </>
 }
