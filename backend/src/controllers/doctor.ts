@@ -23,11 +23,7 @@ const locationList = async (req: Request, res: Response) => {
     }
   });
 
-  return res.status(200)
-    .send({
-      status: 'success',
-      data: cities.map((location) => location.city),
-    });
+  return results.success(res, cities.map((location) => location.city), 200);
 
 };
 

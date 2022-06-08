@@ -8,4 +8,15 @@ const error = (res: Response, message: string, code: number) => {
     });
 };
 
-export default { error };
+const success = (res: Response, data: any, code: number) => {
+  return res.status(code)
+    .send({
+      status: 'success',
+      data: data,
+    });
+};
+
+export default {
+  error,
+  success
+};
