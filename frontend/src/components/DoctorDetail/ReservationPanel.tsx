@@ -218,7 +218,6 @@ function ReservationSlots() {
                             {"Provést změnu"}
                         </Button>
                     </Grid>
-                    <Divider/>
                 </Stack>
             </FormContainer>
         </LocalizationProvider>

@@ -30,13 +30,13 @@ export function ReservationCardLabels(props: { isPatient: boolean, reservation: 
             </Stack>
         </Grid>
         <Stack direction="row" spacing={1}>
-            <AccessTimeIcon color={"info"}/>
+            <AccessTimeIcon color={"secondary"}/>
             <Typography>
-                {props.reservation.visitTimeFrom + " – " + props.reservation.visitTimeTo}<br/>{props.reservation.visitDate}
+                {props.reservation.visitDate}<br/>{props.reservation.visitTimeFrom + " – " + props.reservation.visitTimeTo}
             </Typography>
         </Stack>
         {props.isPatient && <Stack direction="row" spacing={1}>
-            <LocationOn color={"info"}/>
+            <LocationOn color={"primary"}/>
             <Typography>
                 {props.reservation.doctorAddress}
             </Typography>
