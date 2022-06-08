@@ -43,7 +43,7 @@ function ReservationDatePanel() {
         const reservation: IDatResCreate = {
             comment: formData.reservationNote,
             date: formData.reservationDate,
-            slotIndex: formData.reservationTime
+            time: formData.reservationTime
         };
 
         // note: data has to be in data part, headers in config part

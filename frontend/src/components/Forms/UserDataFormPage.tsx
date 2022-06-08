@@ -203,7 +203,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                 /* @ts-ignore */
                 date: location.state.reservationDate,
                 /* @ts-ignore */
-                slotIndex: location.state.reservationTime
+                time: location.state.reservationTime
             }
             // TODO: finish update reservation - send to db
             await completeReservation(`http://localhost:4000/doctor/${id}/reservations-nonregistered`, res, navigate, id);
