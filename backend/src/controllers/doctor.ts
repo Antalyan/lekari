@@ -532,77 +532,6 @@ const doctorInfoAll = async (req: Request, res: Response) => {
     });
 };
 
-const reservationHoursGet = async (req: Request, res: Response) => {
-  const today = new Date();
-  const reservationHours = await prisma.reservationHours.findMany({
-    orderBy: [
-      {
-        fromDate: 'asc',
-      },
-      {
-        day: 'asc',
-      },
-    ],
-    where: {
-      doctor: {
-        person: {
-          email: res.locals.jwt.username
-        },
-        deleted: false,
-      },
-      fromDate: {
-        lte: today
-      }
-    },
-    select: {
-      fromDate: true,
-      day: true,
-      fromTime: true,
-      toTime: true,
-      interval: true,
-    },
-    distinct: ['day'],
-  });
-
-  let hours = Array<any>(7);
-
-  if (reservationHours.length === 0) {
-    return res.status(200)
-      .json({
-        status: 'success',
-        data: {
-          fromDate: null,
-          interval: null,
-          slots: hours
-        }
-      });
-  }
-
-  reservationHours.forEach(function (value) {
-    if (!value.fromTime || !value.toTime) {
-      hours[value.day] = {
-        fromTime: null,
-        toTime: null
-      };
-    } else {
-      hours[value.day] = {
-        fromTime: convertTimeToString(value.fromTime),
-        toTime: convertTimeToString(value.toTime)
-      };
-    }
-  });
-
-  return res.status(200)
-    .json({
-      status: 'success',
-      data: {
-        fromDate: reservationHours[0].fromDate,
-        interval: reservationHours[0].interval,
-        slots: hours
-      }
-    });
-};
-
 const reservationHoursPost = async (req: Request, res: Response) => {
   try {
     const data = await reservationHoursSchema.validate(req.body);
@@ -781,6 +710,5 @@ export default {
   signUp,
   infoUpdate,
   doctorInfoAll,
-  reservationHoursGet,
   reservationHoursPost
 };
