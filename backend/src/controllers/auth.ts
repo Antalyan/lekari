@@ -170,6 +170,7 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
     });
     if (!person) return validateTokenError(res, 401, 'Forbidden');
     res.locals.jwt = person;
+    console.log(person);
     next();
   });
 };

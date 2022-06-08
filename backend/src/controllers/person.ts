@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import { ValidationError } from 'yup';
 import prisma from '../client';
 import { personUpdateSchema } from './schemas/personSchema';
-import getPerson from '../models/personModel';
 
 const bcryptjs = require('bcryptjs');
 
@@ -22,7 +21,7 @@ const personList = async (req: Request, res: Response, next: NextFunction) => {
 const personDetail = async (req: Request, res: Response) => {
   const person = await prisma.person.findFirst({
     where: {
-      email: res.locals.jwt.username,
+      email: res.locals.jwt.email,
       deleted: false,
     },
     select: {
@@ -91,7 +90,7 @@ const personUpdate = async (req: Request, res: Response) => {
     let updatedPerson = null;
 
     if (data.oldPassword && data.password1 && data.password2) {
-      const person = await getPerson({ email: res.locals.jwt.username });
+      const person = res.locals.jwt;
       if (!person) return passwordError(res, 'Can\'t find person.');
 
       const validPassword = await bcryptjs.compare(data.oldPassword, person.password);
@@ -103,7 +102,7 @@ const personUpdate = async (req: Request, res: Response) => {
 
       updatedPerson = await prisma.person.update({
         where: {
-          email: res.locals.jwt.username,
+          email: res.locals.jwt.email,
         },
         data: {
           firstname: data.firstname,
@@ -129,7 +128,7 @@ const personUpdate = async (req: Request, res: Response) => {
     } else {
       updatedPerson = await prisma.person.update({
         where: {
-          email: res.locals.jwt.username,
+          email: res.locals.jwt.email,
         },
         data: {
           firstname: data.firstname,
@@ -182,7 +181,7 @@ const personReservations = async (req: Request, res: Response) => {
   const date = new Date();
   const reservations = await prisma.person.findMany({
     where: {
-      email: res.locals.jwt.username,
+      email: res.locals.jwt.email,
       deleted: false
     },
     select: {
@@ -267,7 +266,7 @@ const personDelete = async (req: Request, res: Response) => {
   try {
     await prisma.person.updateMany({
       where: {
-        email: res.locals.jwt.username
+        email: res.locals.jwt.email
       },
       data: {
         deleted: true,

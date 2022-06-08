@@ -5,7 +5,6 @@ import { doctorRegistrationSchema, doctorUpdateSchema } from './schemas/doctorSc
 import personTmpSchema from './schemas/personTmpSchema';
 import reservationSchema from './schemas/reservationSchema';
 import doctorModel from '../models/doctorModel';
-import getPerson from '../models/personModel';
 
 const bcryptjs = require('bcryptjs');
 
@@ -174,7 +173,7 @@ const doctorReservations = async (req: Request, res: Response) => {
   const reservations = await prisma.doctor.findMany({
     where: {
       person: {
-        email: res.locals.jwt.username
+        email: res.locals.jwt.email
       }
     },
     select: {
@@ -501,7 +500,7 @@ const doctorDelete = async (req: Request, res: Response) => {
     await prisma.doctor.updateMany({
       where: {
         person: {
-          email: res.locals.jwt.username
+          email: res.locals.jwt.email
         }
       },
       data: {
@@ -747,7 +746,7 @@ const createReservationRegistered = async (req: Request, res: Response) => {
 
     const person = await prisma.person.findFirst({
       where: {
-        email: res.locals.jwt.username,
+        email: res.locals.jwt.email,
       }
     });
     if (person) {
@@ -810,7 +809,7 @@ const infoUpdate = async (req: Request, res: Response) => {
     let updatedPerson = null;
 
     if (data.oldPassword && data.password1 && data.password2) {
-      const person = await getPerson({ email: res.locals.jwt.username });
+      const person = res.locals.jwt;
       if (!person) return passwordError(res, 'Can\'t find person.');
 
       const validPassword = await bcryptjs.compare(data.oldPassword, person.password);
@@ -822,7 +821,7 @@ const infoUpdate = async (req: Request, res: Response) => {
 
       updatedPerson = await prisma.person.update({
         where: {
-          email: res.locals.jwt.username,
+          email: res.locals.jwt.email,
         },
         data: {
           firstname: data.firstname,
@@ -863,7 +862,7 @@ const infoUpdate = async (req: Request, res: Response) => {
     } else {
       updatedPerson = await prisma.person.update({
         where: {
-          email: res.locals.jwt.username,
+          email: res.locals.jwt.email,
         },
         data: {
           firstname: data.firstname,
@@ -931,7 +930,7 @@ const doctorInfoAll = async (req: Request, res: Response) => {
   const doctor = await prisma.doctor.findFirst({
     where: {
       person: {
-        email: res.locals.jwt.username
+        email: res.locals.jwt.email
       }
     },
     include: {
