@@ -335,14 +335,6 @@ const doctorSlots = async (req: Request, res: Response) => {
   });
 };
 
-const notImplemented = async (req: Request, res: Response) => {
-  return res.status(501)
-    .send({
-      status: 'error',
-      message: 'Not implemented yet',
-    });
-};
-
 const reviewSchema = object({
   author: string(),
   rate: number()
