@@ -2,7 +2,7 @@ import {FormContainer, PasswordElement} from "react-hook-form-mui";
 import {Box, Button, Grid, IconButton, Stack, styled, Typography} from "@mui/material";
 import {useFormContext} from "react-hook-form";
 import * as React from "react";
-import {IEditable, IFormPerson, IFormRes, IReservationBasic} from "../../utils/Interfaces";
+import {IEditable, IFormPerson, IFormRes} from "../../utils/Interfaces";
 import {
     COUNTRIES,
     findCountryIndex,
@@ -80,7 +80,7 @@ async function completeRegistration(url: string, subject: any, navigate: Navigat
 }
 
 async function updateProfile(url: string, subject: any, navigate: NavigateFunction) {
-    await axios.put(url, subject)
+    await axios.patch(url, subject)
         .then(response => {
             console.log(response);
             if (response.data.status === "success") {
@@ -93,7 +93,7 @@ async function updateProfile(url: string, subject: any, navigate: NavigateFuncti
         });
 }
 
-async function completeReservation(url: string, subject: any, navigate: NavigateFunction, id?: string) {
+async function completeReservation(url: string, subject: any, navigate: NavigateFunction, id?: number) {
     await axios.post(url, subject)
         .then(response => {
             console.log(response);
@@ -145,9 +145,12 @@ export function UserDataFormPage({type, isEdit}: IForm) {
     }
 
     const location = useLocation();
-    const {id} = useParams();
+    const id = user.id;
 
-    const {data, error} = useSWR(isEdit ? ['http://localhost:4000/personal-info', user.token] : null, fetcherWithToken);
+    // TODO: check edit after API restored
+    const url = 'http://localhost:4000/' + (type == DataFormType.Doctor ? 'doctor-info' : 'personal-info');
+    console.log(url);
+    const {data, error} = useSWR(isEdit ? [url, user.token] : null, fetcherWithToken);
     let defaultValues = {};
     if (isEdit) {
         if (error) console.log(error.message);
