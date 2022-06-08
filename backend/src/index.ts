@@ -36,7 +36,7 @@ api.post('/doctors/:id(\\d+)/review', doctor.postReview);
 api.patch('/doctor-info', auth.validateTokenDoctor, doctor.infoUpdate);
 api.delete('/doctor-info', auth.validateTokenDoctor, doctor.doctorDelete);
 api.post('/doctor/:id(\\d+)/reservations-registered', auth.validateToken, reservation.createReservationRegistered);
-api.post('/doctor/:id(\\d+)/reservations-nonregistered', doctor.createReservationNonregistered);
+api.post('/doctor/:id(\\d+)/reservations-nonregistered', reservation.createReservationNonregistered);
 api.post('/doctor-reservation-hours', auth.validateTokenDoctor, doctor.reservationHoursPost);
 api.put('/doctor-details', auth.validateTokenDoctor, doctor.detailsUpdate);
 
