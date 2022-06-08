@@ -697,12 +697,12 @@ const createReservationRegistered = async (req: Request, res: Response) => {
         });
     }
     // parseInt parameter 10 for remove leading zeros
-    let hours = parseInt(data.time.split(':')[0], 10)
-    let minutes = parseInt(data.time.split(':')[1], 10)
-    let reservationHoursFrom = reservationHours.fromTime.getHours() * 60 + reservationHours.fromTime.getMinutes()
-    let reservationHoursTo = reservationHours.toTime.getHours() * 60 + reservationHours.toTime.getMinutes()
-    if((hours * 60 + minutes) < reservationHoursFrom ||
-     (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo){
+    let hours = parseInt(data.time.split(':')[0], 10);
+    let minutes = parseInt(data.time.split(':')[1], 10);
+    let reservationHoursFrom = reservationHours.fromTime.getHours() * 60 + reservationHours.fromTime.getMinutes();
+    let reservationHoursTo = reservationHours.toTime.getHours() * 60 + reservationHours.toTime.getMinutes();
+    if ((hours * 60 + minutes) < reservationHoursFrom ||
+      (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
       return res.status(500)
         .send({
           status: 'error',
@@ -929,6 +929,139 @@ const infoUpdate = async (req: Request, res: Response) => {
   }
 };
 
+const doctorInfoAll = async (req: Request, res: Response) => {
+  const doctor = await prisma.doctor.findFirst({
+    where: {
+      person: {
+        email: res.locals.jwt.username
+      }
+    },
+    select: {
+      person: {
+        select: {
+          firstname: true,
+          surname: true,
+          degree: true,
+          deleted: true,
+        }
+      },
+      deleted: true,
+      specialization: true,
+      email: true,
+      phone: true,
+      description: true,
+      link: true,
+      languages: {
+        select: {
+          language: true
+        }
+      },
+      address: {
+        select: {
+          country: true,
+          city: true,
+          postalCode: true,
+          street: true,
+          buildingNumber: true,
+        }
+      },
+      profilePicture: true,
+      actuality: true,
+      openingHours: {
+        select: {
+          day: true,
+          opening: true,
+        }
+      },
+      references: {
+        select: {
+          rate: true,
+          comment: true,
+          author: true,
+          created: true,
+        }
+      },
+      reservationHours: {
+        orderBy: [
+          {
+            day: 'asc',
+          },
+        ],
+        distinct: ['day'],
+        select: {
+          day: true,
+          fromTime: true,
+          toTime: true,
+          interval: true,
+          fromDate: true,
+        }
+      },
+    }
+  });
+
+  if (!doctor || doctor.person.deleted || doctor.deleted) {
+    return res.status(404)
+      .send({
+        status: 'error',
+        data: {},
+        message: 'Person was not found'
+      });
+  }
+
+  let reviews = doctor.references.map(function (review, index) {
+    return {
+      rate: review.rate / 2,
+      comment: review.comment,
+      author: review.author,
+      creatDate: review.created.toUTCString(),
+      createTime: review.created.toLocaleTimeString()
+    };
+  });
+
+  let reviewsRatesSum = doctor.references.reduce((a, b) => a + b.rate, 0);
+
+  let opening = new Array<String>(7);
+  doctor.openingHours.slice()
+    .reverse()
+    .forEach(function (x) {
+      opening[x.day] = x.opening;
+    });
+
+  return res.status(200)
+    .json({
+      status: 'success',
+      data: {
+        degree: doctor.person.degree,
+        firstname: doctor.person.firstname,
+        surname: doctor.person.surname,
+        specialization: doctor.specialization,
+        workEmail: doctor.email,
+        workPhone: doctor.phone,
+        description: doctor.description,
+        link: doctor.link,
+        languages: doctor.languages.map(language => {
+          return language.language;
+        }),
+        country: doctor.address.country,
+        city: doctor.address.city,
+        postalCode: doctor.address.postalCode,
+        street: doctor.address.street,
+        buildingNumber: doctor.address.buildingNumber,
+        workCountry: doctor.address.country,
+        workCity: doctor.address.city,
+        workPostalCode: doctor.address.postalCode,
+        workStreet: doctor.address.street,
+        workBuildingNumber: doctor.address.buildingNumber,
+        profilePicture: doctor.profilePicture,
+        actuality: doctor.actuality,
+        openingHours: opening,
+        rateAverage: reviewsRatesSum / doctor.references.length,
+        reviews: reviews,
+        reservationHours: doctor.reservationHours,
+      }
+    });
+};
+
 export default {
   locationList,
   doctorList,
@@ -941,4 +1074,5 @@ export default {
   createReservationRegistered,
   createReservationNonregistered,
   infoUpdate,
+  doctorInfoAll
 };

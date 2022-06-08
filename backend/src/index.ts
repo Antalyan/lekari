@@ -27,6 +27,7 @@ api.get('/doctors-locations', doctor.locationList);
 api.get('/doctors/:id(\\d+)', doctor.doctorDetail);
 api.get('/doctor-reservations', extractJWT, doctor.doctorReservations);
 api.get('/doctors/:id(\\d+)/slots/:date', doctor.doctorSlots);
+api.get('/doctor-info', extractJWT, doctor.doctorInfoAll);
 
 api.post('/signup-doctor', doctor.signUp);
 api.post('/doctors/:id(\\d+)/review', doctor.postReview);
