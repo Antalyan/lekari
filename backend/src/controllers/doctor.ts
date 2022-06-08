@@ -714,7 +714,6 @@ const createReservationRegistered = async (req: Request, res: Response) => {
     fromTime.setMinutes(minutes);
     let toTime = new Date(fromTime);
     toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
-    let reservation = null;
     const checkFree = await prisma.reservation.findMany({
       where: {
         doctorId: doctorId,
@@ -779,23 +778,6 @@ const createReservationRegistered = async (req: Request, res: Response) => {
     }
   }
 };
-
-/*const createReservationHours = async (req: Request, res: Response) => {
-  const data = await reservationHoursSchema.validate(req.body);
-  const intervals = [10, 15, 20, 30, 60]
-  let reservationHours = []
-  const baseTime = new Date()
-  if(data.timeFrom0 && data.timeTo0){
-
-    reservationHours.push({
-      day: 0,
-      fromTime: new Date(baseTime).setHours(baseTime.getHours() + (intervals[data.interval] * data.timeFrom0))
-      toTime: new Date(baseTime).setHours(baseTime.getHours() + (intervals[data.interval] * data.timeFrom0))
-      fromDate:
-      interval:
-    })
-  }
-}*/
 
 const passwordError = (res: Response, message: String) => {
   return res.status(400)
@@ -1008,7 +990,7 @@ const doctorInfoAll = async (req: Request, res: Response) => {
       });
   }
 
-  let reviews = doctor.references.map(function (review, index) {
+  let reviews = doctor.references.map(function (review) {
     return {
       rate: review.rate / 2,
       comment: review.comment,
