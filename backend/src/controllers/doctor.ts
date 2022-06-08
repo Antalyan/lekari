@@ -361,11 +361,16 @@ const reviewSchema = object({
 
 const postReview = async (req: Request, res: Response) => {
   try {
-    const doc_id = parseInt(req.params.id);
+    const personId = parseInt(req.params.id);
+    const doctor = await doctorModel.getDoctorIdFromUserId(personId);
+    if (!doctor || !doctor.doctor) {
+      return res.sendStatus(400);
+    }
+    const doctorId = doctor.doctor.id;
     const data = await reviewSchema.validate(req.body);
     const reference = await prisma.review.create({
       data: {
-        doctorId: doc_id,
+        doctorId: doctorId,
         comment: data.comment,
         rate: data.rate * 2,
         author: data.author || null
