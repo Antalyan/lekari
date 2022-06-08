@@ -4,6 +4,7 @@ import {useForm} from "react-hook-form";
 import {useRecoilState} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import axios from "axios";
+import {checkStatus} from "../../utils/fetcher";
 
 interface ILogin {
     email: string,
@@ -22,8 +23,7 @@ export function LoginForm() {
         await axios.post("http://localhost:4000/login", formData)
             .then(response => {
                     console.log(response);
-                    // TODO: add image
-                    if (response.status === 200) {
+                if (checkStatus(response.data.status)) {
                         setUser({
                             id: response.data.user.id,
                             firstName: response.data.user.firstName,

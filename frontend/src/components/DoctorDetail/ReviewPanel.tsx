@@ -10,6 +10,7 @@ import {useParams} from "react-router-dom";
 import {IDatDoctorInfo, IDatReview} from "../../utils/DatabaseInterfaces";
 import axios from "axios";
 import {useState} from "react";
+import {checkStatus} from "../../utils/fetcher";
 
 function ReviewCreate() {
     const formContext = useForm<IReview>();
@@ -26,7 +27,7 @@ function ReviewCreate() {
         await axios.post(url, review)
             .then(response => {
                 console.log(response);
-                if (response.data.status === "success") {
+                if (checkStatus(response.data.status)) {
                     window.location.reload();
                 }
             })

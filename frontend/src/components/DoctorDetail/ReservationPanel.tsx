@@ -14,7 +14,7 @@ import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {IReservationBasic, IReservationSlots, ISelectItem} from "../../utils/Interfaces";
 import useSWR from "swr";
-import fetcher from "../../utils/fetcher";
+import fetcher, {checkStatus} from "../../utils/fetcher";
 import axios from "axios";
 import {IDatResCreate} from "../../utils/DatabaseInterfaces";
 
@@ -34,7 +34,7 @@ function ReservationDatePanel() {
 
         // note: data has to be in data part, headers in config part
         const url = `http://localhost:4000/doctor/${id}/reservations-registered`
-        await axios.post(url, reservation,{
+        await axios.post(url, reservation, {
             headers: {
                 'Authorization': `Bearer ${user.token}`
             }
@@ -42,7 +42,7 @@ function ReservationDatePanel() {
             .then(response => {
                 console.log(response);
                 alert("Rezervace vytvořena!")
-                if (response.data.status === "success") {
+                if (checkStatus(response.data.status)) {
                     window.location.reload();
                 }
             })
