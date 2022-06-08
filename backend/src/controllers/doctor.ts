@@ -184,9 +184,9 @@ const doctorList = async (req: Request, res: Response) => {
       deleted: false,
     },
     select: {
-      id: true,
       person: {
         select: {
+          id: true,
           firstname: true,
           surname: true,
           degree: true,
@@ -215,7 +215,7 @@ const doctorList = async (req: Request, res: Response) => {
     status: 'sucess',
     data: doctors.map(doctor => {
       return {
-        id: doctor.id,
+        id: doctor.person.id,
         degree: doctor.person.degree,
         firstname: doctor.person.firstname,
         surname: doctor.person.surname,
