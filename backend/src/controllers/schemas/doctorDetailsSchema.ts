@@ -7,8 +7,8 @@ export const doctorDetailsSchema = object({
   languages: array().of(
     string()
   ),
-  email: string().email(),
-  phone: string(),
+  workEmail: string().email(),
+  workPhone: string(),
   description: string(),
   link: string(),
 })
