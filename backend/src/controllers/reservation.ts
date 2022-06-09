@@ -21,7 +21,7 @@ const person = async (req: Request, res: Response) => {
     },
   });
 
-  if (!reservations || reservations.length == 0) {
+  if (!reservations) {
     return res.status(404)
       .send({
         status: 'error',
@@ -64,7 +64,7 @@ const doctor = async (req: Request, res: Response) => {
     }
   });
 
-  if (!reservations || reservations.length == 0) return results.error(res, 'Doctor was not found', 404);
+  if (!reservations) return results.error(res, 'Doctor was not found', 404);
 
   let data = reservations.map(function (reservation) {
     if (reservation.person) {
@@ -266,6 +266,8 @@ const hoursPost = async (req: Request, res: Response) => {
     const data = await reservationHoursSchema.validate(req.body);
 
     const doctor = res.locals.jwt.doctor;
+
+    console.log(doctor);
 
     if (data.slots) {
       let preproccesed = data.slots.map(function (value, index) {
