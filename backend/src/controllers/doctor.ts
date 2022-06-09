@@ -289,6 +289,7 @@ const infoUpdate = async (req: Request, res: Response) => {
     let updatedPerson = null;
 
     if (data.oldPassword && data.password1 && data.password2) {
+
       const person = res.locals.jwt;
       if (!person) return results.error(res, 'Can\'t find person.', 400);
 
