@@ -83,13 +83,13 @@ const updatePasswordSchema = object({
   password2: string(),
 });
 
-const personUpdateSchema = personSchema.shape(updatePasswordSchema.fields);
+const update = personSchema.shape(updatePasswordSchema.fields);
 const personRegistrationSchema = personSchema.shape(passwordSchema.fields);
 
 export default {
   personSchema,
   tmp,
   login,
-  personUpdateSchema,
+  update,
   personRegistrationSchema
 };

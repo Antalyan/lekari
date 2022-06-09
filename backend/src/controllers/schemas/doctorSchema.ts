@@ -35,7 +35,7 @@ const details = object({
 
 const registration = personSchema.personRegistrationSchema.shape(doctorSchema.fields);
 
-const update = personSchema.personUpdateSchema.shape(doctorSchema.fields);
+const update = personSchema.update.shape(doctorSchema.fields);
 
 export default {
   registration,

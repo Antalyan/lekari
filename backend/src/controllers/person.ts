@@ -69,7 +69,7 @@ const detail = async (req: Request, res: Response) => {
 
 const update = async (req: Request, res: Response) => {
   try {
-    const data = await personSchema.personUpdateSchema.validate(req.body);
+    const data = await personSchema.update.validate(req.body);
     let updatedPerson = null;
 
     if (data.oldPassword && data.password1 && data.password2) {
