@@ -83,7 +83,8 @@ async function updateProfile(url: string, subject: any, navigate: NavigateFuncti
     await axios.patch(url, subject, {
         headers: {
             'Authorization': `Bearer ${user.token}`
-        }})
+        }
+    })
         .then(response => {
             console.log(response);
             if (checkStatusOK(response.status)) {
@@ -113,7 +114,6 @@ async function completeReservation(url: string, subject: any, navigate: Navigate
 
 export function UserDataFormPage({type, isEdit}: IForm) {
     const getDefaultValues = () => {
-        // TODO: check default attributes when API edit finished
         const dbperson: IDatPatientProfile | IDatDoctorProfile = data.data;
         return {
             name: dbperson.firstname,
@@ -150,7 +150,6 @@ export function UserDataFormPage({type, isEdit}: IForm) {
     const location = useLocation();
     const resDoctId = useParams().id;
 
-    // TODO: check edit after API restored
     const url = 'http://localhost:4000/' + (type == DataFormType.Doctor ? 'doctor-info' : 'personal-info');
     const {data, error} = useSWR(isEdit ? [url, user.token] : null, fetcherWithToken);
     let defaultValues = {};
@@ -180,43 +179,40 @@ export function UserDataFormPage({type, isEdit}: IForm) {
             password2: formData.passwordCheck === undefined ? undefined : formData.passwordCheck
         }
         if (isEdit) {
-            // TODO: edit url
             await updateProfile('http://localhost:4000/personal-info', patient, navigate, user);
         } else {
             await completeRegistration('http://localhost:4000/register', patient, navigate);
         }
     }
 
-        // TODO: check required and non-required (undefined)
-        const storeReservation = async (formData: IFormRes) => {
-            const res: IDatTmpRes = {
-                firstname: formData.name,
-                surname: formData.surname,
-                degree: formData.degree,
-                birthdate: formData.birthdate,
-                street: formData.street,
-                buildingNumber: formData.streetNumber,
-                city: formData.city,
-                postalCode: formData.postalCode === undefined ? undefined : parseInt(formData.postalCode),
-                country: formData.country === undefined ? undefined : findCountryName(formData.country),
-                email: formData.email,
-                phonePrefix: findPhoneCodeName(formData.phoneCode).toString(),
-                phone: parseInt(formData.phone),
-                insuranceNumber: formData.insuranceNumber === undefined ? undefined : parseInt(formData.insuranceNumber),
-                /* @ts-ignore */
-                comment: location.state.reservationNote,
-                /* @ts-ignore */
-                date: location.state.reservationDate,
-                /* @ts-ignore */
-                time: location.state.reservationTime
-            }
-            // TODO: finish update reservation - send to db
-            const url = `http://localhost:4000/doctor/${resDoctId}/reservations-nonregistered`;
-            console.log(url);
-            await completeReservation(url, res, navigate, user.id);
+    const storeReservation = async (formData: IFormRes) => {
+        const res: IDatTmpRes = {
+            firstname: formData.name,
+            surname: formData.surname,
+            degree: formData.degree,
+            birthdate: formData.birthdate,
+            street: formData.street,
+            buildingNumber: formData.streetNumber,
+            city: formData.city,
+            postalCode: formData.postalCode === undefined ? undefined : parseInt(formData.postalCode),
+            country: formData.country === undefined ? undefined : findCountryName(formData.country),
+            email: formData.email,
+            phonePrefix: findPhoneCodeName(formData.phoneCode).toString(),
+            phone: parseInt(formData.phone),
+            insuranceNumber: formData.insuranceNumber === undefined ? undefined : parseInt(formData.insuranceNumber),
+            /* @ts-ignore */
+            comment: location.state.reservationNote,
+            /* @ts-ignore */
+            date: location.state.reservationDate,
+            /* @ts-ignore */
+            time: location.state.reservationTime
+        }
+
+        const url = `http://localhost:4000/doctor/${resDoctId}/reservations-nonregistered`;
+        console.log(url);
+        await completeReservation(url, res, navigate, user.id);
     };
 
-    // TODO: check storing address doctor attributes when API impl finished
     const storeDoctor = async (formData: IFormPerson, isEdit: boolean) => {
         const doctor: IDatDoctorProfile = {
             firstname: formData.name,
@@ -243,7 +239,6 @@ export function UserDataFormPage({type, isEdit}: IForm) {
             workCountry: formData.doctorCountry === undefined ? " TYPE ERROR" : findCountryName(formData.doctorCountry),
         }
         if (isEdit) {
-            // TODO: edit url
             await updateProfile('http://localhost:4000/doctor-info', doctor, navigate, user);
         } else {
             await completeRegistration('http://localhost:4000/signup-doctor', doctor, navigate);
@@ -262,7 +257,6 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                 storeDoctor(formData, isEdit);
                 break;
             default:
-                // TODO: change to reservation based on logged information
                 storeReservation(formData);
                 break;
         }
@@ -410,7 +404,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <FormTextField isEdit={isEdit} name={'doctorStreet'} label={'Ulice'} fullWidth
-                                                       />
+                                        />
                                     </Grid>
                                     <Grid item xs={6}>
                                         <FormTextField isEdit={isEdit} name={'doctorStreetNumber'}
