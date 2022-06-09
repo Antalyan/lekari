@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '../client';
 import { number, object, string, ValidationError } from 'yup';
-import { doctorRegistrationSchema, doctorUpdateSchema } from './schemas/doctorSchema';
+import { doctorUpdateSchema } from './schemas/doctorSchema';
 import doctorModel from '../models/doctorModel';
 import doctorDetailsSchema from './schemas/doctorDetailsSchema';
 import results from '../utilities/results';
@@ -256,71 +256,6 @@ const postReview = async (req: Request, res: Response) => {
           status: 'success',
           data: { id: reference.id },
           message: 'Review saved.'
-        });
-    } else {
-      return results.error(res, 'Unknown error', 500);
-    }
-
-  } catch (e) {
-    if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
-    return results.error(res, 'Unknown error', 500);
-  }
-};
-
-const signUp = async (req: Request, res: Response) => {
-  let {
-    password1,
-    password2
-  } = req.body;
-
-  if (password1 !== password2) return results.error(res, 'Password doesn\'t match the controll.', 400);
-
-  try {
-    const data = await doctorRegistrationSchema.validate(req.body);
-    const hash = await hashing.hash(password1);
-    const person = await prisma.person.create({
-      data: {
-        firstname: data.firstname,
-        surname: data.surname,
-        degree: data.degree || null,
-        birthdate: data.birthdate,
-        email: data.email,
-        insuranceNumber: data.insuranceNumber || null,
-        phonePrefix: data.phonePrefix,
-        phone: data.phone,
-        address: {
-          create: {
-            country: data.country,
-            city: data.city,
-            postalCode: data.postalCode,
-            street: data.street || null,
-            buildingNumber: data.buildingNumber,
-          },
-        },
-        password: hash,
-        doctor: {
-          create: {
-            specialization: data.specialization,
-            actuality: data.actuality || null,
-            address: {
-              create: {
-                country: data.country,
-                city: data.city,
-                postalCode: data.postalCode,
-                street: data.street || null,
-                buildingNumber: data.buildingNumber,
-              }
-            }
-          }
-        }
-      }
-    });
-    if (person) {
-      return res.status(201)
-        .send({
-          status: 'success',
-          data: { id: person.id },
-          message: 'Person registered.'
         });
     } else {
       return results.error(res, 'Unknown error', 500);
@@ -616,7 +551,6 @@ export default {
   detailUpdate,
   slots,
   postReview,
-  signUp,
   infoUpdate,
   allInfo
 };
