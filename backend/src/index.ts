@@ -41,7 +41,7 @@ api.post('/doctor-reservation-hours', auth.validateTokenDoctor, reservation.rese
 api.put('/doctor-details', auth.validateTokenDoctor, doctor.detailUpdate);
 
 api.get('/persons', person.list);                     // Undocumented
-api.get('/personal-info', auth.validateToken, person.personDetail);
+api.get('/personal-info', auth.validateToken, person.detail);
 api.patch('/personal-info', auth.validateToken, person.personUpdate);
 api.get('/person-reservations', auth.validateToken, reservation.personReservations);
 api.delete('/personal-info', auth.validateToken, person.personDelete);

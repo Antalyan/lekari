@@ -18,7 +18,7 @@ const list = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const personDetail = async (req: Request, res: Response) => {
+const detail = async (req: Request, res: Response) => {
   const person = await prisma.person.findFirst({
     where: {
       email: res.locals.jwt.email,
@@ -205,7 +205,7 @@ const personDelete = async (req: Request, res: Response) => {
 
 export default {
   list,
-  personDetail,
+  detail,
   personDelete,
   personUpdate,
 };
