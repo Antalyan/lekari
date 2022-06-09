@@ -84,7 +84,7 @@ const passwordError = (res: Response, message: String) => {
     });
 };
 
-const personUpdate = async (req: Request, res: Response) => {
+const update = async (req: Request, res: Response) => {
   try {
     const data = await personUpdateSchema.validate(req.body);
     let updatedPerson = null;
@@ -207,5 +207,5 @@ export default {
   list,
   detail,
   remove,
-  personUpdate,
+  update,
 };
