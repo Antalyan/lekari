@@ -153,9 +153,7 @@ const list = async (req: Request, res: Response) => {
 const slots = async (req: Request, res: Response) => {
   const personId = parseInt(req.params.id);
   const doctor = await doctorModel.getDoctorIdFromUserId(personId);
-  if (!doctor || !doctor.doctor) {
-    return res.sendStatus(400);
-  }
+  if (!doctor || !doctor.doctor) return results.error(res, 'Wrong id', 404);
   const doctorId = doctor.doctor.id;
   const date = new Date(req.params.date);
   const nextDay = new Date();
@@ -213,15 +211,9 @@ const slots = async (req: Request, res: Response) => {
       return !reservationsTimes.includes(el);
     });
 
-    return res.send({
-      status: 'success',
-      data: { slots: timeSlots }
-    });
+    return results.success(res, { slots: timeSlots }, 200);
   }
-  return res.send({
-    status: 'success',
-    data: { slots: [] }
-  });
+  return results.success(res, { slots: [] }, 200);
 };
 
 const reviewSchema = object({
@@ -237,9 +229,7 @@ const postReview = async (req: Request, res: Response) => {
   try {
     const personId = parseInt(req.params.id);
     const doctor = await doctorModel.getDoctorIdFromUserId(personId);
-    if (!doctor || !doctor.doctor) {
-      return res.sendStatus(400);
-    }
+    if (!doctor || !doctor.doctor) return results.error(res, 'Wrong id', 404);
     const doctorId = doctor.doctor.id;
     const data = await reviewSchema.validate(req.body);
     const reference = await prisma.review.create({
@@ -390,10 +380,7 @@ const infoUpdate = async (req: Request, res: Response) => {
 
     if (!updatedPerson) return results.error(res, 'Person was not found', 400);
 
-    return res.send({
-      status: 'success',
-      data: updatedPerson.id
-    });
+    return results.success(res, updatedPerson.id, 200);
 
   } catch (e) {
     if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
@@ -532,10 +519,7 @@ const detailUpdate = async (req: Request, res: Response) => {
         day++;
       }
     }
-    return res.send({
-      status: 'success',
-      data: updatedDoctor.id
-    });
+    return results.success(res, updatedDoctor.id, 200);
 
   } catch (e) {
     if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
