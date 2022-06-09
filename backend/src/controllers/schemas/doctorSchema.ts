@@ -49,6 +49,15 @@ const review = object({
     .nullable()
 });
 
+const searching = object({
+  surname: string()
+    .nullable(),
+  location: string()
+    .nullable(),
+  specialization: string()
+    .nullable(),
+});
+
 const registration = personSchema.registration.shape(doctorSchema.fields);
 
 const update = personSchema.update.shape(doctorSchema.fields);
@@ -57,5 +66,6 @@ export default {
   registration,
   details,
   update,
-  review
+  review,
+  searching
 };

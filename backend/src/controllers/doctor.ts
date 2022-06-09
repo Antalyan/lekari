@@ -37,30 +37,30 @@ const detail = async (req: Request, res: Response) => {
 };
 
 const list = async (req: Request, res: Response) => {
-  const {
-    surname,
-    location,
-    specialization
-  } = req.query;
+  try {
+    const data = await doctorSchema.searching.validate(req.query);
+    const doctors = await doctorModel.getDoctors(data.surname, data.specialization, data.location);
 
-  const doctors = await doctorModel.getDoctors(surname as string, specialization as string, location as string);
+    if (!doctors) return results.error(res, 'Person was not found', 404);
 
-  if (!doctors) return results.error(res, 'Person was not found', 404);
-
-  return res.send({
-    status: 'success',
-    data: doctors.map(doctor => {
-      return {
-        id: doctor.person.id,
-        degree: doctor.person.degree,
-        firstname: doctor.person.firstname,
-        surname: doctor.person.surname,
-        specialization: doctor.specialization,
-        city: doctor.address.city,
-        actuality: doctor.actuality
-      };
-    })
-  });
+    return res.send({
+      status: 'success',
+      data: doctors.map(doctor => {
+        return {
+          id: doctor.person.id,
+          degree: doctor.person.degree,
+          firstname: doctor.person.firstname,
+          surname: doctor.person.surname,
+          specialization: doctor.specialization,
+          city: doctor.address.city,
+          actuality: doctor.actuality
+        };
+      })
+    });
+  } catch (e) {
+    if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
+    return results.error(res, 'Unknown error', 500);
+  }
 };
 
 const slots = async (req: Request, res: Response) => {
