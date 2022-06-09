@@ -135,13 +135,34 @@ function ReservationSlots() {
             fromDate: formData.fromDate,
             interval: formData.interval,
             slots: [
-                {fromTime: daysState[0] ? formData.timeFrom0 : undefined, toTime: daysState[0] ? formData.timeTo0 : undefined},
-                {fromTime: daysState[1] ? formData.timeFrom1 : undefined, toTime: daysState[1] ? formData.timeTo1 : undefined},
-                {fromTime: daysState[2] ? formData.timeFrom2 : undefined, toTime: daysState[2] ? formData.timeTo2 : undefined},
-                {fromTime: daysState[3] ? formData.timeFrom3 : undefined, toTime: daysState[3] ? formData.timeTo3 : undefined},
-                {fromTime: daysState[4] ? formData.timeFrom4 : undefined, toTime: daysState[4] ? formData.timeTo4 : undefined},
-                {fromTime: daysState[5] ? formData.timeFrom5 : undefined, toTime: daysState[5] ? formData.timeTo5 : undefined},
-                {fromTime: daysState[6] ? formData.timeFrom6 : undefined, toTime: daysState[6] ? formData.timeTo6 : undefined}]
+                {
+                    fromTime: daysState[0] ? formData.timeFrom0 : undefined,
+                    toTime: daysState[0] ? formData.timeTo0 : undefined
+                },
+                {
+                    fromTime: daysState[1] ? formData.timeFrom1 : undefined,
+                    toTime: daysState[1] ? formData.timeTo1 : undefined
+                },
+                {
+                    fromTime: daysState[2] ? formData.timeFrom2 : undefined,
+                    toTime: daysState[2] ? formData.timeTo2 : undefined
+                },
+                {
+                    fromTime: daysState[3] ? formData.timeFrom3 : undefined,
+                    toTime: daysState[3] ? formData.timeTo3 : undefined
+                },
+                {
+                    fromTime: daysState[4] ? formData.timeFrom4 : undefined,
+                    toTime: daysState[4] ? formData.timeTo4 : undefined
+                },
+                {
+                    fromTime: daysState[5] ? formData.timeFrom5 : undefined,
+                    toTime: daysState[5] ? formData.timeTo5 : undefined
+                },
+                {
+                    fromTime: daysState[6] ? formData.timeFrom6 : undefined,
+                    toTime: daysState[6] ? formData.timeTo6 : undefined
+                }]
         };
 
         const url = `http://localhost:4000/doctor-reservation-hours`
@@ -172,22 +193,23 @@ function ReservationSlots() {
     };
 
     // TODO: recount intervals (options for fromDate and toDate) on update
-    const [intervalState, setIntervalState] = useState(20);
     // interval | 60
-    const countIntervals = () => {
+    const countIntervals = (interval: number) => {
         let result = [];
         let start = new Date(1971, 0, 1);
         start.setHours(RESERVATION_INTERVAL_BOUNDS[0]);
         while (start.getHours() < RESERVATION_INTERVAL_BOUNDS[1]) {
             result.push(start.getHours() + ":" + start.getMinutes() + (start.getMinutes() == 0 ? "0" : ""));
-            start.setMinutes(start.getMinutes() + intervalState);
+            start.setMinutes(start.getMinutes() + interval);
         }
         result.push(start.getHours() + ":" + start.getMinutes() + (start.getMinutes() == 0 ? "0" : ""));
-        start.setMinutes(start.getMinutes() + intervalState);
+        start.setMinutes(start.getMinutes() + interval);
         return result.map((val: string) => {
             return {id: val, title: val}
         });
     }
+
+    const [optionsState, setOptionsState] = useState(countIntervals(10));
 
     const [dateState, setDateState] = useState();
     const user = useRecoilValue(userAtom);
@@ -207,16 +229,43 @@ function ReservationSlots() {
         if (reservationSlots.slots) {
             setDaysState(reservationSlots.slots.map((time) => !(time.fromTime == null && time.toTime == null)));
             setValue("interval", reservationSlots.interval);
+            console.log(reservationSlots.interval);
+            reservationSlots.interval && setOptionsState(countIntervals(reservationSlots.interval));
+            console.log(optionsState);
             reservationSlots.slots.map((slot, index) => {
                 // @ts-ignore
                 slot.fromTime && setValue(`timeFrom${index}`, slot.fromTime);
                 // @ts-ignore
                 slot.toTime && setValue(`timeTo${index}`, slot.toTime)
             })
-            countIntervals();
         }
     }, [reservationSlots]);
 
+    // // reset on change
+    // useEffect(() => {
+    //     setOptionsState(countIntervals());
+    //     console.log(optionsState);
+    //     const initTimes: Array<string> = Array(7).fill(RESERVATION_INTERVAL_BOUNDS[0]+ ":00");
+    //     initTimes.map((slot, index) => {
+    //         // @ts-ignore
+    //         slot.fromTime && setValue(`timeFrom${index}`, slot.fromTime);
+    //         // @ts-ignore
+    //         slot.toTime && setValue(`timeTo${index}`, slot.toTime)
+    //     })
+    // }, [intervalState]);
+
+    const resetSelected = (value?: any) => {
+        setOptionsState(countIntervals(value));
+        console.log("resetting")
+        console.log(optionsState);
+        const initTimes: Array<string> = Array(7).fill(undefined);
+        initTimes.map((time, index) => {
+            // @ts-ignore
+            setValue(`timeFrom${index}`, time);
+            // @ts-ignore
+            setValue(`timeTo${index}`, time)
+        })
+    }
 
     // @ts-ignore
     return <>
@@ -241,7 +290,7 @@ function ReservationSlots() {
                         <Grid item xs={6}>
                             <SelectElement name={'interval'} label={'Délka intervalu rezervací'} required
                                            options={INTERVALS} fullWidth={true} onChange={(value) => {
-                                setIntervalState(value)
+                                resetSelected(value)
                             }}/>
                         </Grid>
                     </Grid>
@@ -257,14 +306,14 @@ function ReservationSlots() {
                                 </Grid>
                                 <Grid item xs={3}>
                                     <SelectElement name={'timeFrom' + index} label={'Od'} required={daysState[index]}
-                                                   options={countIntervals()} fullWidth={true}
+                                                   options={optionsState} fullWidth={true}
                                                    size={"small"}
                                                    disabled={!daysState[index]}
                                     />
                                 </Grid>
                                 <Grid item xs={3}>
                                     <SelectElement name={'timeTo' + index} label={'Do'} required={daysState[index]}
-                                                   options={countIntervals()} fullWidth={true}
+                                                   options={optionsState} fullWidth={true}
                                                    size={"small"}
                                                    disabled={!daysState[index]}
                                     />
