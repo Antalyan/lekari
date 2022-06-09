@@ -8,7 +8,7 @@ import { ValidationError } from 'yup';
 import personTmpSchema from './schemas/personTmpSchema';
 import reservationHoursSchema from './schemas/reservationHoursSchema';
 
-export const personReservations = async (req: Request, res: Response) => {
+export const person = async (req: Request, res: Response) => {
   const date = new Date();
   const reservations = await prisma.person.findMany({
     where: {
@@ -528,7 +528,7 @@ const reservationHoursPost = async (req: Request, res: Response) => {
 };
 
 export default {
-  personReservations,
+  person,
   doctorReservations,
   createReservationRegistered,
   createReservationNonregistered,
