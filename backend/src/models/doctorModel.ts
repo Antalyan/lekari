@@ -60,8 +60,42 @@ const getDoctorIdFromUserId = async (userId: number) => {
   });
 };
 
+const getDoctors = async (surname: string, specialization: string, location: string) => {
+  return await prisma.doctor.findMany({
+    orderBy: [{
+      specialization: 'asc',
+    }, {
+      person: {
+        surname: 'asc',
+      }
+    },],
+    where: {
+      person: {
+        surname: {
+          contains: surname || undefined
+        },
+        deleted: false,
+      },
+      specialization: {
+        contains: specialization || undefined
+      },
+      address: {
+        city: {
+          contains: location || undefined
+        },
+      },
+      deleted: false,
+    },
+    include: {
+      person: true,
+      address: true,
+    },
+  });
+};
+
 export default {
   getDoctorFromUserId,
   getDoctorIdFromUserId,
-  getDoctorFromUserEmail
+  getDoctorFromUserEmail,
+  getDoctors
 };

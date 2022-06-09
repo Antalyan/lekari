@@ -43,36 +43,7 @@ const list = async (req: Request, res: Response) => {
     specialization
   } = req.query;
 
-  const doctors = await prisma.doctor.findMany({
-    orderBy: [{
-      specialization: 'asc',
-    }, {
-      person: {
-        surname: 'asc',
-      }
-    },],
-    where: {
-      person: {
-        surname: {
-          contains: surname as string || undefined
-        },
-        deleted: false,
-      },
-      specialization: {
-        contains: specialization as string || undefined
-      },
-      address: {
-        city: {
-          contains: location as string || undefined
-        },
-      },
-      deleted: false,
-    },
-    include: {
-      person: true,
-      address: true,
-    },
-  });
+  const doctors = await doctorModel.getDoctors(surname as string, specialization as string, location as string);
 
   if (!doctors) return results.error(res, 'Person was not found', 404);
 
