@@ -467,8 +467,25 @@ const hoursPost = async (req: Request, res: Response) => {
 
       for (const value of preproccesed) {
         try {
-          let created = await prisma.reservationHours.create({
-            data: value
+          let created = await prisma.reservationHours.upsert({
+            where:{
+              doctorId_day_fromDate:{
+                doctorId: doctor.id,
+                day: value.day,
+                fromDate: value.fromDate,
+              }
+            },
+            update: {
+              fromTime: value.fromTime,
+              toTime: value.toTime
+            },
+            create:{
+              doctorId: doctor.id,
+              day: value.day,
+              fromDate: value.fromDate,
+              fromTime: value.fromTime,
+              toTime: value.toTime
+            } 
           });
           result.push(created);
         } catch (e) {
