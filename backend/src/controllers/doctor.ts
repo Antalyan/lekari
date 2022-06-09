@@ -72,28 +72,27 @@ const slots = async (req: Request, res: Response) => {
 
   if (reservationHours.length === 0) return results.error(res, 'Reservation hours were not found', 404);
 
-  if (reservationHours[0].fromTime && reservationHours[0].toTime) {
-    let dateFrom = new Date(date);
-    dateFrom.setHours(reservationHours[0].fromTime.getHours());
-    dateFrom.setMinutes(reservationHours[0].fromTime.getMinutes());
-    let allTimeSlots = [];
-    let time = reservationHours[0].toTime.getTime() - reservationHours[0].fromTime.getTime();
-    let lastTime = new Date(dateFrom);
-    for (let i = 0; i < (((time / 60) / reservationHours[0].interval) / 1000); i++) {
-      // regex split by second :
-      let timeString = helperFunctions.convertTimeToString(new Date(lastTime));
-      allTimeSlots.push(timeString);
-      lastTime.setMinutes(lastTime.getMinutes() + reservationHours[0].interval);
-    }
+  if (!reservationHours[0].toTime || !reservationHours[0].fromTime) return results.success(res, { slots: [] }, 200);
 
-    const reservationsTimes = reservations.map((item: { fromTime: any; }) => helperFunctions.convertTimeToString(item.fromTime));
-    let timeSlots = allTimeSlots.filter(function (el) {
-      return !reservationsTimes.includes(el);
-    });
-
-    return results.success(res, { slots: timeSlots }, 200);
+  let dateFrom = new Date(date);
+  dateFrom.setHours(reservationHours[0].fromTime.getHours());
+  dateFrom.setMinutes(reservationHours[0].fromTime.getMinutes());
+  let allTimeSlots = [];
+  let time = reservationHours[0].toTime.getTime() - reservationHours[0].fromTime.getTime();
+  let lastTime = new Date(dateFrom);
+  for (let i = 0; i < (((time / 60) / reservationHours[0].interval) / 1000); i++) {
+    // regex split by second :
+    let timeString = helperFunctions.convertTimeToString(new Date(lastTime));
+    allTimeSlots.push(timeString);
+    lastTime.setMinutes(lastTime.getMinutes() + reservationHours[0].interval);
   }
-  return results.success(res, { slots: [] }, 200);
+
+  const reservationsTimes = reservations.map((item: { fromTime: any; }) => helperFunctions.convertTimeToString(item.fromTime));
+  let timeSlots = allTimeSlots.filter(function (el) {
+    return !reservationsTimes.includes(el);
+  });
+
+  return results.success(res, { slots: timeSlots }, 200);
 };
 
 const postReview = async (req: Request, res: Response) => {
