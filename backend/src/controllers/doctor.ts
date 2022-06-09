@@ -332,7 +332,7 @@ const signUp = async (req: Request, res: Response) => {
   }
 };
 
-const doctorDelete = async (req: Request, res: Response) => {
+const remove = async (req: Request, res: Response) => {
   try {
     await prisma.doctor.updateMany({
       where: {
@@ -612,7 +612,7 @@ export default {
   locations,
   list,
   detail,
-  doctorDelete,
+  remove,
   detailsUpdate,
   doctorSlots,
   postReview,
