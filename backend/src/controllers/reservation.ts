@@ -119,7 +119,10 @@ const create = async (req: Request, res: Response, tmp: boolean) => {
       fromDate: {
         lte: new Date(data.date)
       }
-    }
+    },
+    orderBy: {
+      fromDate: 'desc'
+    },
   });
 
   if (!reservationHours) return results.error(res, 'Can\'t make reservation for this day.', 500);
