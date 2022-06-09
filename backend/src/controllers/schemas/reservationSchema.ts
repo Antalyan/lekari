@@ -15,7 +15,7 @@ const timeRangeSchema = object({
     .nullable()
 });
 
-const reservationHoursSchema = object({
+const hours = object({
   fromDate: date()
     .required(),
   interval: number()
@@ -31,5 +31,5 @@ const reservationHoursSchema = object({
 
 export default {
   registration,
-  reservationHoursSchema
+  hours
 };

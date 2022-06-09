@@ -260,14 +260,14 @@ const hoursGet = async (req: Request, res: Response) => {
 
 const hoursPost = async (req: Request, res: Response) => {
   try {
-    const data = await reservationSchema.reservationHoursSchema.validate(req.body);
+    const data = await reservationSchema.hours.validate(req.body);
 
     const doctor = res.locals.jwt.doctor;
 
     console.log(doctor);
 
     if (data.slots) {
-      let preproccesed = data.slots.map(function (value, index) {
+      let preproccesed = data.slots.map((value: any, index: number) => {
         if (value.fromTime && value.toTime) {
           return {
             doctor: {
