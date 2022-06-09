@@ -173,7 +173,7 @@ const createRegistered = async (req: Request, res: Response) => {
 
 const createNotRegistered = async (req: Request, res: Response) => {
   try {
-    await create(req, res, true);
+    return await create(req, res, true);
   } catch (e) {
     if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
     return results.error(res, 'Unknown error', 500);
