@@ -9,6 +9,7 @@ import hashing from '../utilities/hashing';
 import addressModel from '../models/addressModel';
 import doctorAdapter from '../dataAdapters/doctorAdapter';
 import reservationModel from '../models/reservationModel';
+import reviewModel from '../models/reviewModel';
 
 const locations = async (req: Request, res: Response) => {
   const cities = await addressModel.getDoctorsCities();
@@ -97,17 +98,9 @@ const postReview = async (req: Request, res: Response) => {
   try {
     const doctor = await doctorModel.getDoctorIdFromUserId(parseInt(req.params.id));
     if (!doctor || !doctor.doctor) return results.error(res, 'Wrong id', 404);
-    const doctorId = doctor.doctor.id;
     const data = await doctorSchema.review.validate(req.body);
 
-    const reference = await prisma.review.create({
-      data: {
-        doctorId: doctorId,
-        comment: data.comment,
-        rate: data.rate * 2,
-        author: data.author || null
-      }
-    });
+    const reference = await reviewModel.create(doctor.doctor.id, data);
     if (!reference) return results.error(res, 'Unknown error', 500);
 
     return results.success(res, { id: reference.id }, 201);
