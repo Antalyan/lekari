@@ -1,14 +1,14 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import Grid from "@mui/material/Grid";
-import {Divider, FormControlLabel, FormGroup, Stack, Switch} from "@mui/material";
+import {FormControlLabel, FormGroup, Stack, Switch} from "@mui/material";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import {DatePickerElement, FormContainer, SelectElement, TextFieldElement} from "react-hook-form-mui";
 import {useForm} from "react-hook-form";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import {DataFormType, DAYS, INTERVALS, RESERVATION_INTERVAL_BOUNDS} from "../../data/Constants";
+import {DAYS, INTERVALS, RESERVATION_INTERVAL_BOUNDS} from "../../data/Constants";
 import {useNavigate, useParams} from "react-router-dom";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
@@ -16,7 +16,7 @@ import {IReservationBasic, IReservationSlots, ISelectItem} from "../../utils/Int
 import useSWR from "swr";
 import fetcher, {checkStatusOK, fetcherWithToken} from "../../utils/fetcher";
 import axios from "axios";
-import {IDatResCreate, IDatResHour, IDatResHours} from "../../utils/DatabaseInterfaces";
+import {IDatResCreate, IDatResHours} from "../../utils/DatabaseInterfaces";
 
 
 function ReservationMakePanel() {
@@ -24,7 +24,6 @@ function ReservationMakePanel() {
     const {handleSubmit} = formContext;
     const user = useRecoilValue(userAtom);
 
-    // TODO check used slots are no longer available
     const sendReservation = async (formData: IReservationBasic) => {
         const reservation: IDatResCreate = {
             comment: formData.reservationNote,
@@ -154,9 +153,6 @@ function ReservationSlots() {
             .then(response => {
                 console.log(response);
                 alert("Rezervační sloty změněny")
-                // if (checkStatusOK(response.status)) {
-                //     window.location.reload();
-                // }
             })
             .catch((error) => {
                 console.error(error);
@@ -175,7 +171,7 @@ function ReservationSlots() {
         }))
     };
 
-    // TODO: load value from user
+    // TODO: recount intervals (options for fromDate and toDate) on update
     const [intervalState, setIntervalState] = useState(20);
     // interval | 60
     const countIntervals = () => {
@@ -217,6 +213,7 @@ function ReservationSlots() {
                 // @ts-ignore
                 slot.toTime && setValue(`timeTo${index}`, slot.toTime)
             })
+            countIntervals();
         }
     }, [reservationSlots]);
 
