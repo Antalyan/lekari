@@ -150,7 +150,7 @@ const list = async (req: Request, res: Response) => {
   });
 };
 
-const doctorSlots = async (req: Request, res: Response) => {
+const slots = async (req: Request, res: Response) => {
   const personId = parseInt(req.params.id);
   const doctor = await doctorModel.getDoctorIdFromUserId(personId);
   if (!doctor || !doctor.doctor) {
@@ -614,7 +614,7 @@ export default {
   detail,
   remove,
   detailUpdate,
-  doctorSlots,
+  slots,
   postReview,
   signUp,
   infoUpdate,
