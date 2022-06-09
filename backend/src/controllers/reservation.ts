@@ -349,13 +349,13 @@ const createNotRegistered = async (req: Request, res: Response) => {
 };
 
 const hoursGet = async (req: Request, res: Response) => {
-  let date = new Date()
-  try{
+  let date = new Date();
+  try {
     date = new Date(req.params.date);
-  } catch(e){
+  } catch (e) {
     results.error(res, 'Query param is not in valid date format.', 500);
   }
- 
+
   const reservationHours = await prisma.reservationHours.findMany({
     orderBy: [
       {
@@ -519,7 +519,7 @@ const hoursPost = async (req: Request, res: Response) => {
 };
 
 const doctorRemove = async (req: Request, res: Response) => {
-  const deleted = prisma.reservation.deleteMany({
+  const deleted = await prisma.reservation.deleteMany({
     where: {
       id: req.body.id,
       doctorId: res.locals.jwt.doctor.id,
@@ -533,7 +533,7 @@ const doctorRemove = async (req: Request, res: Response) => {
 };
 
 const personRemove = async (req: Request, res: Response) => {
-  const deleted = prisma.reservation.deleteMany({
+  const deleted = await prisma.reservation.deleteMany({
     where: {
       id: req.body.id,
       personId: res.locals.jwt.id,
