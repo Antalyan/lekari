@@ -465,8 +465,8 @@ const detailUpdate = async (req: Request, res: Response) => {
         id: doctor.id
       },
       data: {
-        email: data.email || null,
-        phone: data.phone || null,
+        email: data.workEmail || null,
+        phone: data.workPhone || null,
         description: data.description || null,
         link: data.link || null,
       }
