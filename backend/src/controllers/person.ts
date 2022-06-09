@@ -67,23 +67,20 @@ const detail = async (req: Request, res: Response) => {
   });
 };
 
-const passwordError = (res: Response, message: string) => {
-  return results.error(res, message, 400);
-};
-
 const update = async (req: Request, res: Response) => {
   try {
     const data = await personUpdateSchema.validate(req.body);
     let updatedPerson = null;
 
     if (data.oldPassword && data.password1 && data.password2) {
+
       const person = res.locals.jwt;
-      if (!person) return passwordError(res, 'Can\'t find person.');
+      if (!person) return results.error(res, 'Can\'t find person.', 400);
 
       const validPassword = await hashing.verify(data.oldPassword, person.password);
-      if (!validPassword) return passwordError(res, 'Old password is not valid.');
+      if (!validPassword) return results.error(res, 'Old password is not valid.', 400);
 
-      if (data.password1 !== data.password2) return passwordError(res, 'Passwords don\'t match.');
+      if (data.password1 !== data.password2) return results.error(res, 'Passwords don\'t match.', 400);
 
       const hash = await hashing.hash(data.password1);
 
