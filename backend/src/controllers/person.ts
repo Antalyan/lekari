@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { ValidationError } from 'yup';
 import prisma from '../client';
 import { personUpdateSchema } from './schemas/personSchema';
+import results from '../utilities/results';
 
 const bcryptjs = require('bcryptjs');
 
@@ -46,14 +46,7 @@ const detail = async (req: Request, res: Response) => {
     }
   });
 
-  if (!person || person.deleted) {
-    return res.status(404)
-      .send({
-        status: 'error',
-        data: {},
-        message: 'Person was not found'
-      });
-  }
+  if (!person || person.deleted) return results.error(res, 'Person was not found.', 404);
 
   return res.send({
     status: 'success',
@@ -75,13 +68,8 @@ const detail = async (req: Request, res: Response) => {
   });
 };
 
-const passwordError = (res: Response, message: String) => {
-  return res.status(400)
-    .json({
-      status: 'error',
-      data: {},
-      message: message,
-    });
+const passwordError = (res: Response, message: string) => {
+  return results.error(res, message, 400);
 };
 
 const update = async (req: Request, res: Response) => {
@@ -152,28 +140,13 @@ const update = async (req: Request, res: Response) => {
       });
     }
 
-    if (!updatedPerson) {
-      return res.status(404)
-        .send({
-          status: 'error',
-          data: {},
-          message: 'Person was not found'
-        });
-    }
+    if (!updatedPerson) return results.error(res, 'Person was not found.', 404);
 
-    return res.send({
-      status: 'success',
-      data: updatedPerson.id
-    });
+    return results.success(res, updatedPerson.id, 200);
+
   } catch (e) {
-    if (e instanceof ValidationError) {
-      return res.status(400)
-        .send({
-          status: 'error',
-          data: e.errors,
-          message: e.message
-        });
-    }
+    if (e instanceof Error) return results.error(res, e.message, 400);
+    return results.error(res, 'Unknown error', 500);
   }
 };
 
@@ -187,19 +160,10 @@ const remove = async (req: Request, res: Response) => {
         deleted: true,
       }
     });
-    return res.status(200)
-      .send({
-        status: 'success',
-        message: 'Person deleted.',
-      });
+    return results.success(res, {}, 200);
   } catch (e) {
-    if (e instanceof Error) {
-      return res.status(400)
-        .send({
-          status: 'error',
-          message: e.message
-        });
-    }
+    if (e instanceof Error) return results.error(res, e.message, 400);
+    return results.error(res, 'Unknown error', 500);
   }
 };
 
