@@ -459,8 +459,7 @@ const allInfo = async (req: Request, res: Response) => {
 const detailUpdate = async (req: Request, res: Response) => {
   try {
     const data = await doctorDetailsSchema.validate(req.body);
-    const doctor = await doctorModel.getDoctorFromUserEmail(res.locals.jwt.username);
-    if (!doctor) return results.error(res, 'Doctor was not found', 404);
+    const doctor = res.locals.jwt.doctor;
     const updatedDoctor = await prisma.doctor.update({
       where: {
         id: doctor.id
