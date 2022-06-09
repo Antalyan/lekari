@@ -27,6 +27,33 @@ export const personSchema = object({
     .required(),
 });
 
+export const personTmpSchema = object({
+  firstname: string()
+    .required(),
+  surname: string()
+    .required(),
+  degree: string(),
+  birthdate: date()
+    .required(),
+  email: string()
+    .email(),
+  phonePrefix: string()
+    .required(),
+  phone: number()
+    .required(),
+  insuranceNumber: number(),
+  country: string(),
+  city: string(),
+  postalCode: number(),
+  street: string(),
+  buildingNumber: string(),
+  date: string()
+    .required(),
+  time: string()
+    .required(),
+  comment: string()
+});
+
 const passwordSchema = object({
   password1: string()
     .required(),
@@ -56,5 +83,5 @@ const updatePasswordSchema = object({
   password2: string(),
 });
 
-export const personUpdateSchema = personSchema.shape(updatePasswordSchema.fields)
+export const personUpdateSchema = personSchema.shape(updatePasswordSchema.fields);
 export const personRegistrationSchema = personSchema.shape(passwordSchema.fields);

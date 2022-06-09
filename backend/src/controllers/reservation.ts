@@ -5,7 +5,7 @@ import doctorModel from '../models/doctorModel';
 import reservationSchema from './schemas/reservationSchema';
 import helperFunctions from '../utilities/helperFunctions';
 import { ValidationError } from 'yup';
-import personTmpSchema from './schemas/personTmpSchema';
+import { personTmpSchema } from './schemas/personSchema';
 import reservationHoursSchema from './schemas/reservationHoursSchema';
 import reservationModel from '../models/reservationModel';
 
