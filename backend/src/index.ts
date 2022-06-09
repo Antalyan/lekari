@@ -37,7 +37,7 @@ api.patch('/doctor-info', auth.validateTokenDoctor, doctor.infoUpdate);
 api.delete('/doctor-info', auth.validateTokenDoctor, doctor.remove);
 api.post('/doctor/:id(\\d+)/reservations-registered', auth.validateToken, reservation.createRegistered);
 api.post('/doctor/:id(\\d+)/reservations-nonregistered', reservation.createNotRegistered);
-api.post('/doctor-reservation-hours', auth.validateTokenDoctor, reservation.reservationHoursPost);
+api.post('/doctor-reservation-hours', auth.validateTokenDoctor, reservation.hoursPost);
 api.put('/doctor-details', auth.validateTokenDoctor, doctor.detailUpdate);
 
 api.get('/persons', person.list);                     // Undocumented

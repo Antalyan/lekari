@@ -437,7 +437,7 @@ const hoursGet = async (req: Request, res: Response) => {
     });
 };
 
-const reservationHoursPost = async (req: Request, res: Response) => {
+const hoursPost = async (req: Request, res: Response) => {
   try {
     const data = await reservationHoursSchema.validate(req.body);
 
@@ -533,5 +533,5 @@ export default {
   createRegistered,
   createNotRegistered,
   hoursGet,
-  reservationHoursPost,
+  hoursPost,
 };
