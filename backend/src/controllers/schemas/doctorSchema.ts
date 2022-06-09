@@ -4,14 +4,16 @@ import { array, number, object, string } from 'yup';
 const doctorSchema = object({
   specialization: string()
     .required(),
-  actuality: string(),
+  actuality: string()
+    .nullable(),
   workCountry: string()
     .required(),
   workCity: string()
     .required(),
   workPostalCode: number()
     .required(),
-  workStreet: string(),
+  workStreet: string()
+    .nullable(),
   workBuildingNumber: string()
     .required(),
 });
@@ -28,9 +30,12 @@ const details = object({
     ),
   workEmail: string()
     .email(),
-  workPhone: string(),
-  description: string(),
-  link: string(),
+  workPhone: string()
+    .nullable(),
+  description: string()
+    .nullable(),
+  link: string()
+    .nullable(),
 });
 
 const registration = personSchema.registration.shape(doctorSchema.fields);
