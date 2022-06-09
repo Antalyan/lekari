@@ -62,36 +62,35 @@ const doctor = async (req: Request, res: Response) => {
   if (!reservations) return results.error(res, 'Doctor was not found', 404);
 
   let data = reservations.map(function (reservation) {
+
+    let degree: string | null = '';
+    let firstname: string | null = '';
+    let surname: string | null = '';
+
     if (reservation.person) {
-      return {
-        id: reservation.id,
-        personDegree: reservation.person.degree,
-        personFirstname: reservation.person.firstname,
-        personSurname: reservation.person.surname,
-        visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
-        visitTimeTo: reservation.toTime.toLocaleTimeString(),
-        visitDate: reservation.fromTime.toISOString()
-          .split('T')[0],
-        note: reservation.personComment,
-        createTime: reservation.created.toLocaleTimeString(),
-        createDate: reservation.created.toISOString()
-          .split('T')[0],
-      };
+      degree = reservation.person.degree;
+      firstname = reservation.person.firstname;
+      surname = reservation.person.surname;
     } else if (reservation.personTmp) {
-      return {
-        id: reservation.id,
-        personDegree: reservation.personTmp.degree,
-        personFirstname: reservation.personTmp.firstname,
-        personSurname: reservation.personTmp.surname,
-        visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
-        visitTimeTo: reservation.toTime.toLocaleTimeString(),
-        visitDate: reservation.fromTime.toISOString()
-          .split('T')[0],
-        note: reservation.personComment,
-        createTime: reservation.created.toLocaleTimeString(),
-        createDate: reservation.created.toUTCString(),
-      };
+      degree = reservation.personTmp.degree;
+      firstname = reservation.personTmp.firstname;
+      surname = reservation.personTmp.surname;
     }
+
+    return {
+      id: reservation.id,
+      personDegree: degree,
+      personFirstname: firstname,
+      personSurname: surname,
+      visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
+      visitTimeTo: reservation.toTime.toLocaleTimeString(),
+      visitDate: reservation.fromTime.toISOString()
+        .split('T')[0],
+      note: reservation.personComment,
+      createTime: reservation.created.toLocaleTimeString(),
+      createDate: reservation.created.toISOString()
+        .split('T')[0],
+    };
   });
 
   return res.send({
