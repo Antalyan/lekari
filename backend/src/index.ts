@@ -39,6 +39,7 @@ api.get('/persons', person.list);                     // Undocumented
 api.get('/personal-info', auth.validateToken, person.detail);
 api.patch('/personal-info', auth.validateToken, person.update);
 api.get('/person-reservations', auth.validateToken, reservation.person);
+api.delete('/person-reservations', auth.validateToken, reservation.personRemove);
 api.delete('/personal-info', auth.validateToken, person.remove);
 
 api.get('/validate', auth.validateToken, (req: Request, res: Response) => {
