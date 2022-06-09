@@ -371,7 +371,13 @@ const createNotRegistered = async (req: Request, res: Response) => {
 };
 
 const hoursGet = async (req: Request, res: Response) => {
-  const today = new Date();
+  let date = new Date()
+  try{
+    date = new Date(req.params.date);
+  } catch(e){
+    results.error(res, 'Query param is not in valid date format.', 500);
+  }
+ 
   const reservationHours = await prisma.reservationHours.findMany({
     orderBy: [
       {
@@ -389,7 +395,7 @@ const hoursGet = async (req: Request, res: Response) => {
         deleted: false,
       },
       fromDate: {
-        lte: today
+        lte: date
       }
     },
     select: {
