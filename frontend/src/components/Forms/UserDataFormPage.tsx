@@ -244,7 +244,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
         }
         if (isEdit) {
             // TODO: edit url
-            await updateProfile('http://localhost:4000/personal-info', doctor, navigate, user);
+            await updateProfile('http://localhost:4000/doctor-info', doctor, navigate, user);
         } else {
             await completeRegistration('http://localhost:4000/signup-doctor', doctor, navigate);
         }
