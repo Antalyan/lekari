@@ -93,9 +93,21 @@ const getDoctors = async (surname: string | null | undefined, specialization: st
   });
 };
 
+const removeDoctor = async (doctorId: number) => {
+  return await prisma.doctor.updateMany({
+    where: {
+      id: doctorId,
+    },
+    data: {
+      deleted: true,
+    }
+  });
+};
+
 export default {
   getDoctorFromUserId,
   getDoctorIdFromUserId,
   getDoctorFromUserEmail,
-  getDoctors
+  getDoctors,
+  removeDoctor,
 };

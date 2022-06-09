@@ -113,23 +113,14 @@ const postReview = async (req: Request, res: Response) => {
 
 const remove = async (req: Request, res: Response) => {
   try {
-    await prisma.doctor.updateMany({
-      where: {
-        person: {
-          email: res.locals.jwt.email
-        }
-      },
-      data: {
-        deleted: true,
-      }
-    });
+    await doctorModel.removeDoctor(res.locals.jwt.doctor.id);
     return res.status(200)
       .send({
         status: 'success',
         message: 'Doctor deleted.',
       });
   } catch (e) {
-    if (e instanceof Error) return results.error(res, e.message, 500);
+    if (e instanceof Error) return results.error(res, e.message, 400);
     return results.error(res, 'Unknown error', 500);
   }
 };
