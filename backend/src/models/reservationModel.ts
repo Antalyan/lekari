@@ -19,7 +19,7 @@ const getReservations = async (where: any) => {
   });
 };
 
-const createReservation = async (doctorId: number, personId: number, fromTime, toTime, comment) => {
+const createReservation = async (doctorId: number, personId: number, fromTime: Date, toTime: Date, comment: string | undefined) => {
   return await prisma.reservation.create({
     data: {
       doctor: { connect: { id: doctorId } },
