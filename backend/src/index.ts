@@ -44,7 +44,7 @@ api.get('/persons', person.list);                     // Undocumented
 api.get('/personal-info', auth.validateToken, person.detail);
 api.patch('/personal-info', auth.validateToken, person.personUpdate);
 api.get('/person-reservations', auth.validateToken, reservation.personReservations);
-api.delete('/personal-info', auth.validateToken, person.personDelete);
+api.delete('/personal-info', auth.validateToken, person.remove);
 
 api.get('/validate', auth.validateToken, (req: Request, res: Response) => {
   return res.sendStatus(200);

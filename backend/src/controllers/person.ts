@@ -177,7 +177,7 @@ const personUpdate = async (req: Request, res: Response) => {
   }
 };
 
-const personDelete = async (req: Request, res: Response) => {
+const remove = async (req: Request, res: Response) => {
   try {
     await prisma.person.updateMany({
       where: {
@@ -206,6 +206,6 @@ const personDelete = async (req: Request, res: Response) => {
 export default {
   list,
   detail,
-  personDelete,
+  remove,
   personUpdate,
 };
