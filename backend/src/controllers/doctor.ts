@@ -8,6 +8,7 @@ import helperFunctions from '../utilities/helperFunctions';
 import hashing from '../utilities/hashing';
 import addressModel from '../models/addressModel';
 import doctorAdapter from '../dataAdapters/doctorAdapter';
+import reservationModel from '../models/reservationModel';
 
 const locations = async (req: Request, res: Response) => {
   const cities = await addressModel.getDoctorsCities();
@@ -55,37 +56,17 @@ const slots = async (req: Request, res: Response) => {
   const doctor = await doctorModel.getDoctorIdFromUserId(personId);
   if (!doctor || !doctor.doctor) return results.error(res, 'Wrong id', 404);
   const doctorId = doctor.doctor.id;
-  const date = new Date(req.params.date);
-  const nextDay = new Date();
-  nextDay.setDate(date.getDate() + 1);
-  const day = date.getDay();
 
-  const reservationHours = await prisma.reservationHours.findMany({
-    orderBy: {
-      fromDate: 'desc'
-    },
-    where: {
-      doctorId: doctorId,
-      day: day,
-      fromDate: {
-        lte: date
-      }
-    },
-    distinct: ['day'],
-    select: {
-      fromTime: true,
-      toTime: true,
-      fromDate: true,
-      interval: true
-    }
-  });
+  const date = new Date(req.params.date);
+
+  const reservationHours = await reservationModel.getReservationHours(doctorId, date);
 
   const reservations = await prisma.reservation.findMany({
     where: {
       doctorId: doctorId,
       fromTime: {
         gte: date,
-        lt: nextDay,
+        lt: new Date(date.getDate() + 1),
       }
     },
     select: {

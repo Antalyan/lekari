@@ -86,8 +86,31 @@ const createReservationNotRegistered = async (doctorId: number, fromTime: Date, 
   }
 };
 
+const getReservationHours = async (doctorId: number, date: Date) => {
+  return await prisma.reservationHours.findMany({
+    orderBy: {
+      fromDate: 'desc'
+    },
+    where: {
+      doctorId: doctorId,
+      day: date.getDay(),
+      fromDate: {
+        lte: date
+      }
+    },
+    distinct: ['day'],
+    select: {
+      fromTime: true,
+      toTime: true,
+      fromDate: true,
+      interval: true
+    }
+  });
+};
+
 export default {
   getReservations,
   createReservation,
-  createReservationNotRegistered
+  createReservationNotRegistered,
+  getReservationHours
 };
