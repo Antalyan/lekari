@@ -1,6 +1,6 @@
 import { array, date, number, object, string } from 'yup';
 
-const registrationSchema = object({
+const registration = object({
   date: string()
     .required(),
   time: string()
@@ -30,6 +30,6 @@ const reservationHoursSchema = object({
 });
 
 export default {
-  registrationSchema,
+  registration,
   reservationHoursSchema
 };
