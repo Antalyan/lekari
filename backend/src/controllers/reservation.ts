@@ -12,17 +12,12 @@ import { ValidationError } from 'yup';
 import personTmpSchema from './schemas/personTmpSchema';
 import reservationHoursSchema from './schemas/reservationHoursSchema';
 
-export const person = async (req: Request, res: Response) => {
-  const date = new Date();
-
+const person = async (req: Request, res: Response) => {
   const reservations = await prisma.reservation.findMany({
     where: {
       personId: res.locals.jwt.id,
-      person: {
-        deleted: false
-      },
       fromTime: {
-        gte: date,
+        gte: new Date(),
       },
     },
     orderBy: {
@@ -75,7 +70,7 @@ export const person = async (req: Request, res: Response) => {
   });
 };
 
-export const doctor = async (req: Request, res: Response) => {
+const doctor = async (req: Request, res: Response) => {
   const reservations = await prisma.reservation.findMany({
     where: {
       doctorId: res.locals.jwt.doctor.id,
@@ -386,10 +381,11 @@ const hoursGet = async (req: Request, res: Response) => {
     distinct: ['day'],
   });
 
-  let hours = Array<any>(7).fill({
-    fromTime: null,
-    toTime: null
-  });
+  let hours = Array<any>(7)
+    .fill({
+      fromTime: null,
+      toTime: null
+    });
 
   if (reservationHours.length === 0) {
     return res.status(200)
