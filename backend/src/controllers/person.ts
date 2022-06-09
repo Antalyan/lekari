@@ -2,8 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import prisma from '../client';
 import { personUpdateSchema } from './schemas/personSchema';
 import results from '../utilities/results';
-
-const bcryptjs = require('bcryptjs');
+import hashing from '../utilities/hashing';
 
 const list = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -81,12 +80,12 @@ const update = async (req: Request, res: Response) => {
       const person = res.locals.jwt;
       if (!person) return passwordError(res, 'Can\'t find person.');
 
-      const validPassword = await bcryptjs.compare(data.oldPassword, person.password);
+      const validPassword = await hashing.verify(data.oldPassword, person.password);
       if (!validPassword) return passwordError(res, 'Old password is not valid.');
 
       if (data.password1 !== data.password2) return passwordError(res, 'Passwords don\'t match.');
 
-      const hash = await bcryptjs.hash(data.password1, 10);
+      const hash = await hashing.hash(data.password1);
 
       updatedPerson = await prisma.person.update({
         where: {
