@@ -45,4 +45,18 @@ const getPerson = async (where: any) => {
   });
 };
 
-export default getPerson;
+const remove = async (personId: number) => {
+  return await prisma.person.updateMany({
+    where: {
+      id: personId,
+    },
+    data: {
+      deleted: true,
+    }
+  });
+};
+
+export default {
+  getPerson,
+  remove
+};

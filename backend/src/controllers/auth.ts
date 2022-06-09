@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { ValidationError } from 'yup';
 import prisma from '../client';
 import personSchema from './schemas/personSchema';
-import getPerson from '../models/personModel';
+import personModel from '../models/personModel';
 import config from '../config/config';
 import hashing from '../utilities/hashing';
 import results from '../utilities/results';
@@ -161,7 +161,7 @@ const login = async (req: Request, res: Response) => {
   try {
     const data = await personSchema.login.validate(req.body);
 
-    const person = await getPerson({ email: data.email });
+    const person = await personModel.getPerson({ email: data.email });
     if (!person) return loginError(res);
 
     const validPassword = await hashing.verify(data.password, person.password);
@@ -231,7 +231,7 @@ const validateToken = (req: Request, res: Response, next: NextFunction, doctor: 
 
   jwt.verify(token, config.server.token.secret, async (err: any, user: any) => {
     if (err) return validateTokenError(res, 403, 'Forbidden');
-    const person = await getPerson({
+    const person = await personModel.getPerson({
       email: user.email,
       id: user.id
     });

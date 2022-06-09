@@ -3,6 +3,7 @@ import prisma from '../client';
 import personSchema from './schemas/personSchema';
 import results from '../utilities/results';
 import hashing from '../utilities/hashing';
+import personModel from '../models/personModel';
 
 const list = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -148,14 +149,7 @@ const update = async (req: Request, res: Response) => {
 
 const remove = async (req: Request, res: Response) => {
   try {
-    await prisma.person.updateMany({
-      where: {
-        email: res.locals.jwt.email
-      },
-      data: {
-        deleted: true,
-      }
-    });
+    await personModel.remove(res.locals.jwt.id);
     return results.success(res, {}, 200);
   } catch (e) {
     if (e instanceof Error) return results.error(res, e.message, 400);
