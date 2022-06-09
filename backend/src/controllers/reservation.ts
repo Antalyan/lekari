@@ -85,7 +85,8 @@ const doctor = async (req: Request, res: Response) => {
         personSurname: reservation.personTmp.surname,
         visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
         visitTimeTo: reservation.toTime.toLocaleTimeString(),
-        visitDate: reservation.fromTime.getDate(),
+        visitDate: reservation.fromTime.toISOString()
+          .split('T')[0],
         note: reservation.personComment,
         createTime: reservation.created.toLocaleTimeString(),
         createDate: reservation.created.toUTCString(),
