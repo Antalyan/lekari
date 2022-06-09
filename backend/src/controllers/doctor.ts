@@ -15,10 +15,7 @@ const locations = async (req: Request, res: Response) => {
         doctor: null,
       }
     },
-    distinct: ['city'],
-    select: {
-      city: true,
-    }
+    distinct: ['city']
   });
 
   return results.success(res, cities.map((location) => location.city), 200);
