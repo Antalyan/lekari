@@ -52,13 +52,11 @@ const list = async (req: Request, res: Response) => {
 };
 
 const slots = async (req: Request, res: Response) => {
-  const personId = parseInt(req.params.id);
-  const doctor = await doctorModel.getDoctorIdFromUserId(personId);
+  const doctor = await doctorModel.getDoctorIdFromUserId(parseInt(req.params.id));
   if (!doctor || !doctor.doctor) return results.error(res, 'Wrong id', 404);
   const doctorId = doctor.doctor.id;
 
   const date = new Date(req.params.date);
-
   const reservationHours = await reservationModel.getReservationHours(doctorId, date);
 
   const where = {
@@ -74,21 +72,21 @@ const slots = async (req: Request, res: Response) => {
 
   if (!reservationHours[0].toTime || !reservationHours[0].fromTime) return results.success(res, { slots: [] }, 200);
 
-  let dateFrom = new Date(date);
+  const dateFrom = new Date(date);
   dateFrom.setHours(reservationHours[0].fromTime.getHours());
   dateFrom.setMinutes(reservationHours[0].fromTime.getMinutes());
-  let allTimeSlots = [];
-  let time = reservationHours[0].toTime.getTime() - reservationHours[0].fromTime.getTime();
-  let lastTime = new Date(dateFrom);
+  const allTimeSlots = [];
+  const time = reservationHours[0].toTime.getTime() - reservationHours[0].fromTime.getTime();
+  const lastTime = new Date(dateFrom);
   for (let i = 0; i < (((time / 60) / reservationHours[0].interval) / 1000); i++) {
     // regex split by second :
-    let timeString = helperFunctions.convertTimeToString(new Date(lastTime));
+    const timeString = helperFunctions.convertTimeToString(new Date(lastTime));
     allTimeSlots.push(timeString);
     lastTime.setMinutes(lastTime.getMinutes() + reservationHours[0].interval);
   }
 
   const reservationsTimes = reservations.map((item: { fromTime: any; }) => helperFunctions.convertTimeToString(item.fromTime));
-  let timeSlots = allTimeSlots.filter(function (el) {
+  const timeSlots = allTimeSlots.filter(function (el) {
     return !reservationsTimes.includes(el);
   });
 
