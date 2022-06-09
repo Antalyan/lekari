@@ -83,7 +83,7 @@ const register = async (req: Request, res: Response) => {
   }
 };
 
-const signUp = async (req: Request, res: Response) => {
+const registerDoctor = async (req: Request, res: Response) => {
   let {
     password1,
     password2
@@ -251,5 +251,5 @@ export default {
   logout,
   validateToken,
   validateTokenDoctor,
-  signUp
+  registerDoctor
 };
