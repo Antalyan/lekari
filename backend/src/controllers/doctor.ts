@@ -9,14 +9,7 @@ import hashing from '../utilities/hashing';
 import addressModel from '../models/addressModel';
 
 const locations = async (req: Request, res: Response) => {
-  const cities = await prisma.address.findMany({
-    where: {
-      NOT: {
-        doctor: null,
-      }
-    },
-    distinct: ['city']
-  });
+  const cities = await addressModel.getDoctorsCities();
 
   return results.success(res, cities.map((location) => location.city), 200);
 
