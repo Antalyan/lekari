@@ -39,12 +39,14 @@ const details = object({
 });
 
 const review = object({
-  author: string(),
+  author: string()
+    .nullable(),
   rate: number()
     .min(0)
     .max(5)
     .required(),
   comment: string()
+    .nullable()
 });
 
 const registration = personSchema.registration.shape(doctorSchema.fields);
