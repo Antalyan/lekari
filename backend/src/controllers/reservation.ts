@@ -117,7 +117,7 @@ const create = async (req: Request, res: Response, tmp: boolean) => {
       doctorId: doctorId,
       day: day,
       fromDate: {
-        lte: data.date
+        lte: new Date(data.date)
       }
     }
   });
