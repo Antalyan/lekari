@@ -95,11 +95,11 @@ const slots = async (req: Request, res: Response) => {
 
 const postReview = async (req: Request, res: Response) => {
   try {
-    const personId = parseInt(req.params.id);
-    const doctor = await doctorModel.getDoctorIdFromUserId(personId);
+    const doctor = await doctorModel.getDoctorIdFromUserId(parseInt(req.params.id));
     if (!doctor || !doctor.doctor) return results.error(res, 'Wrong id', 404);
     const doctorId = doctor.doctor.id;
     const data = await doctorSchema.review.validate(req.body);
+
     const reference = await prisma.review.create({
       data: {
         doctorId: doctorId,
@@ -108,16 +108,9 @@ const postReview = async (req: Request, res: Response) => {
         author: data.author || null
       }
     });
-    if (reference) {
-      return res.status(201)
-        .send({
-          status: 'success',
-          data: { id: reference.id },
-          message: 'Review saved.'
-        });
-    } else {
-      return results.error(res, 'Unknown error', 500);
-    }
+    if (!reference) return results.error(res, 'Unknown error', 500);
+
+    return results.success(res, { id: reference.id }, 201);
 
   } catch (e) {
     if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
