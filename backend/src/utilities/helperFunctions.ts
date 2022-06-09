@@ -1,4 +1,4 @@
-export const createDatetime = (date: Date, time: string) => {
+const createDatetime = (date: Date, time: string) => {
   let splitedTime = time.split(':');
   if (splitedTime.length === 2) {
     let datetime = new Date(date);
@@ -9,20 +9,27 @@ export const createDatetime = (date: Date, time: string) => {
   return null;
 };
 
-export const convertTimeToString = (datetime: Date) => {
+const convertTimeToString = (datetime: Date) => {
   if (datetime) {
     let splitTime = datetime.toTimeString()
       .match(/([0-9]+:[0-9]+)/g);
     if (splitTime) {
-      return splitTime[0].replace(/^0+/, '');;
+      return splitTime[0].replace(/^0+/, '');
+
     }
   }
   return null;
 };
 
-export const getTimeInMinutes = (datetime: Date | null) => {
+const getTimeInMinutes = (datetime: Date | null) => {
   if (datetime) {
     return datetime.getHours() * 60 + datetime.getMinutes();
   }
   return null;
+};
+
+export default {
+  createDatetime,
+  convertTimeToString,
+  getTimeInMinutes
 };

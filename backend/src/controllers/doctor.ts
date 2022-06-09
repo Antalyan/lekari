@@ -5,7 +5,7 @@ import { doctorUpdateSchema } from './schemas/doctorSchema';
 import doctorModel from '../models/doctorModel';
 import doctorDetailsSchema from './schemas/doctorDetailsSchema';
 import results from '../utilities/results';
-import { convertTimeToString } from '../utilities/helperFunctions';
+import helperFunctions from '../utilities/helperFunctions';
 import hashing from '../utilities/hashing';
 
 const locations = async (req: Request, res: Response) => {
@@ -201,12 +201,12 @@ const slots = async (req: Request, res: Response) => {
     let lastTime = new Date(dateFrom);
     for (let i = 0; i < (((time / 60) / reservationHours[0].interval) / 1000); i++) {
       // regex split by second :
-      let timeString = convertTimeToString(new Date(lastTime));
+      let timeString = helperFunctions.convertTimeToString(new Date(lastTime));
       allTimeSlots.push(timeString);
       lastTime.setMinutes(lastTime.getMinutes() + reservationHours[0].interval);
     }
 
-    const reservationsTimes = reservations.map((item: { fromTime: any; }) => convertTimeToString(item.fromTime));
+    const reservationsTimes = reservations.map((item: { fromTime: any; }) => helperFunctions.convertTimeToString(item.fromTime));
     let timeSlots = allTimeSlots.filter(function (el) {
       return !reservationsTimes.includes(el);
     });

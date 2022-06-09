@@ -3,11 +3,7 @@ import prisma from '../client';
 import results from '../utilities/results';
 import doctorModel from '../models/doctorModel';
 import reservationSchema from './schemas/reservationSchema';
-import {
-  convertTimeToString,
-  createDatetime,
-  getTimeInMinutes
-} from '../utilities/helperFunctions';
+import helperFunctions from '../utilities/helperFunctions';
 import { ValidationError } from 'yup';
 import personTmpSchema from './schemas/personTmpSchema';
 import reservationHoursSchema from './schemas/reservationHoursSchema';
@@ -134,8 +130,8 @@ const create = async (req: Request, res: Response, tmp: boolean) => {
 
   if (!reservationHours.fromTime || !reservationHours.toTime) return results.error(res, 'Time is out of reservation hours.', 500);
 
-  let reservationHoursFrom = getTimeInMinutes(reservationHours.fromTime);
-  let reservationHoursTo = getTimeInMinutes(reservationHours.toTime);
+  let reservationHoursFrom = helperFunctions.getTimeInMinutes(reservationHours.fromTime);
+  let reservationHoursTo = helperFunctions.getTimeInMinutes(reservationHours.toTime);
   if (!reservationHoursFrom || !reservationHoursTo ||
     (hours * 60 + minutes) < reservationHoursFrom ||
     (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
@@ -246,8 +242,8 @@ const hoursGet = async (req: Request, res: Response) => {
       };
     } else {
       hours[value.day] = {
-        fromTime: convertTimeToString(value.fromTime),
-        toTime: convertTimeToString(value.toTime)
+        fromTime: helperFunctions.convertTimeToString(value.fromTime),
+        toTime: helperFunctions.convertTimeToString(value.toTime)
       };
     }
   });
@@ -283,8 +279,8 @@ const hoursPost = async (req: Request, res: Response) => {
             day: index,
             fromDate: data.fromDate,
             interval: data.interval,
-            fromTime: createDatetime(data.fromDate, value.fromTime),
-            toTime: createDatetime(data.fromDate, value.toTime)
+            fromTime: helperFunctions.createDatetime(data.fromDate, value.fromTime),
+            toTime: helperFunctions.createDatetime(data.fromDate, value.toTime)
           };
         } else {
           return {
@@ -314,10 +310,10 @@ const hoursPost = async (req: Request, res: Response) => {
       for (let reservation of checkReservations) {
         let day = reservation.fromTime.getDay();
         let reservationChange = preproccesed[day];
-        let resTimeFrom = getTimeInMinutes(reservation.fromTime);
-        let resHourTimeFrom = getTimeInMinutes(reservationChange.fromTime);
-        let resTimeTo = getTimeInMinutes(reservation.toTime);
-        let resHourTimeTo = getTimeInMinutes(reservationChange.toTime);
+        let resTimeFrom = helperFunctions.getTimeInMinutes(reservation.fromTime);
+        let resHourTimeFrom = helperFunctions.getTimeInMinutes(reservationChange.fromTime);
+        let resTimeTo = helperFunctions.getTimeInMinutes(reservation.toTime);
+        let resHourTimeTo = helperFunctions.getTimeInMinutes(reservationChange.toTime);
         if (!resHourTimeFrom || !resHourTimeTo || !resTimeFrom || !resTimeTo) {
           return results.error(res, 'V konfliktu s existujícími rezervacemi.', 409);
         }
