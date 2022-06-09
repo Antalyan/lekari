@@ -13,12 +13,6 @@ api.use(cors());
 api.use(express.json());
 api.use(express.urlencoded({ extended: true }));
 
-api.get('/', (req: any, res: { send: (arg0: { status: string; data: {}; message: string; }) => any; }) => res.send({
-  status: 'success',
-  data: {},
-  message: 'Welcome to our API'
-}));
-
 /**
  * Resource person
  */
