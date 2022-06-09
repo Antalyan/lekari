@@ -33,12 +33,12 @@ const details = object({
   link: string(),
 });
 
-const doctorRegistrationSchema = personRegistrationSchema.shape(doctorSchema.fields);
+const registration = personRegistrationSchema.shape(doctorSchema.fields);
 
 const doctorUpdateSchema = personUpdateSchema.shape(doctorSchema.fields);
 
 export default {
-  doctorRegistrationSchema,
+  registration,
   details,
   doctorUpdateSchema
 };

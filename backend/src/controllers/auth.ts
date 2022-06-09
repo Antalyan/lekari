@@ -92,7 +92,7 @@ const registerDoctor = async (req: Request, res: Response) => {
   if (password1 !== password2) return results.error(res, 'Password doesn\'t match the controll.', 400);
 
   try {
-    const data = await doctorSchema.doctorRegistrationSchema.validate(req.body);
+    const data = await doctorSchema.registration.validate(req.body);
     const hash = await hashing.hash(password1);
     const person = await prisma.person.create({
       data: {
