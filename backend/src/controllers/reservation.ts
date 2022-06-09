@@ -69,7 +69,7 @@ const doctor = async (req: Request, res: Response) => {
   let data = reservations.map(function (reservation) {
     if (reservation.person) {
       return {
-        id: reservation.person.id,
+        id: reservation.id,
         personDegree: reservation.person.degree,
         personFirstname: reservation.person.firstname,
         personSurname: reservation.person.surname,
@@ -84,7 +84,7 @@ const doctor = async (req: Request, res: Response) => {
       };
     } else if (reservation.personTmp) {
       return {
-        id: reservation.personTmp.id,
+        id: reservation.id,
         personDegree: reservation.personTmp.degree,
         personFirstname: reservation.personTmp.firstname,
         personSurname: reservation.personTmp.surname,
