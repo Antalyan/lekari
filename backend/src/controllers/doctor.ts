@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
 import prisma from '../client';
 import { number, object, string, ValidationError } from 'yup';
-import { doctorUpdateSchema } from './schemas/doctorSchema';
+import doctorSchema from './schemas/doctorSchema';
 import doctorModel from '../models/doctorModel';
-import doctorDetailsSchema from './schemas/doctorDetailsSchema';
 import results from '../utilities/results';
 import helperFunctions from '../utilities/helperFunctions';
 import hashing from '../utilities/hashing';
@@ -456,7 +455,7 @@ const allInfo = async (req: Request, res: Response) => {
 
 const detailUpdate = async (req: Request, res: Response) => {
   try {
-    const data = await doctorDetailsSchema.validate(req.body);
+    const data = await doctorSchema.doctorDetailsSchema.validate(req.body);
     const doctor = res.locals.jwt.doctor;
     const updatedDoctor = await prisma.doctor.update({
       where: {
