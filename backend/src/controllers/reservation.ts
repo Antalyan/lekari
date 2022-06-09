@@ -386,7 +386,10 @@ const hoursGet = async (req: Request, res: Response) => {
     distinct: ['day'],
   });
 
-  let hours = Array<any>(7);
+  let hours = Array<any>(7).fill({
+    fromTime: null,
+    toTime: null
+  });
 
   if (reservationHours.length === 0) {
     return res.status(200)
