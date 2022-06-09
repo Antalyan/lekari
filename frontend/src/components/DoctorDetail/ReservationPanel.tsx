@@ -32,6 +32,8 @@ function ReservationDatePanel() {
             time: formData.reservationTime
         };
 
+        console.log(reservation);
+
         // note: data has to be in data part, headers in config part
         const url = `http://localhost:4000/doctor/${id}/reservations-registered`
         await axios.post(url, reservation, {
@@ -137,13 +139,13 @@ function ReservationSlots() {
         const slots: IDatResHours = {
             fromDate: formData.fromDate,
             interval: formData.interval,
-            slots: [{fromTime: formData.timeFrom1, toTime: formData.timeTo1},
+            slots: [{fromTime: formData.timeFrom0, toTime: formData.timeTo0},
+                {fromTime: formData.timeFrom1, toTime: formData.timeTo1},
                 {fromTime: formData.timeFrom2, toTime: formData.timeTo2},
                 {fromTime: formData.timeFrom3, toTime: formData.timeTo3},
                 {fromTime: formData.timeFrom4, toTime: formData.timeTo4},
                 {fromTime: formData.timeFrom5, toTime: formData.timeTo5},
-                {fromTime: formData.timeFrom6, toTime: formData.timeTo6},
-                {fromTime: formData.timeFrom7, toTime: formData.timeTo7}]
+                {fromTime: formData.timeFrom6, toTime: formData.timeTo6}]
         };
 
         const url = `http://localhost:4000/doctor-reservation-hours`
@@ -155,9 +157,9 @@ function ReservationSlots() {
             .then(response => {
                 console.log(response);
                 alert("Rezervační sloty změněny")
-                if (checkStatusOK(response.status)) {
-                    window.location.reload();
-                }
+                // if (checkStatusOK(response.status)) {
+                //     window.location.reload();
+                // }
             })
             .catch((error) => {
                 console.error(error);
@@ -188,6 +190,8 @@ function ReservationSlots() {
             result.push(start.getHours() + ":" + start.getMinutes() + (start.getMinutes() == 0 ? "0" : ""));
             start.setMinutes(start.getMinutes() + intervalState);
         }
+        result.push(start.getHours() + ":" + start.getMinutes() + (start.getMinutes() == 0 ? "0" : ""));
+        start.setMinutes(start.getMinutes() + intervalState);
         return result.map((val: string) => {
             return {id: val, title: val}
         });
@@ -201,6 +205,7 @@ function ReservationSlots() {
 
     if (error) console.log(error.message);
     if (data) {
+        console.log(url);
         console.log(data);
         if (data.status != "error") {
             reservationSlots = data.data;
@@ -213,9 +218,9 @@ function ReservationSlots() {
             setValue("interval", reservationSlots.interval);
             reservationSlots.slots.map((slot, index) => {
                 // @ts-ignore
-                slot.fromTime && setValue(`timeFrom${index + 1}`, slot.fromTime);
+                slot.fromTime && setValue(`timeFrom${index}`, slot.fromTime);
                 // @ts-ignore
-                slot.toTime && setValue(`timeTo${index + 1}`, slot.toTime)
+                slot.toTime && setValue(`timeTo${index}`, slot.toTime)
             })
         }
     }, [reservationSlots]);
