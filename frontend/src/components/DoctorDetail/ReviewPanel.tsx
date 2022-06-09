@@ -38,7 +38,6 @@ function ReviewCreate() {
     }
 
     const onSubmit = (formData: IReview) => {
-        console.log(formData);
         storeInfo(formData);
     };
 

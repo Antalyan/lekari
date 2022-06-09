@@ -32,8 +32,6 @@ function ReservationMakePanel() {
             time: formData.reservationTime
         };
 
-        console.log(reservation);
-
         // note: data has to be in data part, headers in config part
         const url = `http://localhost:4000/doctor/${id}/reservations-registered`
         await axios.post(url, reservation, {
@@ -55,7 +53,6 @@ function ReservationMakePanel() {
     }
 
     const onSubmit = handleSubmit((formData: IReservationBasic) => {
-        console.log(formData);
         if (user.token) {
             sendReservation(formData);
         } else {
@@ -65,7 +62,7 @@ function ReservationMakePanel() {
                     reservationTime: formData.reservationTime,
                     reservationNote: formData.reservationNote
                 }
-            })
+            });
         }
     })
 
@@ -78,7 +75,6 @@ function ReservationMakePanel() {
     const {data, error} = useSWR(dateState == null ? null : url, fetcher);
 
     useEffect(() => {
-        console.log(url);
     }, [dateState]);
 
     if (error) console.log(error.message);
@@ -169,7 +165,6 @@ function ReservationSlots() {
     }
 
     const onSubmit = handleSubmit((formData: IReservationSlots) => {
-        console.log(formData)
         sendSlotUpdate(formData);
     })
 
@@ -206,20 +201,16 @@ function ReservationSlots() {
 
     if (error) console.log(error.message);
     if (data) {
-        console.log(url);
         console.log(data);
         if (data.status != "error" && data.data.fromDate != null) {
-            console.log('inside');
             reservationSlots = data.data;
         }
-        console.log("CONDITION: " + data.data.fromDate == null)
     }
 
     useEffect(() => {
         if (reservationSlots.slots) {
             setDaysState(reservationSlots.slots.map((time) => !(time.fromTime == null && time.toTime == null)));
             setValue("interval", reservationSlots.interval);
-            console.log("INTERVAL: " + reservationSlots.interval);
             reservationSlots.slots.map((slot, index) => {
                 // @ts-ignore
                 slot.fromTime && setValue(`timeFrom${index}`, slot.fromTime);

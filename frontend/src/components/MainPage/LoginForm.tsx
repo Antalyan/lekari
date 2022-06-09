@@ -19,7 +19,6 @@ export function LoginForm() {
     const {handleSubmit} = formContext
 
     const onSubmit = handleSubmit(async (formData: ILogin) => {
-        console.log(formData);
         await axios.post("http://localhost:4000/login", formData)
             .then(response => {
                     console.log(response);

@@ -210,7 +210,6 @@ export function UserDataFormPage({type, isEdit}: IForm) {
         }
 
         const url = `http://localhost:4000/doctor/${resDoctId}/reservations-nonregistered`;
-        console.log(url);
         await completeReservation(url, res, navigate);
     };
 
@@ -249,7 +248,6 @@ export function UserDataFormPage({type, isEdit}: IForm) {
 
     // @ts-ignore
     const onSubmit = (formData: IFormPerson) => {
-        console.log("NAME:" + formData.name)
         console.log(formData)
         switch (type) {
             case DataFormType.Patient:

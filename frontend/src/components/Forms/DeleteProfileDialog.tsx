@@ -21,7 +21,6 @@ export function DeleteProfileDialog() {
 
     const handleDeleteProfile = async () => {
         const url = 'http://localhost:4000/' + (user.isDoctor == true ? 'doctor-info' : 'personal-info');
-        console.log(url);
         await axios.delete(url, {
             headers: {
                 'Authorization': `Bearer ${user.token}`

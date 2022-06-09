@@ -24,7 +24,6 @@ export function SearchPanel({filter, setFilter}: IPanelSetter) {
     const onSubmit = handleSubmit((formData: { search: string }) => {
         /*TODO Handle data: send to database and retrieve updated doctors */
         /*Doctors will probably need to be connected with MainPage via a state */
-        console.log(formData);
 
         setFilter({
             specialization: filter.specialization,
