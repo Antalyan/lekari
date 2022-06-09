@@ -190,7 +190,6 @@ export function InfoPanel(info: IDoctorDetailInfo) {
 
     const onSubmit = (formData: IDoctorDetailInfo) => {
         // TODO: send data to database on this click
-        console.log(formData);
         storeInfo(formData);
     };
 

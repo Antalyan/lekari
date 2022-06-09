@@ -79,8 +79,7 @@ export function DoctorCard(props: { detailed: boolean, doctor: IDoctorCard }) {
                 <Grid item xs={4} container direction="column" paddingRight={4} justifyContent={"flex-start"}
                       alignItems={"flex-end"} marginTop={3}>
                     <Button href={`/doctor/${props.doctor.id}`} variant='contained' color={'primary'}
-                            size={"large"}
-                            onClick={() => console.log("DETAIL")}>DETAIL</Button>
+                            size={"large"}>DETAIL</Button>
                 </Grid>}
         </Grid>
     )
