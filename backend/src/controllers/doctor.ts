@@ -114,11 +114,7 @@ const postReview = async (req: Request, res: Response) => {
 const remove = async (req: Request, res: Response) => {
   try {
     await doctorModel.removeDoctor(res.locals.jwt.doctor.id);
-    return res.status(200)
-      .send({
-        status: 'success',
-        message: 'Doctor deleted.',
-      });
+    return results.success(res, {}, 200);
   } catch (e) {
     if (e instanceof Error) return results.error(res, e.message, 400);
     return results.error(res, 'Unknown error', 500);
