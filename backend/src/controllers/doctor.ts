@@ -8,7 +8,7 @@ import results from '../utilities/results';
 import { convertTimeToString } from './helperFunctions';
 import hashing from '../utilities/hashing';
 
-const locationList = async (req: Request, res: Response) => {
+const locations = async (req: Request, res: Response) => {
   const cities = await prisma.address.findMany({
     where: {
       NOT: {
@@ -609,7 +609,7 @@ const detailsUpdate = async (req: Request, res: Response) => {
 };
 
 export default {
-  locationList,
+  locations,
   list,
   doctorDetail,
   doctorDelete,

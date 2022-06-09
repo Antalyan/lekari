@@ -24,7 +24,7 @@ api.get('/', (req: any, res: { send: (arg0: { status: string; data: {}; message:
  */
 
 api.get('/doctors', doctor.list);
-api.get('/doctors-locations', doctor.locationList);
+api.get('/doctors-locations', doctor.locations);
 api.get('/doctors/:id(\\d+)', doctor.doctorDetail);
 api.get('/doctor-reservations', auth.validateTokenDoctor, reservation.doctorReservations);
 api.get('/doctors/:id(\\d+)/slots/:date', doctor.doctorSlots);
