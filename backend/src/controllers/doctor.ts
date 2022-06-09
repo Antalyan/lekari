@@ -7,6 +7,7 @@ import results from '../utilities/results';
 import helperFunctions from '../utilities/helperFunctions';
 import hashing from '../utilities/hashing';
 import addressModel from '../models/addressModel';
+import doctorAdapter from '../dataAdapters/doctorAdapter';
 
 const locations = async (req: Request, res: Response) => {
   const cities = await addressModel.getDoctorsCities();
@@ -16,23 +17,11 @@ const locations = async (req: Request, res: Response) => {
 };
 
 const detail = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
 
-  const person = await doctorModel.getDoctorFromUserId(id);
-
+  const person = await doctorModel.getDoctorFromUserId(parseInt(req.params.id));
   if (!person || !person.doctor) return results.error(res, 'Person was not found', 404);
 
-  let reviews = person.doctor.references.map(function (review) {
-    return {
-      rate: review.rate / 2,
-      comment: review.comment,
-      author: review.author,
-      createDate: review.created.toISOString()
-        .split('T')[0],
-      createTime: review.created.toLocaleTimeString()
-    };
-  });
-
+  let reviews = doctorAdapter.formatReviews(person.doctor.references);
   let reviewsRatesSum = person.doctor.references.reduce((a, b) => a + (b.rate / 2), 0);
 
   let opening = new Array<String | null>(7);
