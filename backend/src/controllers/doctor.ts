@@ -10,6 +10,7 @@ import addressModel from '../models/addressModel';
 import doctorAdapter from '../dataAdapters/doctorAdapter';
 import reservationModel from '../models/reservationModel';
 import reviewModel from '../models/reviewModel';
+import personModel from '../models/personModel';
 
 const locations = async (req: Request, res: Response) => {
   const cities = await addressModel.getDoctorsCities();
@@ -114,6 +115,7 @@ const postReview = async (req: Request, res: Response) => {
 const remove = async (req: Request, res: Response) => {
   try {
     await doctorModel.removeDoctor(res.locals.jwt.doctor.id);
+    await personModel.remove(res.locals.jwt.id);
     return results.success(res, {}, 200);
   } catch (e) {
     if (e instanceof Error) return results.error(res, e.message, 400);
