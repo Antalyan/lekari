@@ -531,7 +531,7 @@ const doctorInfoAll = async (req: Request, res: Response) => {
     });
 };
 
-const detailsUpdate = async (req: Request, res: Response) => {
+const detailUpdate = async (req: Request, res: Response) => {
   try {
     const data = await doctorDetailsSchema.validate(req.body);
     const doctor = await doctorModel.getDoctorFromUserEmail(res.locals.jwt.username);
@@ -613,7 +613,7 @@ export default {
   list,
   detail,
   remove,
-  detailsUpdate,
+  detailUpdate,
   doctorSlots,
   postReview,
   signUp,
