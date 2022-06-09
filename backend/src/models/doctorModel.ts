@@ -60,7 +60,7 @@ const getDoctorIdFromUserId = async (userId: number) => {
   });
 };
 
-const getDoctors = async (surname: string, specialization: string, location: string) => {
+const getDoctors = async (surname: string | null | undefined, specialization: string | null | undefined, location: string | null | undefined) => {
   return await prisma.doctor.findMany({
     orderBy: [{
       specialization: 'asc',

@@ -23,7 +23,7 @@ const formatDetail = (person: any, openingHours: any, reviewsSum: number, review
     workPhone: person.doctor.phone,
     description: person.doctor.description,
     link: person.doctor.link,
-    languages: person.doctor.languages.map(language => language.language),
+    languages: person.doctor.languages.map((language: { language: string; }) => language.language),
     workCountry: person.doctor.address.country,
     workCity: person.doctor.address.city,
     workPostalCode: person.doctor.address.postalCode,
@@ -37,8 +37,8 @@ const formatDetail = (person: any, openingHours: any, reviewsSum: number, review
   };
 };
 
-const list = (doctors) => {
-  return doctors.map(doctor => {
+const list = (doctors: any[]) => {
+  return doctors.map((doctor: any) => {
     return {
       id: doctor.person.id,
       degree: doctor.person.degree,
