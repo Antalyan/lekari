@@ -112,13 +112,12 @@ const create = async (req: Request, res: Response, tmp: boolean) => {
   const data = (!tmp) ? await reservationSchema.validate(req.body) : await personTmpSchema.validate(req.body);
 
   const day = new Date(data.date).getDay();
-  const today = new Date();
   const reservationHours = await prisma.reservationHours.findFirst({
     where: {
       doctorId: doctorId,
       day: day,
       fromDate: {
-        lte: today
+        lte: data.date
       }
     }
   });
