@@ -37,7 +37,22 @@ const formatDetail = (person: any, openingHours: any, reviewsSum: number, review
   };
 };
 
+const list = (doctors) => {
+  return doctors.map(doctor => {
+    return {
+      id: doctor.person.id,
+      degree: doctor.person.degree,
+      firstname: doctor.person.firstname,
+      surname: doctor.person.surname,
+      specialization: doctor.specialization,
+      city: doctor.address.city,
+      actuality: doctor.actuality
+    };
+  });
+};
+
 export default {
   formatReviews,
-  formatDetail
+  formatDetail,
+  list
 };

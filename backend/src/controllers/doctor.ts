@@ -42,21 +42,8 @@ const list = async (req: Request, res: Response) => {
     const doctors = await doctorModel.getDoctors(data.surname, data.specialization, data.location);
 
     if (!doctors) return results.error(res, 'Person was not found', 404);
+    return results.success(res, doctorAdapter.list(doctors), 200);
 
-    return res.send({
-      status: 'success',
-      data: doctors.map(doctor => {
-        return {
-          id: doctor.person.id,
-          degree: doctor.person.degree,
-          firstname: doctor.person.firstname,
-          surname: doctor.person.surname,
-          specialization: doctor.specialization,
-          city: doctor.address.city,
-          actuality: doctor.actuality
-        };
-      })
-    });
   } catch (e) {
     if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
     return results.error(res, 'Unknown error', 500);
