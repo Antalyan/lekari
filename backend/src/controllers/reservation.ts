@@ -104,12 +104,12 @@ const doctor = async (req: Request, res: Response) => {
   });
 };
 
-const create = async (req: Request, res: Response) => {
+const create = async (req: Request, res: Response, tmp: boolean) => {
   const doctor = await doctorModel.getDoctorIdFromUserId(parseInt(req.params.id));
   if (!doctor || !doctor.doctor) return results.error(res, 'Cannot find doctor.', 400);
   const doctorId = doctor.doctor.id;
 
-  const data = await reservationSchema.validate(req.body);
+  const data = (!tmp) ? await reservationSchema.validate(req.body) : await personTmpSchema.validate(req.body);
 
   const day = new Date(data.date).getDay();
   const today = new Date();
@@ -155,9 +155,8 @@ const create = async (req: Request, res: Response) => {
 
   if (checkFree.length !== 0) return results.error(res, 'Someone already ordered.', 500);
 
-  const patientId = res.locals.jwt.id;
+  const reservation = (!tmp) ? await reservationModel.createReservation(doctorId, res.locals.jwt.id, fromTime, toTime, data.comment) : await reservationModel.createReservationNotRegistered(doctorId, fromTime, toTime, data);
 
-  const reservation = reservationModel.createReservation(doctorId, patientId, fromTime, toTime, data.comment);
   if (!reservation) return results.error(res, 'Unknown error.', 500);
   return results.success(res, { id: fromTime }, 201);
 
@@ -165,7 +164,7 @@ const create = async (req: Request, res: Response) => {
 
 const createRegistered = async (req: Request, res: Response) => {
   try {
-    return await create(req, res);
+    return await create(req, res, false);
   } catch (e) {
     if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
     return results.error(res, 'Unknown error', 500);
@@ -174,125 +173,7 @@ const createRegistered = async (req: Request, res: Response) => {
 
 const createNotRegistered = async (req: Request, res: Response) => {
   try {
-    const personId = parseInt(req.params.id);
-    const doctor = await doctorModel.getDoctorIdFromUserId(personId);
-    if (!doctor || !doctor.doctor) {
-      return res.sendStatus(400);
-    }
-    const doctorId = doctor.doctor.id;
-    const data = await personTmpSchema.validate(req.body);
-    const day = new Date(data.date).getDay();
-    const today = new Date();
-    const reservationHours = await prisma.reservationHours.findFirst({
-      where: {
-        doctorId: doctorId,
-        day: day,
-        fromDate: {
-          lte: today
-        }
-      },
-      select: {
-        fromTime: true,
-        toTime: true,
-        interval: true,
-      }
-    });
-
-    if (!reservationHours) return results.error(res, 'Can\'t make reservation for this day.', 500);
-
-    // parseInt parameter 10 for remove leading zeros
-    let hours = parseInt(data.time.split(':')[0], 10);
-    let minutes = parseInt(data.time.split(':')[1], 10);
-    if (!reservationHours.fromTime || !reservationHours.toTime) {
-      return results.error(res, 'Time is out of reservation hours.', 500);
-    }
-
-    let reservationHoursFrom = getTimeInMinutes(reservationHours.fromTime);
-    let reservationHoursTo = getTimeInMinutes(reservationHours.toTime);
-    if (!reservationHoursFrom || !reservationHoursTo ||
-      (hours * 60 + minutes) < reservationHoursFrom ||
-      (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
-      return results.error(res, 'Time is out of reservation hours.', 500);
-    }
-    let fromTime = new Date(data.date);
-    fromTime.setHours(hours);
-    fromTime.setMinutes(minutes);
-    let toTime = new Date(fromTime);
-    toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
-
-    const checkFree = await prisma.reservation.findMany({
-      where: {
-        doctorId: doctorId,
-        fromTime: fromTime
-      },
-    });
-
-    if (checkFree.length !== 0) return results.error(res, 'Someone already ordered.', 500);
-
-    let reservation: any;
-    if (data.country && data.city && data.postalCode && data.buildingNumber) {
-      reservation = await prisma.reservation.create({
-        data: {
-          doctor: { connect: { id: doctorId } },
-          personTmp: {
-            create: {
-              firstname: data.firstname,
-              surname: data.surname,
-              degree: data.degree || null,
-              birthdate: data.birthdate,
-              email: data.email || null,
-              insuranceNumber: data.insuranceNumber || null,
-              phonePrefix: data.phonePrefix,
-              phone: data.phone,
-              address: {
-                create: {
-                  country: data.country,
-                  city: data.city,
-                  street: data.street || null,
-                  postalCode: data.postalCode,
-                  buildingNumber: data.buildingNumber,
-                }
-              }
-            }
-          },
-          fromTime: fromTime,
-          toTime: toTime,
-          personComment: data.comment,
-        }
-      });
-    } else {
-      reservation = await prisma.reservation.create({
-        data: {
-          doctor: { connect: { id: doctorId } },
-          personTmp: {
-            create: {
-              firstname: data.firstname,
-              surname: data.surname,
-              degree: data.degree || null,
-              birthdate: data.birthdate,
-              email: data.email || null,
-              insuranceNumber: data.insuranceNumber || null,
-              phonePrefix: data.phonePrefix,
-              phone: data.phone
-            }
-          },
-          fromTime: fromTime,
-          toTime: toTime,
-          personComment: data.comment,
-        }
-      });
-    }
-    if (reservation) {
-      return res.status(201)
-        .send({
-          status: 'success',
-          data: { id: reservation.id },
-          message: 'Reservation saved.'
-        });
-    } else {
-      return results.error(res, 'Unknown error.', 500);
-    }
-
+    await create(req, res, true);
   } catch (e) {
     if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
     return results.error(res, 'Unknown error', 500);

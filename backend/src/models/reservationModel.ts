@@ -31,7 +31,63 @@ const createReservation = async (doctorId: number, personId: number, fromTime: D
   });
 };
 
+const createReservationNotRegistered = async (doctorId: number, fromTime: Date, toTime: Date, data: any) => {
+  if (data.country && data.city && data.postalCode && data.buildingNumber) {
+    return await prisma.reservation.create({
+      data: {
+        doctor: { connect: { id: doctorId } },
+        personTmp: {
+          create: {
+            firstname: data.firstname,
+            surname: data.surname,
+            degree: data.degree || null,
+            birthdate: data.birthdate,
+            email: data.email || null,
+            insuranceNumber: data.insuranceNumber || null,
+            phonePrefix: data.phonePrefix,
+            phone: data.phone,
+            address: {
+              create: {
+                country: data.country,
+                city: data.city,
+                street: data.street || null,
+                postalCode: data.postalCode,
+                buildingNumber: data.buildingNumber,
+              }
+            }
+          }
+        },
+        fromTime: fromTime,
+        toTime: toTime,
+        personComment: data.comment,
+      }
+    });
+  } else {
+    return await prisma.reservation.create({
+      data: {
+        doctor: { connect: { id: doctorId } },
+        personTmp: {
+          create: {
+            firstname: data.firstname,
+            surname: data.surname,
+            degree: data.degree || null,
+            birthdate: data.birthdate,
+            email: data.email || null,
+            insuranceNumber: data.insuranceNumber || null,
+            phonePrefix: data.phonePrefix,
+            phone: data.phone
+          }
+        },
+        fromTime: fromTime,
+        toTime: toTime,
+        personComment: data.comment,
+      }
+    });
+  }
+};
+
 export default {
   getReservations,
-  createReservation
+  createReservation,
+  createReservationNotRegistered
 };
