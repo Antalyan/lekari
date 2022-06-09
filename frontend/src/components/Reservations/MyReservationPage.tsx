@@ -17,7 +17,7 @@ export function MyReservationPage(props: { isPatient: boolean }) {
     const user = useRecoilValue(userAtom)
     const url = props.isPatient ? 'http://localhost:4000/person-reservations' : 'http://localhost:4000/doctor-reservations';
     const {data, error} = useSWR( [url, user.token], fetcherWithToken);
-    if (error) console.log(error.message)
+    if (error) console.log(error.message);
     if (!data) return <div>Loading...</div>;
     if (data) console.log(data)
 

@@ -216,6 +216,7 @@ function ReservationSlots() {
         if (reservationSlots.slots) {
             setDaysState(reservationSlots.slots.map((time) => !(time.fromTime == null && time.toTime == null)));
             setValue("interval", reservationSlots.interval);
+            console.log("INTERVAL: " + reservationSlots.interval);
             reservationSlots.slots.map((slot, index) => {
                 // @ts-ignore
                 slot.fromTime && setValue(`timeFrom${index}`, slot.fromTime);

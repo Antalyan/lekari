@@ -63,7 +63,12 @@ export function DoctorDetailPage() {
     const url = 'http://localhost:4000/doctors/' + id;
     // TODO: return error or redirect if the user with this id does not exist
     const {data, error} = useSWR(url, fetcher);
-    if (error) console.log(error.message)
+    if (error) {
+        console.log(error.message);
+    }
+    // if (data.status == "error") {
+    //     navigate("/");
+    // }
     if (!data) return <div>Loading...</div>;
     if (data) console.log(data)
 
@@ -75,6 +80,7 @@ export function DoctorDetailPage() {
     }
 
     const datDoctor: IDatDoctorDetail = data.data;
+
     const doctor: IDoctorCard = {
         actuality: datDoctor.actuality,
         id: parseInt(id as string),
