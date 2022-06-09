@@ -5,7 +5,7 @@ import { personUpdateSchema } from './schemas/personSchema';
 
 const bcryptjs = require('bcryptjs');
 
-const personList = async (req: Request, res: Response, next: NextFunction) => {
+const list = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const persons = await prisma.person.findMany({
       where: {
@@ -204,7 +204,7 @@ const personDelete = async (req: Request, res: Response) => {
 };
 
 export default {
-  personList,
+  list,
   personDetail,
   personDelete,
   personUpdate,

@@ -40,7 +40,7 @@ api.post('/doctor/:id(\\d+)/reservations-nonregistered', reservation.createReser
 api.post('/doctor-reservation-hours', auth.validateTokenDoctor, reservation.reservationHoursPost);
 api.put('/doctor-details', auth.validateTokenDoctor, doctor.detailUpdate);
 
-api.get('/persons', person.personList);                     // Undocumented
+api.get('/persons', person.list);                     // Undocumented
 api.get('/personal-info', auth.validateToken, person.personDetail);
 api.patch('/personal-info', auth.validateToken, person.personUpdate);
 api.get('/person-reservations', auth.validateToken, reservation.personReservations);
