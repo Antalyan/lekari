@@ -97,13 +97,13 @@ async function updateProfile(url: string, subject: any, navigate: NavigateFuncti
         });
 }
 
-async function completeReservation(url: string, subject: any, navigate: NavigateFunction, id?: number) {
+async function completeReservation(url: string, subject: any, navigate: NavigateFunction) {
     await axios.post(url, subject)
         .then(response => {
             console.log(response);
             if (checkStatusOK(response.status)) {
                 alert("Rezervace vytvořena!");
-                navigate("/doctor/" + id);
+                navigate("/");
             }
         })
         .catch((error) => {
@@ -175,6 +175,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
             phonePrefix: findPhoneCodeName(formData.phoneCode).toString(),
             phone: parseInt(formData.phone),
             insuranceNumber: formData.insuranceNumber === undefined ? undefined : parseInt(formData.insuranceNumber),
+            oldPassword: formData.oldPassword === undefined ? undefined : formData.oldPassword,
             password1: formData.newPassword === undefined ? undefined : formData.newPassword,
             password2: formData.passwordCheck === undefined ? undefined : formData.passwordCheck
         }
@@ -210,7 +211,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
 
         const url = `http://localhost:4000/doctor/${resDoctId}/reservations-nonregistered`;
         console.log(url);
-        await completeReservation(url, res, navigate, user.id);
+        await completeReservation(url, res, navigate);
     };
 
     const storeDoctor = async (formData: IFormPerson, isEdit: boolean) => {
@@ -228,6 +229,7 @@ export function UserDataFormPage({type, isEdit}: IForm) {
             phonePrefix: findPhoneCodeName(formData.phoneCode).toString(),
             phone: parseInt(formData.phone),
             insuranceNumber: formData.insuranceNumber === undefined ? undefined : parseInt(formData.insuranceNumber),
+            oldPassword: formData.oldPassword === undefined ? undefined : formData.oldPassword,
             password1: formData.newPassword === undefined ? undefined : formData.newPassword,
             password2: formData.passwordCheck === undefined ? undefined : formData.passwordCheck,
             specialization: formData.specialization === undefined ? " TYPE ERROR" : findSpecializationName(formData.specialization),

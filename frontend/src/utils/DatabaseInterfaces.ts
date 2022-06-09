@@ -25,10 +25,7 @@ export interface IDatPatientProfile {
     buildingNumber: string,
     password1?: string,
     password2?: string
-    // oldPassword?: string,
-    // newPassword?: string,
-    // passwordCheck?: string,
-    // profilePicture: string,
+    oldPassword?: string,
 }
 
 
@@ -46,12 +43,9 @@ export interface IDatDoctorProfile {
     postalCode: number,
     street?: string,
     buildingNumber: string,
+    oldPassword?: string,
     password1?: string,
     password2?: string
-    // oldPassword?: string,
-    // newPassword?: string,
-    // passwordCheck?: string,
-    // profilePicture: string,
     specialization: string,
     actuality?: string,
     workStreet?: string,

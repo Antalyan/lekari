@@ -100,20 +100,20 @@ export interface IReservation {
 export interface IReservationSlots {
     fromDate?: Date,
     interval?: number,
+    timeFrom0?: string,
     timeFrom1?: string,
     timeFrom2?: string,
     timeFrom3?: string,
     timeFrom4?: string,
     timeFrom5?: string,
     timeFrom6?: string,
-    timeFrom7?: string,
+    timeTo0?: string,
     timeTo1?: string,
     timeTo2?: string,
     timeTo3?: string,
     timeTo4?: string,
     timeTo5?: string,
     timeTo6?: string,
-    timeTo7?: string,
 }
 
 export interface IDoctorDetailInfo {
