@@ -14,47 +14,25 @@ import reservationHoursSchema from './schemas/reservationHoursSchema';
 
 export const person = async (req: Request, res: Response) => {
   const date = new Date();
-  const reservations = await prisma.person.findMany({
+
+  const reservations = await prisma.reservation.findMany({
     where: {
-      email: res.locals.jwt.email,
-      deleted: false
+      personId: res.locals.jwt.id,
+      person: {
+        deleted: false
+      },
+      fromTime: {
+        gte: date,
+      },
     },
-    select: {
-      reservations: {
-        where: {
-          fromTime: {
-            gte: date,
-          }
-        },
-        orderBy: {
-          fromTime: 'asc'
-        },
-        select: {
-          id: true,
-          doctor: {
-            select: {
-              person: {
-                select: {
-                  firstname: true,
-                  surname: true,
-                  degree: true,
-                }
-              },
-              address: {
-                select: {
-                  city: true,
-                  street: true,
-                  buildingNumber: true,
-                }
-              },
-              specialization: true,
-              email: true,
-            }
-          },
-          fromTime: true,
-          toTime: true,
-          personComment: true,
-          created: true
+    orderBy: {
+      fromTime: 'asc'
+    },
+    include: {
+      doctor: {
+        include: {
+          person: true,
+          address: true,
         }
       }
     }
@@ -69,7 +47,7 @@ export const person = async (req: Request, res: Response) => {
       });
   }
 
-  let data = (reservations[0]).reservations.map(
+  let data = reservations.map(
     function (reservation) {
       return {
         id: reservation.id,
