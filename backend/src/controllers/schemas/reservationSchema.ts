@@ -6,6 +6,7 @@ const registration = object({
   time: string()
     .required(),
   comment: string()
+    .nullable()
 });
 
 const timeRangeSchema = object({
