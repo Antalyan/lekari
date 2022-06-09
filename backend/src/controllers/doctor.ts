@@ -61,18 +61,14 @@ const slots = async (req: Request, res: Response) => {
 
   const reservationHours = await reservationModel.getReservationHours(doctorId, date);
 
-  const reservations = await prisma.reservation.findMany({
-    where: {
-      doctorId: doctorId,
-      fromTime: {
-        gte: date,
-        lt: new Date(date.getDate() + 1),
-      }
-    },
-    select: {
-      fromTime: true
+  const where = {
+    doctorId: doctorId,
+    fromTime: {
+      gte: date,
+      lt: new Date(date.getDate() + 1),
     }
-  });
+  };
+  const reservations = await reservationModel.getReservations(where);
 
   if (reservationHours.length === 0) return results.error(res, 'Reservation hours were not found', 404);
 
