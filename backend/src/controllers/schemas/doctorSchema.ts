@@ -16,7 +16,7 @@ const doctorSchema = object({
     .required(),
 });
 
-const doctorDetailsSchema = object({
+const details = object({
   openingHours: array()
     .of(
       string()
@@ -39,6 +39,6 @@ const doctorUpdateSchema = personUpdateSchema.shape(doctorSchema.fields);
 
 export default {
   doctorRegistrationSchema,
-  doctorDetailsSchema,
+  details,
   doctorUpdateSchema
 };

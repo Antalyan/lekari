@@ -455,7 +455,7 @@ const allInfo = async (req: Request, res: Response) => {
 
 const detailUpdate = async (req: Request, res: Response) => {
   try {
-    const data = await doctorSchema.doctorDetailsSchema.validate(req.body);
+    const data = await doctorSchema.details.validate(req.body);
     const doctor = res.locals.jwt.doctor;
     const updatedDoctor = await prisma.doctor.update({
       where: {
