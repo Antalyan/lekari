@@ -104,89 +104,93 @@ const doctor = async (req: Request, res: Response) => {
   });
 };
 
+const create = async (req: Request, res: Response) => {
+  const personId = parseInt(req.params.id);
+  const doctor = await doctorModel.getDoctorIdFromUserId(personId);
+  if (!doctor || !doctor.doctor) {
+    return res.sendStatus(400);
+  }
+  const doctorId = doctor.doctor.id;
+  const data = await reservationSchema.validate(req.body);
+  const day = new Date(data.date).getDay();
+  const today = new Date();
+  const reservationHours = await prisma.reservationHours.findFirst({
+    where: {
+      doctorId: doctorId,
+      day: day,
+      fromDate: {
+        lte: today
+      }
+    },
+    select: {
+      fromTime: true,
+      toTime: true,
+      interval: true,
+    }
+  });
+
+  if (!reservationHours) return results.error(res, 'Can\'t make reservation for this day.', 500);
+
+  // parseInt parameter 10 for remove leading zeros
+  let hours = parseInt(data.time.split(':')[0], 10);
+  let minutes = parseInt(data.time.split(':')[1], 10);
+  if (!reservationHours.fromTime || !reservationHours.toTime) {
+    return results.error(res, 'Time is out of reservation hours.', 500);
+  }
+  let reservationHoursFrom = getTimeInMinutes(reservationHours.fromTime);
+  let reservationHoursTo = getTimeInMinutes(reservationHours.toTime);
+  if (!reservationHoursFrom || !reservationHoursTo ||
+    (hours * 60 + minutes) < reservationHoursFrom ||
+    (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
+    return results.error(res, 'Time is out of reservation hours.', 500);
+  }
+  let fromTime = new Date(data.date);
+  fromTime.setHours(hours);
+  fromTime.setMinutes(minutes);
+  let toTime = new Date(fromTime);
+  toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
+
+  const checkFree = await prisma.reservation.findMany({
+    where: {
+      doctorId: doctorId,
+      fromTime: fromTime
+    },
+  });
+
+  if (checkFree.length !== 0) return results.error(res, 'Someone already ordered.', 500);
+
+  const person = await prisma.person.findFirst({
+    where: {
+      email: res.locals.jwt.email,
+    }
+  });
+
+  if (person) {
+    const reservation = await prisma.reservation.create({
+      data: {
+        doctor: { connect: { id: doctorId } },
+        person: { connect: { id: person.id } },
+        fromTime: fromTime,
+        toTime: toTime,
+        personComment: data.comment,
+      }
+    });
+    if (reservation) {
+      return res.status(201)
+        .send({
+          status: 'success',
+          data: { id: fromTime },
+          message: 'Reservation saved.'
+        });
+    } else {
+      return results.error(res, 'Unknown error.', 500);
+    }
+  }
+};
+
 const createRegistered = async (req: Request, res: Response) => {
   try {
-    const personId = parseInt(req.params.id);
-    const doctor = await doctorModel.getDoctorIdFromUserId(personId);
-    if (!doctor || !doctor.doctor) {
-      return res.sendStatus(400);
-    }
-    const doctorId = doctor.doctor.id;
-    const data = await reservationSchema.validate(req.body);
-    const day = new Date(data.date).getDay();
-    const today = new Date();
-    const reservationHours = await prisma.reservationHours.findFirst({
-      where: {
-        doctorId: doctorId,
-        day: day,
-        fromDate: {
-          lte: today
-        }
-      },
-      select: {
-        fromTime: true,
-        toTime: true,
-        interval: true,
-      }
-    });
-
-    if (!reservationHours) return results.error(res, 'Can\'t make reservation for this day.', 500);
-
-    // parseInt parameter 10 for remove leading zeros
-    let hours = parseInt(data.time.split(':')[0], 10);
-    let minutes = parseInt(data.time.split(':')[1], 10);
-    if (!reservationHours.fromTime || !reservationHours.toTime) {
-      return results.error(res, 'Time is out of reservation hours.', 500);
-    }
-    let reservationHoursFrom = getTimeInMinutes(reservationHours.fromTime);
-    let reservationHoursTo = getTimeInMinutes(reservationHours.toTime);
-    if (!reservationHoursFrom || !reservationHoursTo ||
-      (hours * 60 + minutes) < reservationHoursFrom ||
-      (hours * 60 + minutes + reservationHours.interval) > reservationHoursTo) {
-      return results.error(res, 'Time is out of reservation hours.', 500);
-    }
-
-    let fromTime = new Date(data.date);
-    fromTime.setHours(hours);
-    fromTime.setMinutes(minutes);
-    let toTime = new Date(fromTime);
-    toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
-    const checkFree = await prisma.reservation.findMany({
-      where: {
-        doctorId: doctorId,
-        fromTime: fromTime
-      },
-    });
-
-    if (checkFree.length !== 0) return results.error(res, 'Someone already ordered.', 500);
-
-    const person = await prisma.person.findFirst({
-      where: {
-        email: res.locals.jwt.email,
-      }
-    });
-
-    if (person) {
-      const reservation = await prisma.reservation.create({
-        data: {
-          doctor: { connect: { id: doctorId } },
-          person: { connect: { id: person.id } },
-          fromTime: fromTime,
-          toTime: toTime,
-          personComment: data.comment,
-        }
-      });
-      if (reservation) {
-        return res.status(201)
-          .send({
-            status: 'success',
-            data: { id: fromTime },
-            message: 'Reservation saved.'
-          });
-      } else {
-        return results.error(res, 'Unknown error.', 500);
-      }
-    }
+    return await create(req, res);
   } catch (e) {
     if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
     return results.error(res, 'Unknown error', 500);
