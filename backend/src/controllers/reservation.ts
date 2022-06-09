@@ -11,31 +11,14 @@ import {
 import { ValidationError } from 'yup';
 import personTmpSchema from './schemas/personTmpSchema';
 import reservationHoursSchema from './schemas/reservationHoursSchema';
+import reservationModel from '../models/reservationModel';
 
-export const person = async (req: Request, res: Response) => {
-  const date = new Date();
-
-  const reservations = await prisma.reservation.findMany({
-    where: {
-      personId: res.locals.jwt.id,
-      person: {
-        deleted: false
-      },
-      fromTime: {
-        gte: date,
-      },
+const person = async (req: Request, res: Response) => {
+  const reservations = await reservationModel.getReservations({
+    personId: res.locals.jwt.id,
+    fromTime: {
+      gte: new Date(),
     },
-    orderBy: {
-      fromTime: 'asc'
-    },
-    include: {
-      doctor: {
-        include: {
-          person: true,
-          address: true,
-        }
-      }
-    }
   });
 
   if (!reservations || reservations.length == 0) {
@@ -48,25 +31,23 @@ export const person = async (req: Request, res: Response) => {
   }
 
   let data = reservations.map(
-    function (reservation) {
-      return {
-        id: reservation.id,
-        doctorDegree: reservation.doctor.person.degree,
-        doctorFirstname: reservation.doctor.person.firstname,
-        doctorSurname: reservation.doctor.person.surname,
-        visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
-        visitTimeTo: reservation.toTime.toLocaleTimeString(),
-        visitDate: reservation.fromTime.toISOString()
-          .split('T')[0],
-        note: reservation.personComment,
-        createTime: reservation.created.toLocaleTimeString(),
-        createDate: reservation.created.toISOString()
-          .split('T')[0],
-        workStreet: reservation.doctor.address.street,
-        workBuildingNumber: reservation.doctor.address.buildingNumber,
-        workCity: reservation.doctor.address.city,
-      };
-    }
+    reservation => ({
+      id: reservation.id,
+      doctorDegree: reservation.doctor.person.degree,
+      doctorFirstname: reservation.doctor.person.firstname,
+      doctorSurname: reservation.doctor.person.surname,
+      visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
+      visitTimeTo: reservation.toTime.toLocaleTimeString(),
+      visitDate: reservation.fromTime.toISOString()
+        .split('T')[0],
+      note: reservation.personComment,
+      createTime: reservation.created.toLocaleTimeString(),
+      createDate: reservation.created.toISOString()
+        .split('T')[0],
+      workStreet: reservation.doctor.address.street,
+      workBuildingNumber: reservation.doctor.address.buildingNumber,
+      workCity: reservation.doctor.address.city,
+    })
   );
 
   return res.send({
@@ -75,20 +56,11 @@ export const person = async (req: Request, res: Response) => {
   });
 };
 
-export const doctor = async (req: Request, res: Response) => {
-  const reservations = await prisma.reservation.findMany({
-    where: {
-      doctorId: res.locals.jwt.doctor.id,
-      fromTime: {
-        gte: new Date(),
-      }
-    },
-    orderBy: {
-      fromTime: 'asc'
-    },
-    include: {
-      person: true,
-      personTmp: true,
+const doctor = async (req: Request, res: Response) => {
+  const reservations = await reservationModel.getReservations({
+    doctorId: res.locals.jwt.doctor.id,
+    fromTime: {
+      gte: new Date(),
     }
   });
 
@@ -386,10 +358,11 @@ const hoursGet = async (req: Request, res: Response) => {
     distinct: ['day'],
   });
 
-  let hours = Array<any>(7).fill({
-    fromTime: null,
-    toTime: null
-  });
+  let hours = Array<any>(7)
+    .fill({
+      fromTime: null,
+      toTime: null
+    });
 
   if (reservationHours.length === 0) {
     return res.status(200)
