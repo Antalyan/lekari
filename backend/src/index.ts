@@ -28,7 +28,7 @@ api.get('/doctors-locations', doctor.locations);
 api.get('/doctors/:id(\\d+)', doctor.detail);
 api.get('/doctor-reservations', auth.validateTokenDoctor, reservation.doctorReservations);
 api.get('/doctors/:id(\\d+)/slots/:date', doctor.slots);
-api.get('/doctor-info', auth.validateTokenDoctor, doctor.doctorInfoAll);
+api.get('/doctor-info', auth.validateTokenDoctor, doctor.allInfo);
 api.get('/doctor-reservation-hours', auth.validateTokenDoctor, reservation.reservationHoursGet);
 
 api.post('/signup-doctor', doctor.signUp);

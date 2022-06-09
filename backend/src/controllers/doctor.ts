@@ -466,7 +466,7 @@ const infoUpdate = async (req: Request, res: Response) => {
   }
 };
 
-const doctorInfoAll = async (req: Request, res: Response) => {
+const allInfo = async (req: Request, res: Response) => {
   const person = res.locals.jwt;
 
   if (!person || !person.doctor) return results.error(res, 'Person was not found', 404);
@@ -618,5 +618,5 @@ export default {
   postReview,
   signUp,
   infoUpdate,
-  doctorInfoAll
+  allInfo
 };
