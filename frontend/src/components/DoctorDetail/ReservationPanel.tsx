@@ -131,7 +131,7 @@ function ReservationDatePanel() {
 
 function ReservationSlots() {
     const formContext = useForm<IReservationSlots>();
-    const {handleSubmit} = formContext;
+    const {handleSubmit, control, setValue} = formContext
 
     const sendSlotUpdate = async (formData: IReservationSlots) => {
         const slots: IDatResHours = {
@@ -166,7 +166,6 @@ function ReservationSlots() {
     }
 
     const onSubmit = handleSubmit((formData: IReservationSlots) => {
-        // TODO: store into database (check if not conflicting with reservations made on backend)
         console.log(formData)
         sendSlotUpdate(formData);
     })
@@ -204,11 +203,25 @@ function ReservationSlots() {
     if (data) {
         console.log(data);
         if (data.status != "error") {
-            reservationSlots = data.data.slots;
-            reservationSlots.slots && setDaysState(reservationSlots.slots.map((time) => !(time.fromTime == null && time.toTime == null)));
+            reservationSlots = data.data;
         }
     }
 
+    useEffect(() => {
+        if (reservationSlots.slots) {
+            setDaysState(reservationSlots.slots.map((time) => !(time.fromTime == null && time.toTime == null)));
+            setValue("interval", reservationSlots.interval);
+            reservationSlots.slots.map((slot, index) => {
+                // @ts-ignore
+                slot.fromTime && setValue(`timeFrom${index + 1}`, slot.fromTime);
+                // @ts-ignore
+                slot.toTime && setValue(`timeTo${index + 1}`, slot.toTime)
+            })
+        }
+    }, [reservationSlots]);
+
+
+    // @ts-ignore
     return <>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             {/*@ts-ignore*/}
@@ -225,7 +238,8 @@ function ReservationSlots() {
                     <Grid container justifyContent={"space-between"} paddingBottom={2}>
                         <Grid item xs={3}>
                             {/*@ts-ignore*/}
-                            <DatePickerElement name={'fromDate'} label={'Od'} required onChange={(e) => setDateState(e)}/>
+                            <DatePickerElement onChange={(e) => setDateState(e)}
+                                               name={'fromDate'} label={'Od'} required/>
                         </Grid>
                         <Grid item xs={6}>
                             <SelectElement name={'interval'} label={'Délka intervalu rezervací'} required
@@ -249,7 +263,6 @@ function ReservationSlots() {
                                                    options={countIntervals()} fullWidth={true}
                                                    size={"small"}
                                                    disabled={!daysState[index]}
-                                                   defaultValue={reservationSlots.slots ? reservationSlots.slots[index].fromTime : null}
                                     />
                                 </Grid>
                                 <Grid item xs={3}>
@@ -257,7 +270,6 @@ function ReservationSlots() {
                                                    options={countIntervals()} fullWidth={true}
                                                    size={"small"}
                                                    disabled={!daysState[index]}
-                                                   defaultValue={reservationSlots.slots ? reservationSlots.slots[index].toTime : null}
                                     />
                                 </Grid>
                             </Grid>)
