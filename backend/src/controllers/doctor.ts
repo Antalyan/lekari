@@ -31,33 +31,9 @@ const detail = async (req: Request, res: Response) => {
       opening[x.day] = x.opening;
     });
 
-  return res.status(200)
-    .json({
-      status: 'success',
-      data: {
-        degree: person.degree,
-        firstname: person.firstname,
-        surname: person.surname,
-        specialization: person.doctor.specialization,
-        workEmail: person.doctor.email,
-        workPhone: person.doctor.phone,
-        description: person.doctor.description,
-        link: person.doctor.link,
-        languages: person.doctor.languages.map(language => {
-          return language.language;
-        }),
-        workCountry: person.doctor.address.country,
-        workCity: person.doctor.address.city,
-        workPostalCode: person.doctor.address.postalCode,
-        workStreet: person.doctor.address.street,
-        workBuildingNumber: person.doctor.address.buildingNumber,
-        profilePicture: person.doctor.profilePicture,
-        actuality: person.doctor.actuality,
-        openingHours: opening,
-        rateAverage: Math.round((reviewsRatesSum / person.doctor.references.length) * 2) / 2,
-        reviews: reviews
-      }
-    });
+  const data = doctorAdapter.formatDetail(person, opening, reviewsRatesSum, reviews);
+
+  return results.success(res, data, 200);
 };
 
 const list = async (req: Request, res: Response) => {
