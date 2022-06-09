@@ -191,7 +191,7 @@ const hoursGet = async (req: Request, res: Response) => {
   const reservationHours = await prisma.reservationHours.findMany({
     orderBy: [
       {
-        fromDate: 'asc',
+        fromDate: 'desc',
       },
       {
         day: 'asc',
@@ -338,14 +338,16 @@ const hoursPost = async (req: Request, res: Response) => {
             },
             update: {
               fromTime: value.fromTime,
-              toTime: value.toTime
+              toTime: value.toTime,
+              interval: value.interval
             },
             create: {
               doctorId: doctor.id,
               day: value.day,
               fromDate: value.fromDate,
               fromTime: value.fromTime,
-              toTime: value.toTime
+              toTime: value.toTime,
+              interval: value.interval
             }
           });
           result.push(created);
