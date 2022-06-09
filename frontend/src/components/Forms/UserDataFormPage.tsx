@@ -69,6 +69,8 @@ async function completeRegistration(url: string, subject: any, navigate: Navigat
         .then(response => {
             console.log(response);
             if (checkStatusOK(response.status)) {
+                // TODO: delete
+                console.log(subject);
                 alert("Registrace úspěšná! Nyní se můžete přihlásit.");
                 navigate("/");
             }
@@ -231,13 +233,13 @@ export function UserDataFormPage({type, isEdit}: IForm) {
             oldPassword: formData.oldPassword === undefined ? undefined : formData.oldPassword,
             password1: formData.newPassword === undefined ? undefined : formData.newPassword,
             password2: formData.passwordCheck === undefined ? undefined : formData.passwordCheck,
-            specialization: formData.specialization === undefined ? " TYPE ERROR" : findSpecializationName(formData.specialization),
-            actuality: formData.status === undefined ? " TYPE ERROR" : formData.status,
-            workStreet: formData.doctorStreet === undefined ? " TYPE ERROR" : formData.doctorStreet,
-            workBuildingNumber: formData.doctorStreetNumber === undefined ? " TYPE ERROR" : formData.doctorStreetNumber,
-            workCity: formData.doctorCity === undefined ? " TYPE ERROR" : formData.doctorCity,
+            specialization: formData.specialization === undefined ? "INCOMPATIBLE TYPE" : findSpecializationName(formData.specialization),
+            actuality: formData.status === undefined ? undefined : formData.status,
+            workStreet: formData.doctorStreet === undefined ? undefined : formData.doctorStreet,
+            workBuildingNumber: formData.doctorStreetNumber === undefined ? undefined : formData.doctorStreetNumber,
+            workCity: formData.doctorCity === undefined ? "INCOMPATIBLE TYPE" : formData.doctorCity,
             workPostalCode: formData.doctorPostalCode === undefined ? -1 : parseInt(formData.doctorPostalCode),
-            workCountry: formData.doctorCountry === undefined ? " TYPE ERROR" : findCountryName(formData.doctorCountry),
+            workCountry: formData.doctorCountry === undefined ? "INCOMPATIBLE TYPE" : findCountryName(formData.doctorCountry),
         }
         if (isEdit) {
             await updateProfile('http://localhost:4000/doctor-info', doctor, navigate, user);
@@ -474,8 +476,8 @@ export function UserDataFormPage({type, isEdit}: IForm) {
                                         <>
                                             <Button variant='contained' type={'submit'} color={'primary'}
                                             >{"Uložit změny"}</Button>
-                                            {/*TODO: Zrušit změny*/}
                                             <Button variant='contained' color={'primary'}
+                                                    onClick={() => window.location.reload()}
                                             >{"Zrušit změny"}</Button>
                                         </>
                                         : <Button variant='contained' type={'submit'} color={'primary'}
