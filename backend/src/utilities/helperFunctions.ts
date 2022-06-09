@@ -14,7 +14,7 @@ export const convertTimeToString = (datetime: Date) => {
     let splitTime = datetime.toTimeString()
       .match(/([0-9]+:[0-9]+)/g);
     if (splitTime) {
-      return splitTime[0];
+      return splitTime[0].replace(/^0+/, '');;
     }
   }
   return null;

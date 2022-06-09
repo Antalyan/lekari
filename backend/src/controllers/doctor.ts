@@ -159,16 +159,19 @@ const slots = async (req: Request, res: Response) => {
   const nextDay = new Date();
   nextDay.setDate(date.getDate() + 1);
   const day = date.getDay();
-  let today = new Date();
 
   const reservationHours = await prisma.reservationHours.findMany({
+    orderBy:{
+      fromDate: 'desc'
+    },
     where: {
       doctorId: doctorId,
       day: day,
       fromDate: {
-        lte: today
+        lte: date
       }
     },
+    distinct: ['day'],
     select: {
       fromTime: true,
       toTime: true,
