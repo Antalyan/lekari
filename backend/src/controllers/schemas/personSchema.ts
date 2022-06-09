@@ -27,7 +27,7 @@ const personSchema = object({
     .required(),
 });
 
-const personTmpSchema = object({
+const tmp = object({
   firstname: string()
     .required(),
   surname: string()
@@ -88,7 +88,7 @@ const personRegistrationSchema = personSchema.shape(passwordSchema.fields);
 
 export default {
   personSchema,
-  personTmpSchema,
+  tmp,
   loginSchema,
   personUpdateSchema,
   personRegistrationSchema
