@@ -7,18 +7,16 @@ import EditIcon from '@mui/icons-material/Edit';
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {FormContainer, MultiSelectElement, TextFieldElement} from "react-hook-form-mui";
-import {useForm} from "react-hook-form";
 import {DAYS, LANGUAGES, validateNumbers, validateUrl} from "../../data/Constants";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {useParams} from "react-router-dom";
-import {IDoctorDetailInfo, IFormPerson} from "../../utils/Interfaces";
-import {IDatDoctorDetail, IDatDoctorInfo, IDatPersonReservation} from "../../utils/DatabaseInterfaces";
+import {IDoctorDetailInfo} from "../../utils/Interfaces";
+import {IDatDoctorInfo} from "../../utils/DatabaseInterfaces";
 import axios from "axios";
 import {checkStatusOK} from "../../utils/fetcher";
 
 function Opening() {
-    // TODO: editability could be checked at backend on submit as well?
     const [editingState, setEditingState] = useState(false);
     const user = useRecoilValue(userAtom)
     const {id} = useParams();
@@ -189,7 +187,6 @@ export function InfoPanel(info: IDoctorDetailInfo) {
     }
 
     const onSubmit = (formData: IDoctorDetailInfo) => {
-        // TODO: send data to database on this click
         storeInfo(formData);
     };
 

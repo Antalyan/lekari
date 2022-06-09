@@ -1,4 +1,4 @@
-import {atom, selector} from "recoil";
+import {atom} from "recoil";
 import {IGlobalProfileInfo} from "../utils/Interfaces";
 import {recoilPersist} from "recoil-persist";
 

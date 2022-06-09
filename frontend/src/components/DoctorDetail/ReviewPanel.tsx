@@ -1,15 +1,15 @@
-import {IDoctorDetailInfo, IReview, IReviewList} from "../../utils/Interfaces";
+import {IReview, IReviewList} from "../../utils/Interfaces";
 import {Divider, Grid, Rating, Stack, Typography} from "@mui/material";
 import * as React from "react";
+import {useState} from "react";
 import {FormContainer, TextFieldElement} from "react-hook-form-mui";
-import {Controller, useForm} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import Button from "@mui/material/Button";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {useParams} from "react-router-dom";
-import {IDatDoctorInfo, IDatReview} from "../../utils/DatabaseInterfaces";
+import {IDatReview} from "../../utils/DatabaseInterfaces";
 import axios from "axios";
-import {useState} from "react";
 import {checkStatusOK} from "../../utils/fetcher";
 
 function ReviewCreate() {

@@ -1,5 +1,3 @@
-import {COUNTRIES} from "./Countries";
-
 export function findSpecializationName(id: number) {
     return SPECIALIZATIONS[id - 1]
 }

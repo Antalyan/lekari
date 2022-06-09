@@ -37,7 +37,6 @@ export default function App() {
         <CssBaseline/>
         <BrowserRouter>
             <Routes>
-                {/*TODO: add my-reservations, patient-reservations*/}
                 <Route path="/" element={<MainPage/>}/>
                 <Route path="/register-patient"
                        element={<UserDataFormPage {...{type: DataFormType.Patient, isEdit: false}} />}/>
