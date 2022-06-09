@@ -25,7 +25,7 @@ const getTimeInMinutes = (datetime: Date | null) => {
   if (datetime) {
     return datetime.getHours() * 60 + datetime.getMinutes();
   }
-  return null;
+  return 0;
 };
 
 export default {

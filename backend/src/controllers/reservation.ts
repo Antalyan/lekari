@@ -302,7 +302,7 @@ const hoursPost = async (req: Request, res: Response) => {
         let resHourTimeFrom = helperFunctions.getTimeInMinutes(reservationChange.fromTime);
         let resTimeTo = helperFunctions.getTimeInMinutes(reservation.toTime);
         let resHourTimeTo = helperFunctions.getTimeInMinutes(reservationChange.toTime);
-        if (!resHourTimeFrom || !resHourTimeTo || !resTimeFrom || !resTimeTo) {
+        if (resHourTimeFrom == 0 || resHourTimeTo == 0 || resTimeFrom == 0 || resTimeTo == 0) {
           return results.error(res, 'V konfliktu s existujícími rezervacemi.', 409);
         }
         if (resTimeFrom < resHourTimeFrom || resTimeTo > resHourTimeTo) {
@@ -313,6 +313,9 @@ const hoursPost = async (req: Request, res: Response) => {
       let result = [];
 
       for (const value of preproccesed) {
+        if(helperFunctions.getTimeInMinutes(value.fromTime) > helperFunctions.getTimeInMinutes(value.toTime)){
+          return results.error(res, "Čas od je vyšší než čas do." , 400);
+        }
         try {
           let created = await prisma.reservationHours.upsert({
             where: {
