@@ -5,7 +5,7 @@ import { doctorUpdateSchema } from './schemas/doctorSchema';
 import doctorModel from '../models/doctorModel';
 import doctorDetailsSchema from './schemas/doctorDetailsSchema';
 import results from '../utilities/results';
-import { convertTimeToString } from './helperFunctions';
+import { convertTimeToString } from '../utilities/helperFunctions';
 import hashing from '../utilities/hashing';
 
 const locations = async (req: Request, res: Response) => {

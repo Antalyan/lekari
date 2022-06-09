@@ -3,7 +3,11 @@ import prisma from '../client';
 import results from '../utilities/results';
 import doctorModel from '../models/doctorModel';
 import reservationSchema from './schemas/reservationSchema';
-import { convertTimeToString, createDatetime, getTimeInMinutes } from './helperFunctions';
+import {
+  convertTimeToString,
+  createDatetime,
+  getTimeInMinutes
+} from '../utilities/helperFunctions';
 import { ValidationError } from 'yup';
 import personTmpSchema from './schemas/personTmpSchema';
 import reservationHoursSchema from './schemas/reservationHoursSchema';
