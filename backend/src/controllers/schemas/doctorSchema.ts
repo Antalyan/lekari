@@ -1,4 +1,4 @@
-import { personRegistrationSchema, personUpdateSchema } from './personSchema';
+import personSchema from './personSchema';
 import { array, number, object, string } from 'yup';
 
 const doctorSchema = object({
@@ -33,9 +33,9 @@ const details = object({
   link: string(),
 });
 
-const registration = personRegistrationSchema.shape(doctorSchema.fields);
+const registration = personSchema.personRegistrationSchema.shape(doctorSchema.fields);
 
-const update = personUpdateSchema.shape(doctorSchema.fields);
+const update = personSchema.personUpdateSchema.shape(doctorSchema.fields);
 
 export default {
   registration,

@@ -1,6 +1,6 @@
 import { date, number, object, string } from 'yup';
 
-export const personSchema = object({
+const personSchema = object({
   firstname: string()
     .required(),
   surname: string()
@@ -27,7 +27,7 @@ export const personSchema = object({
     .required(),
 });
 
-export const personTmpSchema = object({
+const personTmpSchema = object({
   firstname: string()
     .required(),
   surname: string()
@@ -61,7 +61,7 @@ const passwordSchema = object({
     .required(),
 });
 
-export const loginSchema = object({
+const loginSchema = object({
   email: string()
     .email()
     .required(),
@@ -83,5 +83,13 @@ const updatePasswordSchema = object({
   password2: string(),
 });
 
-export const personUpdateSchema = personSchema.shape(updatePasswordSchema.fields);
-export const personRegistrationSchema = personSchema.shape(passwordSchema.fields);
+const personUpdateSchema = personSchema.shape(updatePasswordSchema.fields);
+const personRegistrationSchema = personSchema.shape(passwordSchema.fields);
+
+export default {
+  personSchema,
+  personTmpSchema,
+  loginSchema,
+  personUpdateSchema,
+  personRegistrationSchema
+};

@@ -5,7 +5,7 @@ import doctorModel from '../models/doctorModel';
 import reservationSchema from './schemas/reservationSchema';
 import helperFunctions from '../utilities/helperFunctions';
 import { ValidationError } from 'yup';
-import { personTmpSchema } from './schemas/personSchema';
+import personSchema from './schemas/personSchema';
 import reservationHoursSchema from './schemas/reservationHoursSchema';
 import reservationModel from '../models/reservationModel';
 
@@ -105,7 +105,7 @@ const create = async (req: Request, res: Response, tmp: boolean) => {
   if (!doctor || !doctor.doctor) return results.error(res, 'Cannot find doctor.', 400);
   const doctorId = doctor.doctor.id;
 
-  const data = (!tmp) ? await reservationSchema.validate(req.body) : await personTmpSchema.validate(req.body);
+  const data = (!tmp) ? await reservationSchema.validate(req.body) : await personSchema.personTmpSchema.validate(req.body);
 
   const day = new Date(data.date).getDay();
   const reservationHours = await prisma.reservationHours.findFirst({

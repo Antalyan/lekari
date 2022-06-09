@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { ValidationError } from 'yup';
 import prisma from '../client';
-import { loginSchema, personRegistrationSchema } from './schemas/personSchema';
+import personSchema from './schemas/personSchema';
 import getPerson from '../models/personModel';
 import config from '../config/config';
 import hashing from '../utilities/hashing';
@@ -25,7 +25,7 @@ const register = async (req: Request, res: Response) => {
       });
   }
   try {
-    const data = await personRegistrationSchema.validate(req.body);
+    const data = await personSchema.personRegistrationSchema.validate(req.body);
     const hash = await hashing.hash(password1);
     const person = await prisma.person.create({
       data: {
@@ -159,7 +159,7 @@ const loginError = (res: Response) => {
 
 const login = async (req: Request, res: Response) => {
   try {
-    const data = await loginSchema.validate(req.body);
+    const data = await personSchema.loginSchema.validate(req.body);
 
     const person = await getPerson({ email: data.email });
     if (!person) return loginError(res);
