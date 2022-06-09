@@ -7,6 +7,7 @@ import helperFunctions from '../utilities/helperFunctions';
 import { ValidationError } from 'yup';
 import personSchema from './schemas/personSchema';
 import reservationModel from '../models/reservationModel';
+import { Person, PersonTmp } from '@prisma/client';
 
 const person = async (req: Request, res: Response) => {
   const reservations = await reservationModel.getReservations({
@@ -63,25 +64,13 @@ const doctor = async (req: Request, res: Response) => {
 
   let data = reservations.map(function (reservation) {
 
-    let degree: string | null = '';
-    let firstname: string | null = '';
-    let surname: string | null = '';
-
-    if (reservation.person) {
-      degree = reservation.person.degree;
-      firstname = reservation.person.firstname;
-      surname = reservation.person.surname;
-    } else if (reservation.personTmp) {
-      degree = reservation.personTmp.degree;
-      firstname = reservation.personTmp.firstname;
-      surname = reservation.personTmp.surname;
-    }
-
+    const person: Person | PersonTmp | null = reservation.person || reservation.personTmp;
+    if (!person) return;
     return {
       id: reservation.id,
-      personDegree: degree,
-      personFirstname: firstname,
-      personSurname: surname,
+      personDegree: person.degree,
+      personFirstname: person.firstname,
+      personSurname: person.surname,
       visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
       visitTimeTo: reservation.toTime.toLocaleTimeString(),
       visitDate: reservation.fromTime.toISOString()
