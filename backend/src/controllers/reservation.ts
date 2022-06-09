@@ -200,7 +200,7 @@ const hoursGet = async (req: Request, res: Response) => {
     where: {
       doctor: {
         person: {
-          email: res.locals.jwt.username
+          email: res.locals.jwt.email,
         },
         deleted: false,
       },
@@ -265,8 +265,7 @@ const hoursPost = async (req: Request, res: Response) => {
   try {
     const data = await reservationHoursSchema.validate(req.body);
 
-    const doctor = await doctorModel.getDoctorFromUserEmail(res.locals.jwt.username);
-    if (!doctor) return results.error(res, 'Doctor was not found', 500);
+    const doctor = res.locals.jwt.doctor;
 
     if (data.slots) {
       let preproccesed = data.slots.map(function (value, index) {

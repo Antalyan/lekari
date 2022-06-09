@@ -161,7 +161,7 @@ const slots = async (req: Request, res: Response) => {
   const day = date.getDay();
 
   const reservationHours = await prisma.reservationHours.findMany({
-    orderBy:{
+    orderBy: {
       fromDate: 'desc'
     },
     where: {
@@ -312,6 +312,7 @@ const infoUpdate = async (req: Request, res: Response) => {
           phonePrefix: data.phonePrefix,
           phone: data.phone,
           insuranceNumber: data.insuranceNumber || null,
+          password: hash,
           address: {
             update: {
               country: data.country,
@@ -336,7 +337,6 @@ const infoUpdate = async (req: Request, res: Response) => {
               },
             }
           },
-          password: hash
         }
       });
     } else {
