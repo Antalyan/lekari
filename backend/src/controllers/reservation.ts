@@ -150,7 +150,7 @@ export const doctor = async (req: Request, res: Response) => {
   });
 };
 
-const createReservationRegistered = async (req: Request, res: Response) => {
+const createRegistered = async (req: Request, res: Response) => {
   try {
     const personId = parseInt(req.params.id);
     const doctor = await doctorModel.getDoctorIdFromUserId(personId);
@@ -530,7 +530,7 @@ const reservationHoursPost = async (req: Request, res: Response) => {
 export default {
   person,
   doctor,
-  createReservationRegistered,
+  createRegistered,
   createReservationNonregistered,
   reservationHoursGet,
   reservationHoursPost,
