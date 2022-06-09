@@ -18,7 +18,6 @@ export function DeleteReservationDialog(props: { isPatient: boolean, reservation
     const user = useRecoilValue(userAtom);
 
     const handleDeleteReservation = async () => {
-        // TODO: delete reservation from database AND update GUI (perhaps automatically using SWR?)
         setOpen(false);
         const url = 'http://localhost:4000/' + (props.isPatient ? 'person-reservations' : 'doctor-reservations');
         await axios.delete(url, {

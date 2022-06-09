@@ -1,4 +1,3 @@
-// TODO: evaluate isEdit (T: edit, F: initial fill in) based on which page we are (register + reservation vs profile)
 import * as React from "react";
 import {useState} from "react";
 import {IconButton, Stack} from "@mui/material";

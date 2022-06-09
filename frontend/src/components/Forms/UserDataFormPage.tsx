@@ -69,8 +69,6 @@ async function completeRegistration(url: string, subject: any, navigate: Navigat
         .then(response => {
             console.log(response);
             if (checkStatusOK(response.status)) {
-                // TODO: delete
-                console.log(subject);
                 alert("Registrace úspěšná! Nyní se můžete přihlásit.");
                 navigate("/");
             }

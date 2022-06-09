@@ -1,5 +1,6 @@
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import {useEffect, useState} from "react";
 import Header from "../Header";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -11,7 +12,6 @@ import {Footer} from "../Footer";
 import useSWR from 'swr';
 import fetcher from "../../utils/fetcher";
 import {IDatBasicDoctor} from "../../utils/DatabaseInterfaces";
-import {useEffect, useState} from "react";
 import {createTheme} from "@mui/material/styles";
 
 export function MainPage() {
@@ -111,8 +111,6 @@ export function MainPage() {
                 </Grid>
                 <Grid item xs={6} md={4}>
                     <Box display="flex" height={{xs:"10rem", md:"13rem"}}
-                        // TODO: adjust box color?
-                        // bgcolor="lightgreen"
                          alignItems="right"
                          margin={0}
                          justifyContent="right">

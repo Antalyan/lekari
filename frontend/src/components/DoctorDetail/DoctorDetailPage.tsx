@@ -11,8 +11,8 @@ import {ReservationPanel} from "./ReservationPanel";
 import {ReviewPanel} from "./ReviewPanel";
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
-import {IDatDoctorDetail, IDatPersonReservation, IDatReview} from "../../utils/DatabaseInterfaces";
-import {IDoctorCard, IDoctorDetailInfo, IReview, IReviewList} from "../../utils/Interfaces";
+import {IDatDoctorDetail, IDatReview} from "../../utils/DatabaseInterfaces";
+import {IDoctorCard, IDoctorDetailInfo, IReview} from "../../utils/Interfaces";
 import {createTheme} from "@mui/material/styles";
 
 
@@ -66,9 +66,7 @@ export function DoctorDetailPage() {
     if (error) {
         console.log(error.message);
     }
-    // if (data.status == "error") {
-    //     navigate("/");
-    // }
+
     if (!data) return <div>Loading...</div>;
     if (data) console.log(data)
 
