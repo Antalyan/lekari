@@ -1,4 +1,4 @@
-import { number, object, string } from 'yup';
+import { array, date, number, object, string } from 'yup';
 
 const registrationSchema = object({
   date: string()
@@ -8,4 +8,28 @@ const registrationSchema = object({
   comment: string()
 });
 
-export default registrationSchema;
+const timeRangeSchema = object({
+  fromTime: string()
+    .nullable(),
+  toTime: string()
+    .nullable()
+});
+
+export const reservationHoursSchema = object({
+  fromDate: date()
+    .required(),
+  interval: number()
+    .integer(),
+  slots: array()
+    .required()
+    .of(
+      object()
+        .shape(
+          timeRangeSchema.nullable().fields)
+    )
+});
+
+export default {
+  registrationSchema,
+  reservationHoursSchema
+};
