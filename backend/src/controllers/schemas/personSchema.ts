@@ -5,7 +5,8 @@ const personSchema = object({
     .required(),
   surname: string()
     .required(),
-  degree: string(),
+  degree: string()
+    .nullable(),
   birthdate: date()
     .required(),
   email: string()
@@ -15,14 +16,16 @@ const personSchema = object({
     .required(),
   phone: number()
     .required(),
-  insuranceNumber: number(),
+  insuranceNumber: number()
+    .nullable(),
   country: string()
     .required(),
   city: string()
     .required(),
   postalCode: number()
     .required(),
-  street: string(),
+  street: string()
+    .nullable(),
   buildingNumber: string()
     .required(),
 });
@@ -32,7 +35,8 @@ const tmp = object({
     .required(),
   surname: string()
     .required(),
-  degree: string(),
+  degree: string()
+    .nullable(),
   birthdate: date()
     .required(),
   email: string()
@@ -41,17 +45,24 @@ const tmp = object({
     .required(),
   phone: number()
     .required(),
-  insuranceNumber: number(),
-  country: string(),
-  city: string(),
-  postalCode: number(),
-  street: string(),
-  buildingNumber: string(),
+  insuranceNumber: number()
+    .nullable(),
+  country: string()
+    .nullable(),
+  city: string()
+    .nullable(),
+  postalCode: number()
+    .nullable(),
+  street: string()
+    .nullable(),
+  buildingNumber: string()
+    .nullable(),
   date: string()
     .required(),
   time: string()
     .required(),
   comment: string()
+    .nullable()
 });
 
 const passwordSchema = object({
@@ -69,18 +80,13 @@ const login = object({
     .required(),
 });
 
-/*
-TODO: Finnish validation in this style.
-.when(['newPassword1', 'newPassword2'], {
-    is: (newPassword1, newPassword2) => newPassword1 && newPassword2,
-    then: string().required('Required'),
-    otherwise: string()
-  })
-*/
 const updatePasswordSchema = object({
-  oldPassword: string(),
-  password1: string(),
-  password2: string(),
+  oldPassword: string()
+    .nullable(),
+  password1: string()
+    .nullable(),
+  password2: string()
+    .nullable(),
 });
 
 const update = personSchema.shape(updatePasswordSchema.fields);
