@@ -93,7 +93,7 @@ export const person = async (req: Request, res: Response) => {
   });
 };
 
-export const doctorReservations = async (req: Request, res: Response) => {
+export const doctor = async (req: Request, res: Response) => {
   const reservations = await prisma.reservation.findMany({
     where: {
       doctorId: res.locals.jwt.doctor.id,
@@ -529,7 +529,7 @@ const reservationHoursPost = async (req: Request, res: Response) => {
 
 export default {
   person,
-  doctorReservations,
+  doctor,
   createReservationRegistered,
   createReservationNonregistered,
   reservationHoursGet,
