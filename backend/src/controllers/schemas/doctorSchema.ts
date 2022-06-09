@@ -1,7 +1,7 @@
 import { personRegistrationSchema, personUpdateSchema } from './personSchema';
 import { array, number, object, string } from 'yup';
 
-export const doctorSchema = object({
+const doctorSchema = object({
   specialization: string()
     .required(),
   actuality: string(),
@@ -33,11 +33,12 @@ const doctorDetailsSchema = object({
   link: string(),
 });
 
-export const doctorRegistrationSchema = personRegistrationSchema.shape(doctorSchema.fields);
+const doctorRegistrationSchema = personRegistrationSchema.shape(doctorSchema.fields);
 
-export const doctorUpdateSchema = personUpdateSchema.shape(doctorSchema.fields);
+const doctorUpdateSchema = personUpdateSchema.shape(doctorSchema.fields);
 
 export default {
   doctorRegistrationSchema,
-  doctorDetailsSchema
+  doctorDetailsSchema,
+  doctorUpdateSchema
 };

@@ -6,7 +6,7 @@ import getPerson from '../models/personModel';
 import config from '../config/config';
 import hashing from '../utilities/hashing';
 import results from '../utilities/results';
-import doctorRegistrationSchema from './schemas/doctorSchema';
+import doctorSchema from './schemas/doctorSchema';
 
 const jwt = require('jsonwebtoken');
 
@@ -92,7 +92,7 @@ const registerDoctor = async (req: Request, res: Response) => {
   if (password1 !== password2) return results.error(res, 'Password doesn\'t match the controll.', 400);
 
   try {
-    const data = await doctorRegistrationSchema.validate(req.body);
+    const data = await doctorSchema.doctorRegistrationSchema.validate(req.body);
     const hash = await hashing.hash(password1);
     const person = await prisma.person.create({
       data: {
