@@ -19,7 +19,7 @@ import axios from "axios";
 import {IDatResCreate, IDatResHour, IDatResHours} from "../../utils/DatabaseInterfaces";
 
 
-function ReservationDatePanel() {
+function ReservationMakePanel() {
     const formContext = useForm<IReservationBasic>();
     const {handleSubmit} = formContext;
     const user = useRecoilValue(userAtom);
@@ -133,19 +133,20 @@ function ReservationDatePanel() {
 
 function ReservationSlots() {
     const formContext = useForm<IReservationSlots>();
-    const {handleSubmit, control, setValue} = formContext
+    const {handleSubmit, setValue} = formContext
 
     const sendSlotUpdate = async (formData: IReservationSlots) => {
         const slots: IDatResHours = {
             fromDate: formData.fromDate,
             interval: formData.interval,
-            slots: [{fromTime: formData.timeFrom0, toTime: formData.timeTo0},
-                {fromTime: formData.timeFrom1, toTime: formData.timeTo1},
-                {fromTime: formData.timeFrom2, toTime: formData.timeTo2},
-                {fromTime: formData.timeFrom3, toTime: formData.timeTo3},
-                {fromTime: formData.timeFrom4, toTime: formData.timeTo4},
-                {fromTime: formData.timeFrom5, toTime: formData.timeTo5},
-                {fromTime: formData.timeFrom6, toTime: formData.timeTo6}]
+            slots: [
+                {fromTime: daysState[0] ? formData.timeFrom0 : undefined, toTime: daysState[0] ? formData.timeTo0 : undefined},
+                {fromTime: daysState[1] ? formData.timeFrom1 : undefined, toTime: daysState[1] ? formData.timeTo1 : undefined},
+                {fromTime: daysState[2] ? formData.timeFrom2 : undefined, toTime: daysState[2] ? formData.timeTo2 : undefined},
+                {fromTime: daysState[3] ? formData.timeFrom3 : undefined, toTime: daysState[3] ? formData.timeTo3 : undefined},
+                {fromTime: daysState[4] ? formData.timeFrom4 : undefined, toTime: daysState[4] ? formData.timeTo4 : undefined},
+                {fromTime: daysState[5] ? formData.timeFrom5 : undefined, toTime: daysState[5] ? formData.timeTo5 : undefined},
+                {fromTime: daysState[6] ? formData.timeFrom6 : undefined, toTime: daysState[6] ? formData.timeTo6 : undefined}]
         };
 
         const url = `http://localhost:4000/doctor-reservation-hours`
@@ -207,9 +208,11 @@ function ReservationSlots() {
     if (data) {
         console.log(url);
         console.log(data);
-        if (data.status != "error") {
+        if (data.status != "error" && data.data.fromDate != null) {
+            console.log('inside');
             reservationSlots = data.data;
         }
+        console.log("CONDITION: " + data.data.fromDate == null)
     }
 
     useEffect(() => {
@@ -301,6 +304,6 @@ export function ReservationPanel() {
             <>
                 <ReservationSlots/>
             </> :
-            <ReservationDatePanel/>}
+            <ReservationMakePanel/>}
     </Stack>
 }
