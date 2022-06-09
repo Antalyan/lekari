@@ -14,7 +14,7 @@ import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {IReservationBasic, IReservationSlots, ISelectItem} from "../../utils/Interfaces";
 import useSWR from "swr";
-import fetcher, {checkStatus, fetcherWithToken} from "../../utils/fetcher";
+import fetcher, {checkStatusOK, fetcherWithToken} from "../../utils/fetcher";
 import axios from "axios";
 import {IDatResCreate, IDatResHour, IDatResHours} from "../../utils/DatabaseInterfaces";
 
@@ -42,7 +42,7 @@ function ReservationDatePanel() {
             .then(response => {
                 console.log(response);
                 alert("Rezervace vytvořena!")
-                if (checkStatus(response.status)) {
+                if (checkStatusOK(response.status)) {
                     window.location.reload();
                 }
             })
@@ -155,7 +155,7 @@ function ReservationSlots() {
             .then(response => {
                 console.log(response);
                 alert("Rezervační sloty změněny")
-                if (checkStatus(response.status)) {
+                if (checkStatusOK(response.status)) {
                     window.location.reload();
                 }
             })

@@ -14,6 +14,6 @@ export function fetcherWithToken (url: string, token: string) {
 
 export default fetcher;
 
-export function checkStatus(status: number) {
+export function checkStatusOK(status: number) {
   return status >= 200 && status <= 299;
 }

@@ -5,6 +5,7 @@ import Grid from "@mui/material/Grid";
 import axios from "axios";
 import {useRecoilState} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
+import {checkStatusOK} from "../../utils/fetcher";
 
 export function DeleteProfileDialog() {
     let navigate = useNavigate();
@@ -26,9 +27,11 @@ export function DeleteProfileDialog() {
                 'Authorization': `Bearer ${user.token}`
             }})
             .then(response => {
-                console.log("Deletion succeeded");
-                setUser({});
-                navigate("/");
+                if (checkStatusOK(response.status)) {
+                    console.log("Deletion succeeded");
+                    setUser({});
+                    navigate("/");
+                }
             })
             .catch(error => {
                 console.error(error);

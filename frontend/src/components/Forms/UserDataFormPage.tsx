@@ -24,7 +24,7 @@ import {NavigateFunction, useLocation, useNavigate, useParams} from "react-route
 import axios from 'axios';
 import {IDatDoctorProfile, IDatPatientProfile, IDatTmpRes} from "../../utils/DatabaseInterfaces";
 import useSWR from "swr";
-import {checkStatus, fetcherWithToken} from "../../utils/fetcher";
+import {checkStatusOK, fetcherWithToken} from "../../utils/fetcher";
 import {findSpecializationIndex, findSpecializationName, SPECIALIZATIONS} from "../../data/Specializations";
 
 interface IForm {
@@ -68,7 +68,7 @@ async function completeRegistration(url: string, subject: any, navigate: Navigat
     await axios.post(url, subject)
         .then(response => {
             console.log(response);
-            if (checkStatus(response.status)) {
+            if (checkStatusOK(response.status)) {
                 alert("Registrace úspěšná! Nyní se můžete přihlásit.");
                 navigate("/");
             }
@@ -86,7 +86,7 @@ async function updateProfile(url: string, subject: any, navigate: NavigateFuncti
         }})
         .then(response => {
             console.log(response);
-            if (checkStatus(response.status)) {
+            if (checkStatusOK(response.status)) {
                 navigate("/");
             }
         })
@@ -100,7 +100,7 @@ async function completeReservation(url: string, subject: any, navigate: Navigate
     await axios.post(url, subject)
         .then(response => {
             console.log(response);
-            if (checkStatus(response.status)) {
+            if (checkStatusOK(response.status)) {
                 alert("Rezervace vytvořena!");
                 navigate("/doctor/" + id);
             }
