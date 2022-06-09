@@ -15,6 +15,7 @@ import {useParams} from "react-router-dom";
 import {IDoctorDetailInfo, IFormPerson} from "../../utils/Interfaces";
 import {IDatDoctorDetail, IDatDoctorInfo, IDatPersonReservation} from "../../utils/DatabaseInterfaces";
 import axios from "axios";
+import {checkStatusOK} from "../../utils/fetcher";
 
 function Opening() {
     // TODO: editability could be checked at backend on submit as well?
@@ -169,13 +170,17 @@ export function InfoPanel(info: IDoctorDetailInfo) {
         }
 
         // TODO: check and update request, update url
-        const url = "";
+        const url = 'http://localhost:4000/doctor-details';
         await axios.put(url, detail, {
             headers: {
                 'Authorization': `Bearer ${user.token}`
             }})
             .then(response => {
                 console.log(response);
+                if (checkStatusOK(response.status)) {
+                    alert("Údaje změněny!");
+                    window.location.reload();
+                }
             })
             .catch((error) => {
                 console.error(error);
