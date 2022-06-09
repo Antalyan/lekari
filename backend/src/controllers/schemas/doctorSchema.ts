@@ -38,6 +38,15 @@ const details = object({
     .nullable(),
 });
 
+const review = object({
+  author: string(),
+  rate: number()
+    .min(0)
+    .max(5)
+    .required(),
+  comment: string()
+});
+
 const registration = personSchema.registration.shape(doctorSchema.fields);
 
 const update = personSchema.update.shape(doctorSchema.fields);
@@ -45,5 +54,6 @@ const update = personSchema.update.shape(doctorSchema.fields);
 export default {
   registration,
   details,
-  update
+  update,
+  review
 };

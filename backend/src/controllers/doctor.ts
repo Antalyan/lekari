@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import prisma from '../client';
-import { number, object, string, ValidationError } from 'yup';
+import { ValidationError } from 'yup';
 import doctorSchema from './schemas/doctorSchema';
 import doctorModel from '../models/doctorModel';
 import results from '../utilities/results';
 import helperFunctions from '../utilities/helperFunctions';
 import hashing from '../utilities/hashing';
+import addressModel from '../models/addressModel';
 
 const locations = async (req: Request, res: Response) => {
   const cities = await prisma.address.findMany({
@@ -215,22 +216,13 @@ const slots = async (req: Request, res: Response) => {
   return results.success(res, { slots: [] }, 200);
 };
 
-const reviewSchema = object({
-  author: string(),
-  rate: number()
-    .min(0)
-    .max(5)
-    .required(),
-  comment: string()
-});
-
 const postReview = async (req: Request, res: Response) => {
   try {
     const personId = parseInt(req.params.id);
     const doctor = await doctorModel.getDoctorIdFromUserId(personId);
     if (!doctor || !doctor.doctor) return results.error(res, 'Wrong id', 404);
     const doctorId = doctor.doctor.id;
-    const data = await reviewSchema.validate(req.body);
+    const data = await doctorSchema.review.validate(req.body);
     const reference = await prisma.review.create({
       data: {
         doctorId: doctorId,
