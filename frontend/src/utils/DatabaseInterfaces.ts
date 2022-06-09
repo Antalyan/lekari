@@ -155,4 +155,15 @@ export interface IDatResCreate {
     comment?: string
 }
 
+export interface IDatResHour {
+    fromTime?: string,
+    toTime?: string
+}
+
+export interface IDatResHours {
+    fromDate?: Date,
+    interval?: number,
+    slots?: IDatResHour[]
+}
+
 

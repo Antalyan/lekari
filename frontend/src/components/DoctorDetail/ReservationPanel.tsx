@@ -8,15 +8,15 @@ import {DatePickerElement, FormContainer, SelectElement, TextFieldElement} from 
 import {useForm} from "react-hook-form";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import {DAYS, INTERVALS, RESERVATION_INTERVAL_BOUNDS} from "../../data/Constants";
+import {DataFormType, DAYS, INTERVALS, RESERVATION_INTERVAL_BOUNDS} from "../../data/Constants";
 import {useNavigate, useParams} from "react-router-dom";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {IReservationBasic, IReservationSlots, ISelectItem} from "../../utils/Interfaces";
 import useSWR from "swr";
-import fetcher, {checkStatus} from "../../utils/fetcher";
+import fetcher, {checkStatus, fetcherWithToken} from "../../utils/fetcher";
 import axios from "axios";
-import {IDatResCreate} from "../../utils/DatabaseInterfaces";
+import {IDatResCreate, IDatResHour, IDatResHours} from "../../utils/DatabaseInterfaces";
 
 
 function ReservationDatePanel() {
@@ -132,10 +132,43 @@ function ReservationDatePanel() {
 function ReservationSlots() {
     const formContext = useForm<IReservationSlots>();
     const {handleSubmit} = formContext;
+
+    const sendSlotUpdate = async (formData: IReservationSlots) => {
+        const slots: IDatResHours = {
+            fromDate: formData.fromDate,
+            interval: formData.interval,
+            slots: [{fromTime: formData.timeFrom1, toTime: formData.timeTo1},
+                {fromTime: formData.timeFrom2, toTime: formData.timeTo2},
+                {fromTime: formData.timeFrom3, toTime: formData.timeTo3},
+                {fromTime: formData.timeFrom4, toTime: formData.timeTo4},
+                {fromTime: formData.timeFrom5, toTime: formData.timeTo5},
+                {fromTime: formData.timeFrom6, toTime: formData.timeTo6},
+                {fromTime: formData.timeFrom7, toTime: formData.timeTo7}]
+        };
+
+        const url = `http://localhost:4000/doctor-reservation-hours`
+        await axios.post(url, slots, {
+            headers: {
+                'Authorization': `Bearer ${user.token}`
+            }
+        })
+            .then(response => {
+                console.log(response);
+                alert("Rezervační sloty změněny")
+                if (checkStatus(response.status)) {
+                    window.location.reload();
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("Změna rezervačních slotů selhala!\n\n" + error.response.data.message)
+            });
+    }
+
     const onSubmit = handleSubmit((formData: IReservationSlots) => {
         // TODO: store into database (check if not conflicting with reservations made on backend)
-        // TODO: show result to the user
         console.log(formData)
+        sendSlotUpdate(formData);
     })
 
     const [daysState, setDaysState] = useState<boolean[]>([false, false, false, false, false, false, false]);
@@ -161,6 +194,21 @@ function ReservationSlots() {
         });
     }
 
+    const [dateState, setDateState] = useState();
+    const user = useRecoilValue(userAtom);
+    let reservationSlots: IDatResHours = {};
+    const url = `http://localhost:4000/doctor-reservation-hours/` + dateState;
+    const {data, error} = useSWR(dateState == null ? null : [url, user.token], fetcherWithToken);
+
+    if (error) console.log(error.message);
+    if (data) {
+        console.log(data);
+        if (data.status != "error") {
+            reservationSlots = data.data.slots;
+            reservationSlots.slots && setDaysState(reservationSlots.slots.map((time) => !(time.fromTime == null && time.toTime == null)));
+        }
+    }
+
     return <>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             {/*@ts-ignore*/}
@@ -176,7 +224,8 @@ function ReservationSlots() {
                     </Typography>
                     <Grid container justifyContent={"space-between"} paddingBottom={2}>
                         <Grid item xs={3}>
-                            <DatePickerElement name={'fromDate'} label={'Od'} required/>
+                            {/*@ts-ignore*/}
+                            <DatePickerElement name={'fromDate'} label={'Od'} required onChange={(e) => setDateState(e)}/>
                         </Grid>
                         <Grid item xs={6}>
                             <SelectElement name={'interval'} label={'Délka intervalu rezervací'} required
@@ -200,6 +249,7 @@ function ReservationSlots() {
                                                    options={countIntervals()} fullWidth={true}
                                                    size={"small"}
                                                    disabled={!daysState[index]}
+                                                   defaultValue={reservationSlots.slots ? reservationSlots.slots[index].fromTime : null}
                                     />
                                 </Grid>
                                 <Grid item xs={3}>
@@ -207,6 +257,7 @@ function ReservationSlots() {
                                                    options={countIntervals()} fullWidth={true}
                                                    size={"small"}
                                                    disabled={!daysState[index]}
+                                                   defaultValue={reservationSlots.slots ? reservationSlots.slots[index].toTime : null}
                                     />
                                 </Grid>
                             </Grid>)

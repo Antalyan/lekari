@@ -98,8 +98,8 @@ export interface IReservation {
 }
 
 export interface IReservationSlots {
-    fromDate: Date,
-    toDate: Date,
+    fromDate?: Date,
+    interval?: number,
     timeFrom1?: string,
     timeFrom2?: string,
     timeFrom3?: string,
@@ -114,7 +114,6 @@ export interface IReservationSlots {
     timeTo5?: string,
     timeTo6?: string,
     timeTo7?: string,
-    interval: number
 }
 
 export interface IDoctorDetailInfo {
