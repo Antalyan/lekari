@@ -366,7 +366,7 @@ const createNotRegistered = async (req: Request, res: Response) => {
   }
 };
 
-const reservationHoursGet = async (req: Request, res: Response) => {
+const hoursGet = async (req: Request, res: Response) => {
   const today = new Date();
   const reservationHours = await prisma.reservationHours.findMany({
     orderBy: [
@@ -532,6 +532,6 @@ export default {
   doctor,
   createRegistered,
   createNotRegistered,
-  reservationHoursGet,
+  hoursGet,
   reservationHoursPost,
 };
