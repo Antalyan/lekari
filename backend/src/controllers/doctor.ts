@@ -25,7 +25,7 @@ const locations = async (req: Request, res: Response) => {
 
 };
 
-const doctorDetail = async (req: Request, res: Response) => {
+const detail = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
 
   const person = await doctorModel.getDoctorFromUserId(id);
@@ -611,7 +611,7 @@ const detailsUpdate = async (req: Request, res: Response) => {
 export default {
   locations,
   list,
-  doctorDetail,
+  detail,
   doctorDelete,
   detailsUpdate,
   doctorSlots,
