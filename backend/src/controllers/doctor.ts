@@ -68,22 +68,9 @@ const list = async (req: Request, res: Response) => {
       },
       deleted: false,
     },
-    select: {
-      person: {
-        select: {
-          id: true,
-          firstname: true,
-          surname: true,
-          degree: true,
-        }
-      },
-      specialization: true,
-      address: {
-        select: {
-          city: true,
-        }
-      },
-      actuality: true,
+    include: {
+      person: true,
+      address: true,
     },
   });
 
