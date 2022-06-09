@@ -159,7 +159,7 @@ const loginError = (res: Response) => {
 
 const login = async (req: Request, res: Response) => {
   try {
-    const data = await personSchema.loginSchema.validate(req.body);
+    const data = await personSchema.login.validate(req.body);
 
     const person = await getPerson({ email: data.email });
     if (!person) return loginError(res);

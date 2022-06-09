@@ -61,7 +61,7 @@ const passwordSchema = object({
     .required(),
 });
 
-const loginSchema = object({
+const login = object({
   email: string()
     .email()
     .required(),
@@ -89,7 +89,7 @@ const personRegistrationSchema = personSchema.shape(passwordSchema.fields);
 export default {
   personSchema,
   tmp,
-  loginSchema,
+  login,
   personUpdateSchema,
   personRegistrationSchema
 };
