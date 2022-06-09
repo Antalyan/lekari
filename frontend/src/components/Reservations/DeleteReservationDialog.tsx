@@ -20,7 +20,7 @@ export function DeleteReservationDialog(props: { isPatient: boolean, reservation
     const handleDeleteReservation = async () => {
         // TODO: delete reservation from database AND update GUI (perhaps automatically using SWR?)
         setOpen(false);
-        const url = 'http://localhost:4000/' + (props.isPatient ? 'person-reservations' : 'doctor-reservation');
+        const url = 'http://localhost:4000/' + (props.isPatient ? 'person-reservations' : 'doctor-reservations');
         console.log(url);
         console.log(props.reservation.id)
         await axios.delete(url, {
@@ -33,6 +33,7 @@ export function DeleteReservationDialog(props: { isPatient: boolean, reservation
             .then(response => {
                 if (checkStatusOK(response.status)) {
                     console.log("Deletion succeeded");
+                    window.location.reload();
                 }
             })
             .catch(error => {
