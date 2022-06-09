@@ -25,7 +25,7 @@ const register = async (req: Request, res: Response) => {
       });
   }
   try {
-    const data = await personSchema.personRegistrationSchema.validate(req.body);
+    const data = await personSchema.registration.validate(req.body);
     const hash = await hashing.hash(password1);
     const person = await prisma.person.create({
       data: {

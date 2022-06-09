@@ -33,7 +33,7 @@ const details = object({
   link: string(),
 });
 
-const registration = personSchema.personRegistrationSchema.shape(doctorSchema.fields);
+const registration = personSchema.registration.shape(doctorSchema.fields);
 
 const update = personSchema.update.shape(doctorSchema.fields);
 
