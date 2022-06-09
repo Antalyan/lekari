@@ -35,10 +35,10 @@ const details = object({
 
 const registration = personRegistrationSchema.shape(doctorSchema.fields);
 
-const doctorUpdateSchema = personUpdateSchema.shape(doctorSchema.fields);
+const update = personUpdateSchema.shape(doctorSchema.fields);
 
 export default {
   registration,
   details,
-  doctorUpdateSchema
+  update
 };
