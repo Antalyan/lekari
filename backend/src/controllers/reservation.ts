@@ -155,24 +155,12 @@ const create = async (req: Request, res: Response) => {
 
   if (checkFree.length !== 0) return results.error(res, 'Someone already ordered.', 500);
 
-  const person = res.locals.jwt.id;
+  const patientId = res.locals.jwt.id;
 
-  if (person) {
-    const reservation = await prisma.reservation.create({
-      data: {
-        doctor: { connect: { id: doctorId } },
-        person: { connect: { id: person.id } },
-        fromTime: fromTime,
-        toTime: toTime,
-        personComment: data.comment,
-      }
-    });
-    if (reservation) {
-      return results.success(res, { id: fromTime }, 201);
-    } else {
-      return results.error(res, 'Unknown error.', 500);
-    }
-  }
+  const reservation = reservationModel.createReservation(doctorId, patientId, fromTime, toTime, data.comment);
+  if (!reservation) return results.error(res, 'Unknown error.', 500);
+  return results.success(res, { id: fromTime }, 201);
+
 };
 
 const createRegistered = async (req: Request, res: Response) => {
@@ -459,8 +447,8 @@ const hoursPost = async (req: Request, res: Response) => {
       for (const value of preproccesed) {
         try {
           let created = await prisma.reservationHours.upsert({
-            where:{
-              doctorId_day_fromDate:{
+            where: {
+              doctorId_day_fromDate: {
                 doctorId: doctor.id,
                 day: value.day,
                 fromDate: value.fromDate,
@@ -470,13 +458,13 @@ const hoursPost = async (req: Request, res: Response) => {
               fromTime: value.fromTime,
               toTime: value.toTime
             },
-            create:{
+            create: {
               doctorId: doctor.id,
               day: value.day,
               fromDate: value.fromDate,
               fromTime: value.fromTime,
               toTime: value.toTime
-            } 
+            }
           });
           result.push(created);
         } catch (e) {

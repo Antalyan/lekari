@@ -19,4 +19,19 @@ const getReservations = async (where: any) => {
   });
 };
 
-export default { getReservations };
+const createReservation = async (doctorId: number, personId: number, fromTime, toTime, comment) => {
+  return await prisma.reservation.create({
+    data: {
+      doctor: { connect: { id: doctorId } },
+      person: { connect: { id: personId } },
+      fromTime: fromTime,
+      toTime: toTime,
+      personComment: comment,
+    }
+  });
+};
+
+export default {
+  getReservations,
+  createReservation
+};
