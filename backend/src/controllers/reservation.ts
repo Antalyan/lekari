@@ -152,7 +152,7 @@ const create = async (req: Request, res: Response, tmp: boolean) => {
 
   if (checkFree.length !== 0) return results.error(res, 'Someone already ordered.', 500);
 
-  const reservation = (!tmp) ? await reservationModel.createReservation(doctorId, res.locals.jwt.id, fromTime, toTime, data.comment) : await reservationModel.createReservationNotRegistered(doctorId, fromTime, toTime, data);
+  const reservation = tmp ? await reservationModel.createReservationNotRegistered(doctorId, fromTime, toTime, data) : await reservationModel.createReservation(doctorId, res.locals.jwt.id, fromTime, toTime, data.comment);
 
   if (!reservation) return results.error(res, 'Unknown error.', 500);
   return results.success(res, { id: fromTime }, 201);
