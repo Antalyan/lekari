@@ -126,21 +126,7 @@ const infoUpdate = async (req: Request, res: Response) => {
 const detail = async (req: Request, res: Response) => {
 
   const person = await doctorModel.getDoctorFromUserId(parseInt(req.params.id));
-  if (!person || !person.doctor) return results.error(res, 'Person was not found', 404);
-
-  let reviews = doctorAdapter.formatReviews(person.doctor.references);
-  let reviewsRatesSum = person.doctor.references.reduce((a, b) => a + (b.rate / 2), 0);
-
-  let opening = new Array<String | null>(7);
-  person.doctor.openingHours.slice()
-    .reverse()
-    .forEach(function (x) {
-      opening[x.day] = x.opening;
-    });
-
-  const data = doctorAdapter.formatDetail(person, opening, reviewsRatesSum, reviews);
-
-  return results.success(res, data, 200);
+  return info(req, res, person, false);
 };
 
 const allInfo = async (req: Request, res: Response) => {
@@ -159,7 +145,7 @@ const info = (req: Request, res: Response, person: any, all: boolean) => {
     .reverse()
     .forEach((x: any) => opening[x.day] = x.opening);
 
-  const data = doctorAdapter.allInfo(person, opening, reviewsRatesSum, reviews);
+  const data = all ? doctorAdapter.allInfo(person, opening, reviewsRatesSum, reviews) : doctorAdapter.formatDetail(person, opening, reviewsRatesSum, reviews);
   return results.success(res, data, 200);
 };
 
