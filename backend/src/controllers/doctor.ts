@@ -12,6 +12,7 @@ import personModel from '../models/personModel';
 import updateUtils from '../utilities/updateUtils';
 import doctorLanguageModel from '../models/doctorLanguageModel';
 import openingHoursModel from '../models/openingHoursModel';
+import reservationHoursModel from '../models/reservationHoursModel';
 
 const locations = async (req: Request, res: Response) => {
   const cities = await addressModel.getDoctorsCities();
@@ -40,7 +41,7 @@ const slots = async (req: Request, res: Response) => {
   const doctorId = doctor.doctor.id;
 
   const date = new Date(req.params.date);
-  const reservationHours = await reservationModel.getReservationHours(doctorId, date);
+  const reservationHours = await reservationHoursModel.getMany(doctorId, date);
 
   const where = {
     doctorId: doctorId,
