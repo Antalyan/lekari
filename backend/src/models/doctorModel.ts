@@ -59,7 +59,7 @@ const getDoctors = async (surname: string | null | undefined, specialization: st
   });
 };
 
-const removeDoctor = async (doctorId: number) => {
+const remove = async (doctorId: number) => {
   return await prisma.doctor.updateMany({
     where: {
       id: doctorId,
@@ -87,6 +87,6 @@ const update = async (doctorId: number, data: any) => {
 export default {
   getFromUserId,
   getDoctors,
-  removeDoctor,
+  remove,
   update
 };

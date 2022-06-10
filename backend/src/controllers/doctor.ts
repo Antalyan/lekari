@@ -95,7 +95,7 @@ const postReview = async (req: Request, res: Response) => {
 
 const remove = async (req: Request, res: Response) => {
   try {
-    await doctorModel.removeDoctor(res.locals.jwt.doctor.id);
+    await doctorModel.remove(res.locals.jwt.doctor.id);
     await personModel.remove(res.locals.jwt.id);
     return results.success(res, {}, 200);
   } catch (e) {
