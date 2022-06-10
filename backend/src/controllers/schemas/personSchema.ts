@@ -65,7 +65,7 @@ const tmp = object({
     .nullable()
 });
 
-const passwordSchema = object({
+const password = object({
   password1: string()
     .required(),
   password2: string()
@@ -90,12 +90,13 @@ const updatePasswordSchema = object({
 });
 
 const update = personSchema.shape(updatePasswordSchema.fields);
-const registration = personSchema.shape(passwordSchema.fields);
+const registration = personSchema.shape(password.fields);
 
 export default {
   personSchema,
   tmp,
   login,
   update,
-  registration
+  registration,
+  password
 };
