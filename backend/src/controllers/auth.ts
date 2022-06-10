@@ -11,19 +11,13 @@ import doctorSchema from './schemas/doctorSchema';
 const jwt = require('jsonwebtoken');
 
 const register = async (req: Request, res: Response) => {
-  let {
+  const {
     password1,
     password2
-  } = req.body;
+  } = await personSchema.password.validate(req.body);
 
-  if (password1 !== password2) {
-    return res.status(400)
-      .send({
-        status: 'error',
-        data: {},
-        message: 'Password doesn\'t match the controll.'
-      });
-  }
+  if (password1 !== password2) return results.error(res, 'Password doesn\'t match the controll.', 400);
+
   try {
     const data = await personSchema.registration.validate(req.body);
     const hash = await hashing.hash(password1);
@@ -49,37 +43,13 @@ const register = async (req: Request, res: Response) => {
         password: hash
       }
     });
-    if (person) {
-      return res.status(201)
-        .send({
-          status: 'success',
-          data: { id: person.id },
-          message: 'Person registered.'
-        });
-    } else {
-      return res.status(500)
-        .send({
-          status: 'error',
-          message: '',
-        });
-    }
+    if (!person) results.error(res, 'Unable to create person', 400);
+
+    return results.success(res, { id: person.id }, 201);
+
   } catch (e) {
-    if (e instanceof ValidationError) {
-      return res.status(400)
-        .send({
-          status: 'error',
-          data: e.errors,
-          message: e.message
-        });
-    }
-    if (e instanceof Error) {
-      return res.status(500)
-        .send({
-          status: 'error',
-          data: e.message,
-          message: 'Something went wrong'
-        });
-    }
+    if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
+    return results.error(res, 'Unknown error', 500);
   }
 };
 
