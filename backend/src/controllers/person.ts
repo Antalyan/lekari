@@ -75,32 +75,7 @@ const update = async (req: Request, res: Response) => {
     const expr = (data.oldPassword || data.password1 || data.password2);
     const hash = expr ? await updateUtils.checkPasswords(res, data) : res.locals.jwt.password;
 
-    const updatedPerson = await prisma.person.update({
-      where: {
-        email: res.locals.jwt.email,
-      },
-      data: {
-        firstname: data.firstname,
-        surname: data.surname,
-        degree: data.degree || null,
-        birthdate: data.birthdate,
-        email: data.email,
-        phonePrefix: data.phonePrefix,
-        phone: data.phone,
-        insuranceNumber: data.insuranceNumber || null,
-        address: {
-          update: {
-            country: data.country,
-            city: data.city,
-            postalCode: data.postalCode,
-            street: data.street || null,
-            buildingNumber: data.buildingNumber,
-          }
-        },
-        password: hash
-      }
-    });
-
+    const updatedPerson = await personModel.update(res.locals.jwt.id, data, hash);
     if (!updatedPerson) return results.error(res, 'Person was not found.', 404);
 
     return results.success(res, updatedPerson.id, 200);
