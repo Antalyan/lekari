@@ -32,10 +32,10 @@ const register = async (req: Request, res: Response) => {
 };
 
 const registerDoctor = async (req: Request, res: Response) => {
-  let {
+  const {
     password1,
     password2
-  } = req.body;
+  } = await personSchema.password.validate(req.body);
 
   if (password1 !== password2) return results.error(res, 'Password doesn\'t match the controll.', 400);
 
@@ -79,16 +79,9 @@ const registerDoctor = async (req: Request, res: Response) => {
         }
       }
     });
-    if (person) {
-      return res.status(201)
-        .send({
-          status: 'success',
-          data: { id: person.id },
-          message: 'Person registered.'
-        });
-    } else {
-      return results.error(res, 'Unknown error', 500);
-    }
+    if (!person) results.error(res, 'Unable to create person', 400);
+
+    return results.success(res, { id: person.id }, 201);
 
   } catch (e) {
     if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
