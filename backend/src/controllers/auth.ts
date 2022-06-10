@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import { ValidationError } from 'yup';
-import prisma from '../client';
 import personSchema from './schemas/personSchema';
 import personModel from '../models/personModel';
 import config from '../config/config';
@@ -41,44 +40,7 @@ const registerDoctor = async (req: Request, res: Response) => {
 
   try {
     const data = await doctorSchema.registration.validate(req.body);
-    const hash = await hashing.hash(password1);
-    const person = await prisma.person.create({
-      data: {
-        firstname: data.firstname,
-        surname: data.surname,
-        degree: data.degree || null,
-        birthdate: data.birthdate,
-        email: data.email,
-        insuranceNumber: data.insuranceNumber || null,
-        phonePrefix: data.phonePrefix,
-        phone: data.phone,
-        address: {
-          create: {
-            country: data.country,
-            city: data.city,
-            postalCode: data.postalCode,
-            street: data.street || null,
-            buildingNumber: data.buildingNumber,
-          },
-        },
-        password: hash,
-        doctor: {
-          create: {
-            specialization: data.specialization,
-            actuality: data.actuality || null,
-            address: {
-              create: {
-                country: data.country,
-                city: data.city,
-                postalCode: data.postalCode,
-                street: data.street || null,
-                buildingNumber: data.buildingNumber,
-              }
-            }
-          }
-        }
-      }
-    });
+    const person = await personModel.createDoctor(data, await hashing.hash(password1));
     if (!person) results.error(res, 'Unable to create person', 400);
 
     return results.success(res, { id: person.id }, 201);
