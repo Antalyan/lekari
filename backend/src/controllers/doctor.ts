@@ -145,9 +145,13 @@ const infoUpdate = async (req: Request, res: Response) => {
 
 const allInfo = async (req: Request, res: Response) => {
   const person = res.locals.jwt;
+  return info(req, res, person, true);
+};
+
+const info = (req: Request, res: Response, person: any, all: boolean) => {
   if (!person || !person.doctor) return results.error(res, 'Person was not found', 404);
 
-  const reviews = doctorAdapter.formatReviews(person.doctor.references);
+  const reviews = doctorAdapter.formatReviews(person.doctor.references, all);
   const reviewsRatesSum = person.doctor.references.reduce((a: number, b: any) => a + b.rate, 0);
 
   const opening = new Array<String>(7);
