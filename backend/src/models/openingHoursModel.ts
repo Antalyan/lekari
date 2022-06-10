@@ -1,6 +1,6 @@
 import prisma from '../client';
 
-const upsert = async (doctorId: number, day: number, hour: string) => {
+const upsert = async (doctorId: number, day: number, hour: string | null | undefined) => {
   return await prisma.openingHours.upsert({
     where: {
       doctorId_day: {
