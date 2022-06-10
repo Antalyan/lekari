@@ -105,6 +105,33 @@ const remove = async (req: Request, res: Response) => {
   }
 };
 
+const detailUpdate = async (req: Request, res: Response) => {
+  try {
+    const data = await doctorSchema.details.validate(req.body);
+    const updatedDoctor = await doctorModel.update(res.locals.jwt.doctor.id, data);
+    if (!updatedDoctor) return results.error(res, 'Doctor was not found', 404);
+
+    if (data.languages) {
+      for (let language of data.languages) {
+        if (language) await doctorLanguageModel.upsert(res.locals.jwt.doctor.id, language);
+      }
+    }
+
+    if (data.openingHours) {
+      let day = 0;
+      for (let hour of data.openingHours) {
+        await openingHoursModel.upsert(res.locals.jwt.doctor.id, day, hour);
+        day++;
+      }
+    }
+    return results.success(res, updatedDoctor.id, 200);
+
+  } catch (e) {
+    if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
+    return results.error(res, 'Unknown error', 500);
+  }
+};
+
 const infoUpdate = async (req: Request, res: Response) => {
   try {
     const data = await doctorSchema.update.validate(req.body);
@@ -139,7 +166,7 @@ const info = (req: Request, res: Response, person: any, all: boolean) => {
   if (!person || !person.doctor) return results.error(res, 'Person was not found', 404);
 
   const reviews = doctorAdapter.formatReviews(person.doctor.references, all);
-  const reviewsRatesSum = person.doctor.references.reduce((a: number, b: any) => a + b.rate, 0);
+  const reviewsRatesSum = (person.doctor.references.reduce((a: number, b: any) => a + b.rate, 0)) / 2;
 
   const opening = new Array<String>(7);
   person.doctor.openingHours.slice()
@@ -148,33 +175,6 @@ const info = (req: Request, res: Response, person: any, all: boolean) => {
 
   const data = all ? doctorAdapter.allInfo(person, opening, reviewsRatesSum, reviews) : doctorAdapter.formatDetail(person, opening, reviewsRatesSum, reviews);
   return results.success(res, data, 200);
-};
-
-const detailUpdate = async (req: Request, res: Response) => {
-  try {
-    const data = await doctorSchema.details.validate(req.body);
-    const updatedDoctor = await doctorModel.update(res.locals.jwt.doctor.id, data);
-    if (!updatedDoctor) return results.error(res, 'Doctor was not found', 404);
-
-    if (data.languages) {
-      for (let language of data.languages) {
-        if (language) await doctorLanguageModel.upsert(res.locals.jwt.doctor.id, language);
-      }
-    }
-
-    if (data.openingHours) {
-      let day = 0;
-      for (let hour of data.openingHours) {
-        await openingHoursModel.upsert(res.locals.jwt.doctor.id, day, hour);
-        day++;
-      }
-    }
-    return results.success(res, updatedDoctor.id, 200);
-
-  } catch (e) {
-    if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
-    return results.error(res, 'Unknown error', 500);
-  }
 };
 
 export default {

@@ -248,8 +248,8 @@ const hoursPost = async (req: Request, res: Response) => {
       let result = [];
 
       for (const value of preproccesed) {
-        if(helperFunctions.getTimeInMinutes(value.fromTime) > helperFunctions.getTimeInMinutes(value.toTime)){
-          return results.error(res, "Čas od je vyšší než čas do." , 400);
+        if (helperFunctions.getTimeInMinutes(value.fromTime) > helperFunctions.getTimeInMinutes(value.toTime)) {
+          return results.error(res, 'Čas od je vyšší než čas do.', 400);
         }
         try {
           let created = await prisma.reservationHours.upsert({

@@ -5,7 +5,7 @@ const create = async (doctorId: number, data: any) => {
     data: {
       doctorId: doctorId,
       comment: data.comment,
-      rate: data.rate * 2,
+      rate: (data.rate * 2),
       author: data.author || null
     }
   });

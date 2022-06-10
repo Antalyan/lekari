@@ -68,14 +68,11 @@ const allInfo = (person: any, openingHours: any, reviewsSum: number, reviews: an
     postalCode: person.address.postalCode,
     street: person.address.street,
     buildingNumber: person.address.buildingNumber,
-
     workEmail: person.doctor.email,
     workPhone: person.doctor.phone,
     description: person.doctor.description,
     link: person.doctor.link,
-    languages: person.doctor.languages.map((language: { language: string }) => {
-      language.language;
-    }),
+    languages: person.doctor.languages.map((language: { language: string; }) => language.language),
     workCountry: person.doctor.address.country,
     workCity: person.doctor.address.city,
     workPostalCode: person.doctor.address.postalCode,
@@ -84,7 +81,7 @@ const allInfo = (person: any, openingHours: any, reviewsSum: number, reviews: an
     profilePicture: person.doctor.profilePicture,
     actuality: person.doctor.actuality,
     openingHours: openingHours,
-    rateAverage: reviewsSum / person.doctor.references.length,
+    rateAverage: (Math.round((reviewsSum / person.doctor.references.length) * 2) / 2),
     reviews: reviews,
     reservationHours: person.doctor.reservationHours,
   };
