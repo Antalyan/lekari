@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import prisma from '../client';
 import { ValidationError } from 'yup';
 import doctorSchema from './schemas/doctorSchema';
 import doctorModel from '../models/doctorModel';
@@ -12,6 +11,7 @@ import reviewModel from '../models/reviewModel';
 import personModel from '../models/personModel';
 import updateUtils from '../utilities/updateUtils';
 import doctorLanguageModel from '../models/doctorLanguageModel';
+import openingHoursModel from '../models/openingHoursModel';
 
 const locations = async (req: Request, res: Response) => {
   const cities = await addressModel.getDoctorsCities();
@@ -164,7 +164,6 @@ const allInfo = async (req: Request, res: Response) => {
 const detailUpdate = async (req: Request, res: Response) => {
   try {
     const data = await doctorSchema.details.validate(req.body);
-    const doctor = res.locals.jwt.doctor;
     const updatedDoctor = await doctorModel.update(res.locals.jwt.doctor.id, data);
     if (!updatedDoctor) return results.error(res, 'Doctor was not found', 404);
 
@@ -177,26 +176,7 @@ const detailUpdate = async (req: Request, res: Response) => {
     if (data.openingHours) {
       let day = 0;
       for (let hour of data.openingHours) {
-        await prisma.openingHours.upsert({
-          where: {
-            doctorId_day: {
-              doctorId: doctor.id,
-              day: day
-            }
-          },
-          update: {
-            opening: hour
-          },
-          create: {
-            doctor: {
-              connect: {
-                id: doctor.id,
-              }
-            },
-            day: day,
-            opening: hour
-          }
-        });
+        await openingHoursModel.upsert(res.locals.jwt.doctor.id, day, hour);
         day++;
       }
     }
