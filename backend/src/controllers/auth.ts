@@ -51,24 +51,15 @@ const registerDoctor = async (req: Request, res: Response) => {
   }
 };
 
-const loginError = (res: Response) => {
-  return res.status(400)
-    .json({
-      status: 'error',
-      data: {},
-      message: 'Bad credentials',
-    });
-};
-
 const login = async (req: Request, res: Response) => {
   try {
     const data = await personSchema.login.validate(req.body);
 
     const person = await personModel.getPerson({ email: data.email });
-    if (!person) return loginError(res);
+    if (!person) return results.error(res, 'Bad credentials', 400);
 
     const validPassword = await hashing.verify(data.password, person.password);
-    if (!validPassword) return loginError(res);
+    if (!validPassword) return results.error(res, 'Bad credentials', 400);
 
     const accessToken = jwt.sign({
       id: person.id,
@@ -88,14 +79,8 @@ const login = async (req: Request, res: Response) => {
       });
 
   } catch (e) {
-    if (e instanceof ValidationError) {
-      return res.status(400)
-        .send({
-          status: 'error',
-          data: e.errors,
-          message: e.message
-        });
-    }
+    if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
+    return results.error(res, 'Unknown error', 500);
   }
 
 };
