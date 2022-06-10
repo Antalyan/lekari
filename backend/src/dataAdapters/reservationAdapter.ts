@@ -1,7 +1,7 @@
 import { Person, PersonTmp } from '@prisma/client';
 
 const person = (reservations: any) => {
-  return reservations.map(reservation => ({
+  return reservations.map((reservation: any) => ({
     id: reservation.id,
     doctorDegree: reservation.doctor.person.degree,
     doctorFirstname: reservation.doctor.person.firstname,
@@ -21,7 +21,7 @@ const person = (reservations: any) => {
 };
 
 const doctor = (reservations: any) => {
-  return reservations.map(function (reservation) {
+  return reservations.map((reservation: any) => {
     const person: Person | PersonTmp | null = reservation.person || reservation.personTmp;
     if (!person) return;
     return {
