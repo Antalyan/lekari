@@ -7,7 +7,6 @@ import helperFunctions from '../utilities/helperFunctions';
 import { ValidationError } from 'yup';
 import personSchema from './schemas/personSchema';
 import reservationModel from '../models/reservationModel';
-import { Person, PersonTmp } from '@prisma/client';
 import reservationAdapter from '../dataAdapters/reservationAdapter';
 
 const person = async (req: Request, res: Response) => {
@@ -33,30 +32,7 @@ const doctor = async (req: Request, res: Response) => {
 
   if (!reservations) return results.error(res, 'Doctor was not found', 404);
 
-  let data = reservations.map(function (reservation) {
-
-    const person: Person | PersonTmp | null = reservation.person || reservation.personTmp;
-    if (!person) return;
-    return {
-      id: reservation.id,
-      personDegree: person.degree,
-      personFirstname: person.firstname,
-      personSurname: person.surname,
-      visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
-      visitTimeTo: reservation.toTime.toLocaleTimeString(),
-      visitDate: reservation.fromTime.toISOString()
-        .split('T')[0],
-      note: reservation.personComment,
-      createTime: reservation.created.toLocaleTimeString(),
-      createDate: reservation.created.toISOString()
-        .split('T')[0],
-    };
-  });
-
-  return res.send({
-    status: 'success',
-    data: { reservations: data },
-  });
+  return results.success(res, { reservations: reservationAdapter.doctor(reservations) }, 200);
 };
 
 const create = async (req: Request, res: Response, tmp: boolean) => {

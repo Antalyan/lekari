@@ -1,3 +1,5 @@
+import { Person, PersonTmp } from '@prisma/client';
+
 const person = (reservations: any) => {
   return reservations.map(reservation => ({
     id: reservation.id,
@@ -18,4 +20,28 @@ const person = (reservations: any) => {
   }));
 };
 
-export default { person };
+const doctor = (reservations: any) => {
+  return reservations.map(function (reservation) {
+    const person: Person | PersonTmp | null = reservation.person || reservation.personTmp;
+    if (!person) return;
+    return {
+      id: reservation.id,
+      personDegree: person.degree,
+      personFirstname: person.firstname,
+      personSurname: person.surname,
+      visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
+      visitTimeTo: reservation.toTime.toLocaleTimeString(),
+      visitDate: reservation.fromTime.toISOString()
+        .split('T')[0],
+      note: reservation.personComment,
+      createTime: reservation.created.toLocaleTimeString(),
+      createDate: reservation.created.toISOString()
+        .split('T')[0],
+    };
+  });
+};
+
+export default {
+  person,
+  doctor
+};
