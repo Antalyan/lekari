@@ -188,8 +188,6 @@ const hoursPost = async (req: Request, res: Response) => {
 
     const doctor = res.locals.jwt.doctor;
 
-    console.log(doctor);
-
     if (data.slots) {
       let preproccesed = data.slots.map((value: any, index: number) => {
         if (value.fromTime && value.toTime) {
