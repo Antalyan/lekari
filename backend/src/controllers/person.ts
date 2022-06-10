@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import prisma from '../client';
 import personSchema from './schemas/personSchema';
 import results from '../utilities/results';
-import hashing from '../utilities/hashing';
 import personModel from '../models/personModel';
+import updateUtils from '../utilities/updateUtils';
 
 const list = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -71,19 +71,11 @@ const detail = async (req: Request, res: Response) => {
 const update = async (req: Request, res: Response) => {
   try {
     const data = await personSchema.update.validate(req.body);
-    let updatedPerson = null;
+    let updatedPerson;
 
     if (data.oldPassword && data.password1 && data.password2) {
 
-      const person = res.locals.jwt;
-      if (!person) return results.error(res, 'Can\'t find person.', 400);
-
-      const validPassword = await hashing.verify(data.oldPassword, person.password);
-      if (!validPassword) return results.error(res, 'Old password is not valid.', 400);
-
-      if (data.password1 !== data.password2) return results.error(res, 'Passwords don\'t match.', 400);
-
-      const hash = await hashing.hash(data.password1);
+      const hash = await updateUtils.checkPasswords(res, data);
 
       updatedPerson = await prisma.person.update({
         where: {
