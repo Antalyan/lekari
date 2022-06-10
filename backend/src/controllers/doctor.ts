@@ -20,26 +20,6 @@ const locations = async (req: Request, res: Response) => {
 
 };
 
-const detail = async (req: Request, res: Response) => {
-
-  const person = await doctorModel.getDoctorFromUserId(parseInt(req.params.id));
-  if (!person || !person.doctor) return results.error(res, 'Person was not found', 404);
-
-  let reviews = doctorAdapter.formatReviews(person.doctor.references);
-  let reviewsRatesSum = person.doctor.references.reduce((a, b) => a + (b.rate / 2), 0);
-
-  let opening = new Array<String | null>(7);
-  person.doctor.openingHours.slice()
-    .reverse()
-    .forEach(function (x) {
-      opening[x.day] = x.opening;
-    });
-
-  const data = doctorAdapter.formatDetail(person, opening, reviewsRatesSum, reviews);
-
-  return results.success(res, data, 200);
-};
-
 const list = async (req: Request, res: Response) => {
   try {
     const data = await doctorSchema.searching.validate(req.query);
@@ -143,6 +123,26 @@ const infoUpdate = async (req: Request, res: Response) => {
   }
 };
 
+const detail = async (req: Request, res: Response) => {
+
+  const person = await doctorModel.getDoctorFromUserId(parseInt(req.params.id));
+  if (!person || !person.doctor) return results.error(res, 'Person was not found', 404);
+
+  let reviews = doctorAdapter.formatReviews(person.doctor.references);
+  let reviewsRatesSum = person.doctor.references.reduce((a, b) => a + (b.rate / 2), 0);
+
+  let opening = new Array<String | null>(7);
+  person.doctor.openingHours.slice()
+    .reverse()
+    .forEach(function (x) {
+      opening[x.day] = x.opening;
+    });
+
+  const data = doctorAdapter.formatDetail(person, opening, reviewsRatesSum, reviews);
+
+  return results.success(res, data, 200);
+};
+
 const allInfo = async (req: Request, res: Response) => {
   const person = res.locals.jwt;
   return info(req, res, person, true);
@@ -157,9 +157,7 @@ const info = (req: Request, res: Response, person: any, all: boolean) => {
   const opening = new Array<String>(7);
   person.doctor.openingHours.slice()
     .reverse()
-    .forEach(function (x: any) {
-      opening[x.day] = x.opening;
-    });
+    .forEach((x: any) => opening[x.day] = x.opening);
 
   const data = doctorAdapter.allInfo(person, opening, reviewsRatesSum, reviews);
   return results.success(res, data, 200);
