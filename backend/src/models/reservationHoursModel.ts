@@ -22,4 +22,22 @@ const getMany = async (doctorId: number, date: Date) => {
   });
 };
 
-export default { getMany };
+const get = async (doctorId: number, day: number, data: any) => {
+  return await prisma.reservationHours.findFirst({
+    where: {
+      doctorId: doctorId,
+      day: day,
+      fromDate: {
+        lte: new Date(data.date)
+      }
+    },
+    orderBy: {
+      fromDate: 'desc'
+    },
+  });
+};
+
+export default {
+  getMany,
+  get
+};

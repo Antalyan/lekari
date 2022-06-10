@@ -8,6 +8,7 @@ import { ValidationError } from 'yup';
 import personSchema from './schemas/personSchema';
 import reservationModel from '../models/reservationModel';
 import reservationAdapter from '../dataAdapters/reservationAdapter';
+import reservationHoursModel from '../models/reservationHoursModel';
 
 const person = async (req: Request, res: Response) => {
   const reservations = await reservationModel.getReservations({
@@ -43,18 +44,7 @@ const create = async (req: Request, res: Response, tmp: boolean) => {
   const data = (!tmp) ? await reservationSchema.registration.validate(req.body) : await personSchema.tmpReservation.validate(req.body);
 
   const day = new Date(data.date).getDay();
-  const reservationHours = await prisma.reservationHours.findFirst({
-    where: {
-      doctorId: doctorId,
-      day: day,
-      fromDate: {
-        lte: new Date(data.date)
-      }
-    },
-    orderBy: {
-      fromDate: 'desc'
-    },
-  });
+  const reservationHours = await reservationHoursModel.get(doctorId, day, data);
 
   if (!reservationHours) return results.error(res, 'Can\'t make reservation for this day.', 500);
 
@@ -79,11 +69,9 @@ const create = async (req: Request, res: Response, tmp: boolean) => {
   let toTime = new Date(fromTime);
   toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
 
-  const checkFree = await prisma.reservation.findMany({
-    where: {
-      doctorId: doctorId,
-      fromTime: fromTime
-    },
+  const checkFree = await reservationModel.getReservations({
+    doctorId: doctorId,
+    fromTime: fromTime
   });
 
   if (checkFree.length !== 0) return results.error(res, 'Someone already ordered.', 500);
