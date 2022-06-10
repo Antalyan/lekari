@@ -128,91 +128,49 @@ const infoUpdate = async (req: Request, res: Response) => {
     const data = await doctorSchema.update.validate(req.body);
     let updatedPerson;
 
-    if (data.oldPassword && data.password1 && data.password2) {
+    const expr = (data.oldPassword || data.password1 || data.password2);
+    const hash = expr ? await update.checkPasswords(res, data) : res.locals.jwt.password;
 
-      const hash = await update.checkPasswords(res, data);
-
-      updatedPerson = await prisma.person.update({
-        where: {
-          email: res.locals.jwt.email,
-        },
-        data: {
-          firstname: data.firstname,
-          surname: data.surname,
-          degree: data.degree || null,
-          birthdate: data.birthdate,
-          email: data.email,
-          phonePrefix: data.phonePrefix,
-          phone: data.phone,
-          insuranceNumber: data.insuranceNumber || null,
-          password: hash,
-          address: {
-            update: {
-              country: data.country,
-              city: data.city,
-              postalCode: data.postalCode,
-              street: data.street || null,
-              buildingNumber: data.buildingNumber,
-            }
-          },
-          doctor: {
-            update: {
-              specialization: data.specialization,
-              actuality: data.actuality || null,
-              address: {
-                update: {
-                  country: data.workCountry,
-                  city: data.workCity,
-                  postalCode: data.workPostalCode,
-                  street: data.workStreet || null,
-                  buildingNumber: data.workBuildingNumber,
-                }
-              },
-            }
-          },
-        }
-      });
-    } else {
-      updatedPerson = await prisma.person.update({
-        where: {
-          email: res.locals.jwt.email,
-        },
-        data: {
-          firstname: data.firstname,
-          surname: data.surname,
-          degree: data.degree || null,
-          birthdate: data.birthdate,
-          email: data.email,
-          phonePrefix: data.phonePrefix,
-          phone: data.phone,
-          insuranceNumber: data.insuranceNumber || null,
-          address: {
-            update: {
-              country: data.country,
-              city: data.city,
-              postalCode: data.postalCode,
-              street: data.street || null,
-              buildingNumber: data.buildingNumber,
-            }
-          },
-          doctor: {
-            update: {
-              specialization: data.specialization,
-              actuality: data.actuality || null,
-              address: {
-                update: {
-                  country: data.workCountry,
-                  city: data.workCity,
-                  postalCode: data.workPostalCode,
-                  street: data.workStreet || null,
-                  buildingNumber: data.workBuildingNumber,
-                }
-              },
-            }
+    updatedPerson = await prisma.person.update({
+      where: {
+        id: res.locals.jwt.id,
+      },
+      data: {
+        firstname: data.firstname,
+        surname: data.surname,
+        degree: data.degree || null,
+        birthdate: data.birthdate,
+        email: data.email,
+        phonePrefix: data.phonePrefix,
+        phone: data.phone,
+        insuranceNumber: data.insuranceNumber || null,
+        password: hash,
+        address: {
+          update: {
+            country: data.country,
+            city: data.city,
+            postalCode: data.postalCode,
+            street: data.street || null,
+            buildingNumber: data.buildingNumber,
           }
-        }
-      });
-    }
+        },
+        doctor: {
+          update: {
+            specialization: data.specialization,
+            actuality: data.actuality || null,
+            address: {
+              update: {
+                country: data.workCountry,
+                city: data.workCity,
+                postalCode: data.workPostalCode,
+                street: data.workStreet || null,
+                buildingNumber: data.workBuildingNumber,
+              }
+            },
+          }
+        },
+      }
+    });
 
     if (!updatedPerson) return results.error(res, 'Person was not found', 400);
 
