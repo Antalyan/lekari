@@ -127,9 +127,35 @@ const update = async (personId: number, data: any, hash: string) => {
   });
 };
 
+const create = async (data: any, hash: string) => {
+  return await prisma.person.create({
+    data: {
+      firstname: data.firstname,
+      surname: data.surname,
+      degree: data.degree || null,
+      birthdate: data.birthdate,
+      email: data.email,
+      insuranceNumber: data.insuranceNumber || null,
+      phonePrefix: data.phonePrefix,
+      phone: data.phone,
+      address: {
+        create: {
+          country: data.country,
+          city: data.city,
+          postalCode: data.postalCode,
+          street: data.street || null,
+          buildingNumber: data.buildingNumber,
+        }
+      },
+      password: hash
+    }
+  });
+};
+
 export default {
   getPerson,
   remove,
   updateDoctor,
-  update
+  update,
+  create
 };

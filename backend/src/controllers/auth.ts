@@ -20,29 +20,7 @@ const register = async (req: Request, res: Response) => {
 
   try {
     const data = await personSchema.registration.validate(req.body);
-    const hash = await hashing.hash(password1);
-    const person = await prisma.person.create({
-      data: {
-        firstname: data.firstname,
-        surname: data.surname,
-        degree: data.degree || null,
-        birthdate: data.birthdate,
-        email: data.email,
-        insuranceNumber: data.insuranceNumber || null,
-        phonePrefix: data.phonePrefix,
-        phone: data.phone,
-        address: {
-          create: {
-            country: data.country,
-            city: data.city,
-            postalCode: data.postalCode,
-            street: data.street || null,
-            buildingNumber: data.buildingNumber,
-          }
-        },
-        password: hash
-      }
-    });
+    const person = await personModel.create(data, await hashing.hash(password1));
     if (!person) results.error(res, 'Unable to create person', 400);
 
     return results.success(res, { id: person.id }, 201);
