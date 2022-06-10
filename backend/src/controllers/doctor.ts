@@ -146,8 +146,7 @@ const allInfo = async (req: Request, res: Response) => {
   const person = res.locals.jwt;
   if (!person || !person.doctor) return results.error(res, 'Person was not found', 404);
 
-  let reviews = doctorAdapter.formatReviews(person.doctor.references);
-
+  const reviews = doctorAdapter.formatReviews(person.doctor.references);
   const reviewsRatesSum = person.doctor.references.reduce((a: number, b: any) => a + b.rate, 0);
 
   const opening = new Array<String>(7);
@@ -157,45 +156,8 @@ const allInfo = async (req: Request, res: Response) => {
       opening[x.day] = x.opening;
     });
 
-  return res.status(200)
-    .json({
-      status: 'success',
-      data: {
-        degree: person.degree,
-        firstname: person.firstname,
-        surname: person.surname,
-        birthdate: person.birthdate,
-        email: person.email,
-        phonePrefix: person.phonePrefix,
-        phone: person.phone,
-        insuranceNumber: person.insuranceNumber,
-        specialization: person.doctor.specialization,
-        country: person.address.country,
-        city: person.address.city,
-        postalCode: person.address.postalCode,
-        street: person.address.street,
-        buildingNumber: person.address.buildingNumber,
-
-        workEmail: person.doctor.email,
-        workPhone: person.doctor.phone,
-        description: person.doctor.description,
-        link: person.doctor.link,
-        languages: person.doctor.languages.map((language: { language: string }) => {
-          return language.language;
-        }),
-        workCountry: person.doctor.address.country,
-        workCity: person.doctor.address.city,
-        workPostalCode: person.doctor.address.postalCode,
-        workStreet: person.doctor.address.street,
-        workBuildingNumber: person.doctor.address.buildingNumber,
-        profilePicture: person.doctor.profilePicture,
-        actuality: person.doctor.actuality,
-        openingHours: opening,
-        rateAverage: reviewsRatesSum / person.doctor.references.length,
-        reviews: reviews,
-        reservationHours: person.doctor.reservationHours,
-      }
-    });
+  const data = doctorAdapter.allInfo(person, opening, reviewsRatesSum, reviews);
+  return results.success(res, data, 200);
 };
 
 const detailUpdate = async (req: Request, res: Response) => {
