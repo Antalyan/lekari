@@ -7,7 +7,8 @@ import helperFunctions from '../utilities/helperFunctions';
 import { ValidationError } from 'yup';
 import personSchema from './schemas/personSchema';
 import reservationModel from '../models/reservationModel';
-import { Person, PersonTmp } from '@prisma/client';
+import reservationAdapter from '../dataAdapters/reservationAdapter';
+import reservationHoursModel from '../models/reservationHoursModel';
 
 const person = async (req: Request, res: Response) => {
   const reservations = await reservationModel.getReservations({
@@ -17,39 +18,9 @@ const person = async (req: Request, res: Response) => {
     },
   });
 
-  if (!reservations) {
-    return res.status(404)
-      .send({
-        status: 'error',
-        data: {},
-        message: 'Person was not found'
-      });
-  }
+  if (!reservations) results.error(res, 'Person was not found', 404);
 
-  let data = reservations.map(
-    reservation => ({
-      id: reservation.id,
-      doctorDegree: reservation.doctor.person.degree,
-      doctorFirstname: reservation.doctor.person.firstname,
-      doctorSurname: reservation.doctor.person.surname,
-      visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
-      visitTimeTo: reservation.toTime.toLocaleTimeString(),
-      visitDate: reservation.fromTime.toISOString()
-        .split('T')[0],
-      note: reservation.personComment,
-      createTime: reservation.created.toLocaleTimeString(),
-      createDate: reservation.created.toISOString()
-        .split('T')[0],
-      workStreet: reservation.doctor.address.street,
-      workBuildingNumber: reservation.doctor.address.buildingNumber,
-      workCity: reservation.doctor.address.city,
-    })
-  );
-
-  return res.send({
-    status: 'success',
-    data: { reservations: data }
-  });
+  return results.success(res, { reservations: reservationAdapter.person(reservations) }, 200);
 };
 
 const doctor = async (req: Request, res: Response) => {
@@ -62,52 +33,18 @@ const doctor = async (req: Request, res: Response) => {
 
   if (!reservations) return results.error(res, 'Doctor was not found', 404);
 
-  let data = reservations.map(function (reservation) {
-
-    const person: Person | PersonTmp | null = reservation.person || reservation.personTmp;
-    if (!person) return;
-    return {
-      id: reservation.id,
-      personDegree: person.degree,
-      personFirstname: person.firstname,
-      personSurname: person.surname,
-      visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
-      visitTimeTo: reservation.toTime.toLocaleTimeString(),
-      visitDate: reservation.fromTime.toISOString()
-        .split('T')[0],
-      note: reservation.personComment,
-      createTime: reservation.created.toLocaleTimeString(),
-      createDate: reservation.created.toISOString()
-        .split('T')[0],
-    };
-  });
-
-  return res.send({
-    status: 'success',
-    data: { reservations: data },
-  });
+  return results.success(res, { reservations: reservationAdapter.doctor(reservations) }, 200);
 };
 
 const create = async (req: Request, res: Response, tmp: boolean) => {
-  const doctor = await doctorModel.getDoctorIdFromUserId(parseInt(req.params.id));
+  const doctor = await doctorModel.getFromUserId(parseInt(req.params.id));
   if (!doctor || !doctor.doctor) return results.error(res, 'Cannot find doctor.', 400);
   const doctorId = doctor.doctor.id;
 
-  const data = (!tmp) ? await reservationSchema.registration.validate(req.body) : await personSchema.tmp.validate(req.body);
+  const data = (!tmp) ? await reservationSchema.registration.validate(req.body) : await personSchema.tmpReservation.validate(req.body);
 
   const day = new Date(data.date).getDay();
-  const reservationHours = await prisma.reservationHours.findFirst({
-    where: {
-      doctorId: doctorId,
-      day: day,
-      fromDate: {
-        lte: new Date(data.date)
-      }
-    },
-    orderBy: {
-      fromDate: 'desc'
-    },
-  });
+  const reservationHours = await reservationHoursModel.get(doctorId, day, data);
 
   if (!reservationHours) return results.error(res, 'Can\'t make reservation for this day.', 500);
 
@@ -132,11 +69,9 @@ const create = async (req: Request, res: Response, tmp: boolean) => {
   let toTime = new Date(fromTime);
   toTime.setMinutes(fromTime.getMinutes() + reservationHours.interval);
 
-  const checkFree = await prisma.reservation.findMany({
-    where: {
-      doctorId: doctorId,
-      fromTime: fromTime
-    },
+  const checkFree = await reservationModel.getReservations({
+    doctorId: doctorId,
+    fromTime: fromTime
   });
 
   if (checkFree.length !== 0) return results.error(res, 'Someone already ordered.', 500);
@@ -361,12 +296,11 @@ const hoursPost = async (req: Request, res: Response) => {
 };
 
 const doctorRemove = async (req: Request, res: Response) => {
-  const deleted = await prisma.reservation.deleteMany({
-    where: {
-      id: req.body.id,
-      doctorId: res.locals.jwt.doctor.id,
-    }
-  });
+  const where = {
+    id: req.body.id,
+    doctorId: res.locals.jwt.doctor.id,
+  };
+  const deleted = await reservationModel.remove(where);
 
   if (!deleted) return results.error(res, 'Unable to remove reservation', 404);
 
@@ -375,12 +309,11 @@ const doctorRemove = async (req: Request, res: Response) => {
 };
 
 const personRemove = async (req: Request, res: Response) => {
-  const deleted = await prisma.reservation.deleteMany({
-    where: {
-      id: req.body.id,
-      personId: res.locals.jwt.id,
-    }
-  });
+  const where = {
+    id: req.body.id,
+    personId: res.locals.jwt.id,
+  };
+  const deleted = reservationModel.remove(where);
 
   if (!deleted) return results.error(res, 'Unable to remove reservation', 404);
 

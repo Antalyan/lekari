@@ -1,6 +1,6 @@
 import prisma from '../client';
 
-const getDoctorFromUserId = async (userId: number) => {
+const getFromUserId = async (userId: number) => {
   return await prisma.person.findFirst({
     where: {
       deleted: false,
@@ -26,42 +26,67 @@ const getDoctorFromUserId = async (userId: number) => {
   });
 };
 
-const getDoctorFromUserEmail = async (email: string) => {
-  return await prisma.doctor.findFirst({
-    where: {
-      deleted: false,
+const getDoctors = async (surname: string | null | undefined, specialization: string | null | undefined, location: string | null | undefined) => {
+  return await prisma.doctor.findMany({
+    orderBy: [{
+      specialization: 'asc',
+    }, {
       person: {
-        email: email,
-        deleted: false
+        surname: 'asc',
       }
+    },],
+    where: {
+      person: {
+        surname: {
+          contains: surname || undefined
+        },
+        deleted: false,
+      },
+      specialization: {
+        contains: specialization || undefined
+      },
+      address: {
+        city: {
+          contains: location || undefined
+        },
+      },
+      deleted: false,
+    },
+    include: {
+      person: true,
+      address: true,
     },
   });
 };
 
-const getDoctorIdFromUserId = async (userId: number) => {
-  return await prisma.person.findFirst({
+const remove = async (doctorId: number) => {
+  return await prisma.doctor.updateMany({
     where: {
-      deleted: false,
-      id: userId,
-      NOT: {
-        doctor: null,
-      },
-      doctor: {
-        deleted: false,
-      }
+      id: doctorId,
     },
-    select: {
-      doctor: {
-        select: {
-          id: true,
-        }
-      }
+    data: {
+      deleted: true,
+    }
+  });
+};
+
+const update = async (doctorId: number, data: any) => {
+  return await prisma.doctor.update({
+    where: {
+      id: doctorId
+    },
+    data: {
+      email: data.workEmail || null,
+      phone: data.workPhone || null,
+      description: data.description || null,
+      link: data.link || null,
     }
   });
 };
 
 export default {
-  getDoctorFromUserId,
-  getDoctorIdFromUserId,
-  getDoctorFromUserEmail
+  getFromUserId,
+  getDoctors,
+  remove,
+  update
 };

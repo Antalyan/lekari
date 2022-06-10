@@ -1,4 +1,5 @@
 import { date, number, object, string } from 'yup';
+import reservationSchema from './reservationSchema';
 
 const personSchema = object({
   firstname: string()
@@ -65,7 +66,7 @@ const tmp = object({
     .nullable()
 });
 
-const passwordSchema = object({
+const password = object({
   password1: string()
     .required(),
   password2: string()
@@ -89,13 +90,15 @@ const updatePasswordSchema = object({
     .nullable(),
 });
 
+const tmpReservation = tmp.shape(reservationSchema.registration.fields);
 const update = personSchema.shape(updatePasswordSchema.fields);
-const registration = personSchema.shape(passwordSchema.fields);
+const registration = personSchema.shape(password.fields);
 
 export default {
   personSchema,
-  tmp,
+  tmpReservation,
   login,
   update,
-  registration
+  registration,
+  password
 };

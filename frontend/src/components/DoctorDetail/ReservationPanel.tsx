@@ -192,7 +192,6 @@ function ReservationSlots() {
         }))
     };
 
-    // TODO: recount intervals (options for fromDate and toDate) on update
     // interval | 60
     const countIntervals = (interval: number) => {
         let result = [];
@@ -240,19 +239,6 @@ function ReservationSlots() {
             })
         }
     }, [reservationSlots]);
-
-    // // reset on change
-    // useEffect(() => {
-    //     setOptionsState(countIntervals());
-    //     console.log(optionsState);
-    //     const initTimes: Array<string> = Array(7).fill(RESERVATION_INTERVAL_BOUNDS[0]+ ":00");
-    //     initTimes.map((slot, index) => {
-    //         // @ts-ignore
-    //         slot.fromTime && setValue(`timeFrom${index}`, slot.fromTime);
-    //         // @ts-ignore
-    //         slot.toTime && setValue(`timeTo${index}`, slot.toTime)
-    //     })
-    // }, [intervalState]);
 
     const resetSelected = (value?: any) => {
         setOptionsState(countIntervals(value));

@@ -35,7 +35,6 @@ api.post('/doctor/:id(\\d+)/reservations-nonregistered', reservation.createNotRe
 api.post('/doctor-reservation-hours', auth.validateTokenDoctor, reservation.hoursPost);
 api.put('/doctor-details', auth.validateTokenDoctor, doctor.detailUpdate);
 
-api.get('/persons', person.list);                     // Undocumented
 api.get('/personal-info', auth.validateToken, person.detail);
 api.patch('/personal-info', auth.validateToken, person.update);
 api.get('/person-reservations', auth.validateToken, reservation.person);
@@ -47,7 +46,7 @@ api.get('/validate', auth.validateToken, (req: Request, res: Response) => {
 });       // Undocumented
 api.post('/register', auth.register);
 api.post('/login', auth.login);
-api.put('/logout', auth.logout);
+api.put('/logout', auth.validateToken, auth.logout);
 
 /**
  * Start listening on connections

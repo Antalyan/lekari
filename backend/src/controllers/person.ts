@@ -1,141 +1,26 @@
-import { NextFunction, Request, Response } from 'express';
-import prisma from '../client';
+import { Request, Response } from 'express';
 import personSchema from './schemas/personSchema';
 import results from '../utilities/results';
-import hashing from '../utilities/hashing';
-
-const list = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const persons = await prisma.person.findMany({
-      where: {
-        deleted: false,
-      }
-    });
-    res.json(persons);
-  } catch (error) {
-    next(error);
-  }
-};
+import personModel from '../models/personModel';
+import updateUtils from '../utilities/updateUtils';
+import personAdapter from '../dataAdapters/personAdapter';
 
 const detail = async (req: Request, res: Response) => {
-  const person = await prisma.person.findFirst({
-    where: {
-      email: res.locals.jwt.email,
-      deleted: false,
-    },
-    select: {
-      firstname: true,
-      surname: true,
-      degree: true,
-      email: true,
-      phone: true,
-      phonePrefix: true,
-      birthdate: true,
-      insuranceNumber: true,
-      address: {
-        select: {
-          country: true,
-          city: true,
-          postalCode: true,
-          street: true,
-          buildingNumber: true,
-        }
-      },
-      deleted: true,
-    }
-  });
 
+  const person = res.locals.jwt;
   if (!person || person.deleted) return results.error(res, 'Person was not found.', 404);
 
-  return res.send({
-    status: 'success',
-    data: {
-      firstname: person.firstname,
-      surname: person.surname,
-      degree: person.degree || null,
-      email: person.email,
-      phone: person.phone,
-      phonePrefix: person.phonePrefix,
-      birthdate: person.birthdate,
-      insuranceNumber: person.insuranceNumber || null,
-      country: person.address.country,
-      city: person.address.city,
-      postalCode: person.address.postalCode,
-      street: person.address.street || null,
-      buildingNumber: person.address.buildingNumber,
-    }
-  });
+  return results.success(res, personAdapter.detail(person), 200);
 };
 
 const update = async (req: Request, res: Response) => {
   try {
     const data = await personSchema.update.validate(req.body);
-    let updatedPerson = null;
 
-    if (data.oldPassword && data.password1 && data.password2) {
+    const expr = (data.oldPassword || data.password1 || data.password2);
+    const hash = expr ? await updateUtils.checkPasswords(res, data) : res.locals.jwt.password;
 
-      const person = res.locals.jwt;
-      if (!person) return results.error(res, 'Can\'t find person.', 400);
-
-      const validPassword = await hashing.verify(data.oldPassword, person.password);
-      if (!validPassword) return results.error(res, 'Old password is not valid.', 400);
-
-      if (data.password1 !== data.password2) return results.error(res, 'Passwords don\'t match.', 400);
-
-      const hash = await hashing.hash(data.password1);
-
-      updatedPerson = await prisma.person.update({
-        where: {
-          email: res.locals.jwt.email,
-        },
-        data: {
-          firstname: data.firstname,
-          surname: data.surname,
-          degree: data.degree || null,
-          birthdate: data.birthdate,
-          email: data.email,
-          phonePrefix: data.phonePrefix,
-          phone: data.phone,
-          insuranceNumber: data.insuranceNumber || null,
-          address: {
-            update: {
-              country: data.country,
-              city: data.city,
-              postalCode: data.postalCode,
-              street: data.street || null,
-              buildingNumber: data.buildingNumber,
-            }
-          },
-          password: hash
-        }
-      });
-    } else {
-      updatedPerson = await prisma.person.update({
-        where: {
-          email: res.locals.jwt.email,
-        },
-        data: {
-          firstname: data.firstname,
-          surname: data.surname,
-          degree: data.degree || null,
-          birthdate: data.birthdate,
-          email: data.email,
-          phonePrefix: data.phonePrefix,
-          phone: data.phone,
-          insuranceNumber: data.insuranceNumber || null,
-          address: {
-            update: {
-              country: data.country,
-              city: data.city,
-              postalCode: data.postalCode,
-              street: data.street || null,
-              buildingNumber: data.buildingNumber,
-            }
-          }
-        }
-      });
-    }
-
+    const updatedPerson = await personModel.update(res.locals.jwt.id, data, hash);
     if (!updatedPerson) return results.error(res, 'Person was not found.', 404);
 
     return results.success(res, updatedPerson.id, 200);
@@ -148,14 +33,7 @@ const update = async (req: Request, res: Response) => {
 
 const remove = async (req: Request, res: Response) => {
   try {
-    await prisma.person.updateMany({
-      where: {
-        email: res.locals.jwt.email
-      },
-      data: {
-        deleted: true,
-      }
-    });
+    await personModel.remove(res.locals.jwt.id);
     return results.success(res, {}, 200);
   } catch (e) {
     if (e instanceof Error) return results.error(res, e.message, 400);
@@ -164,7 +42,6 @@ const remove = async (req: Request, res: Response) => {
 };
 
 export default {
-  list,
   detail,
   remove,
   update,
