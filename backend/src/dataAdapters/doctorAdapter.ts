@@ -1,13 +1,14 @@
 import { Review } from '@prisma/client';
 
-const formatReviews = (reviews: Review[]) => {
-  return reviews.map(function (review) {
+const formatReviews = (reviews: Review[], utc: boolean = false) => {
+  return reviews.map(review => {
+    const createDate = utc ? review.created.toUTCString() : review.created.toISOString()
+      .split('T')[0];
     return {
       rate: review.rate / 2,
       comment: review.comment,
       author: review.author,
-      createDate: review.created.toISOString()
-        .split('T')[0],
+      createDate: createDate,
       createTime: review.created.toLocaleTimeString()
     };
   });

@@ -144,18 +144,9 @@ const infoUpdate = async (req: Request, res: Response) => {
 
 const allInfo = async (req: Request, res: Response) => {
   const person = res.locals.jwt;
-
   if (!person || !person.doctor) return results.error(res, 'Person was not found', 404);
 
-  let reviews = person.doctor.references.map((review: any) => {
-    return {
-      rate: review.rate / 2,
-      comment: review.comment,
-      author: review.author,
-      creatDate: review.created.toUTCString(),
-      createTime: review.created.toLocaleTimeString()
-    };
-  });
+  let reviews = doctorAdapter.formatReviews(person.doctor.references);
 
   const reviewsRatesSum = person.doctor.references.reduce((a: number, b: any) => a + b.rate, 0);
 
