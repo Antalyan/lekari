@@ -11,6 +11,7 @@ import reservationModel from '../models/reservationModel';
 import reviewModel from '../models/reviewModel';
 import personModel from '../models/personModel';
 import updateUtils from '../utilities/updateUtils';
+import doctorLanguageModel from '../models/doctorLanguageModel';
 
 const locations = async (req: Request, res: Response) => {
   const cities = await addressModel.getDoctorsCities();
@@ -169,25 +170,7 @@ const detailUpdate = async (req: Request, res: Response) => {
 
     if (data.languages) {
       for (let language of data.languages) {
-        if (language) {
-          await prisma.doctorLanguage.upsert({
-            where: {
-              doctorId_language: {
-                doctorId: doctor.id,
-                language: language
-              }
-            },
-            update: {},
-            create: {
-              doctor: {
-                connect: {
-                  id: doctor.id
-                }
-              },
-              language: language
-            }
-          });
-        }
+        if (language) await doctorLanguageModel.upsert(res.locals.jwt.doctor.id, language);
       }
     }
 
