@@ -8,6 +8,7 @@ import { ValidationError } from 'yup';
 import personSchema from './schemas/personSchema';
 import reservationModel from '../models/reservationModel';
 import { Person, PersonTmp } from '@prisma/client';
+import reservationAdapter from '../dataAdapters/reservationAdapter';
 
 const person = async (req: Request, res: Response) => {
   const reservations = await reservationModel.getReservations({
@@ -19,27 +20,7 @@ const person = async (req: Request, res: Response) => {
 
   if (!reservations) results.error(res, 'Person was not found', 404);
 
-  let data = reservations.map(
-    reservation => ({
-      id: reservation.id,
-      doctorDegree: reservation.doctor.person.degree,
-      doctorFirstname: reservation.doctor.person.firstname,
-      doctorSurname: reservation.doctor.person.surname,
-      visitTimeFrom: reservation.fromTime.toLocaleTimeString(),
-      visitTimeTo: reservation.toTime.toLocaleTimeString(),
-      visitDate: reservation.fromTime.toISOString()
-        .split('T')[0],
-      note: reservation.personComment,
-      createTime: reservation.created.toLocaleTimeString(),
-      createDate: reservation.created.toISOString()
-        .split('T')[0],
-      workStreet: reservation.doctor.address.street,
-      workBuildingNumber: reservation.doctor.address.buildingNumber,
-      workCity: reservation.doctor.address.city,
-    })
-  );
-
-  return results.success(res, { reservations: data }, 200);
+  return results.success(res, { reservations: reservationAdapter.person(reservations) }, 200);
 };
 
 const doctor = async (req: Request, res: Response) => {
