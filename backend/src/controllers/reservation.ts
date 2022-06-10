@@ -308,12 +308,11 @@ const hoursPost = async (req: Request, res: Response) => {
 };
 
 const doctorRemove = async (req: Request, res: Response) => {
-  const deleted = await prisma.reservation.deleteMany({
-    where: {
-      id: req.body.id,
-      doctorId: res.locals.jwt.doctor.id,
-    }
-  });
+  const where = {
+    id: req.body.id,
+    doctorId: res.locals.jwt.doctor.id,
+  };
+  const deleted = await reservationModel.remove(where);
 
   if (!deleted) return results.error(res, 'Unable to remove reservation', 404);
 

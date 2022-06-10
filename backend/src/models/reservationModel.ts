@@ -108,9 +108,16 @@ const getReservationHours = async (doctorId: number, date: Date) => {
   });
 };
 
+const remove = async (where: any) => {
+  return await prisma.reservation.deleteMany({
+    where: where,
+  });
+};
+
 export default {
   getReservations,
   createReservation,
   createReservationNotRegistered,
-  getReservationHours
+  getReservationHours,
+  remove
 };
