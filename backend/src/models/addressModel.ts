@@ -5,6 +5,9 @@ const getDoctorsCities = async () => {
     where: {
       NOT: {
         doctor: null,
+      },
+      doctor: {
+        deleted: false,
       }
     },
     distinct: ['city']
