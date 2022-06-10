@@ -10,7 +10,7 @@ import doctorAdapter from '../dataAdapters/doctorAdapter';
 import reservationModel from '../models/reservationModel';
 import reviewModel from '../models/reviewModel';
 import personModel from '../models/personModel';
-import update from '../utilities/updateUtils';
+import updateUtils from '../utilities/updateUtils';
 
 const locations = async (req: Request, res: Response) => {
   const cities = await addressModel.getDoctorsCities();
@@ -128,7 +128,7 @@ const infoUpdate = async (req: Request, res: Response) => {
     const data = await doctorSchema.update.validate(req.body);
 
     const expr = (data.oldPassword || data.password1 || data.password2);
-    const hash = expr ? await update.checkPasswords(res, data) : res.locals.jwt.password;
+    const hash = expr ? await updateUtils.checkPasswords(res, data) : res.locals.jwt.password;
 
     const updatedPerson = await personModel.updateDoctor(res.locals.jwt.id, data, hash);
 
