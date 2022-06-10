@@ -17,14 +17,7 @@ const person = async (req: Request, res: Response) => {
     },
   });
 
-  if (!reservations) {
-    return res.status(404)
-      .send({
-        status: 'error',
-        data: {},
-        message: 'Person was not found'
-      });
-  }
+  if (!reservations) results.error(res, 'Person was not found', 404);
 
   let data = reservations.map(
     reservation => ({
@@ -46,10 +39,7 @@ const person = async (req: Request, res: Response) => {
     })
   );
 
-  return res.send({
-    status: 'success',
-    data: { reservations: data }
-  });
+  return results.success(res, { reservations: data }, 200);
 };
 
 const doctor = async (req: Request, res: Response) => {
