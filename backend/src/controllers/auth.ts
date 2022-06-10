@@ -6,6 +6,7 @@ import config from '../config/config';
 import hashing from '../utilities/hashing';
 import results from '../utilities/results';
 import doctorSchema from './schemas/doctorSchema';
+import authAdapter from '../dataAdapters/authAdapter';
 
 const jwt = require('jsonwebtoken');
 
@@ -61,10 +62,8 @@ const login = async (req: Request, res: Response) => {
     const validPassword = await hashing.verify(data.password, person.password);
     if (!validPassword) return results.error(res, 'Bad credentials', 400);
 
-    const accessToken = jwt.sign({
-      id: person.id,
-      email: person.email,
-    }, config.server.token.secret, { expiresIn: config.server.token.expiration });
+    const accessToken = jwt.sign(authAdapter.token(person), config.server.token.secret,
+      { expiresIn: config.server.token.expiration });
 
     return res.status(200)
       .json({
