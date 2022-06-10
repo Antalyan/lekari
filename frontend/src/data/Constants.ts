@@ -1,4 +1,4 @@
-export const DAYS: string[] = ["Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota", "Neděle"]
+export const DAYS: string[] = ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"]
 export const LANGUAGES: string[] = ["čeština", "angličtina", "němčina", "ruština", "španělština", "francouzština"].sort()
 
 export enum DataFormType {
