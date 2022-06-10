@@ -96,15 +96,15 @@ const validateToken = (req: Request, res: Response, next: NextFunction, doctor: 
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) return validateTokenError(res, 401, 'Unauthorized');
+  if (!token) return results.error(res, 'Unauthorized', 401);
 
   jwt.verify(token, config.server.token.secret, async (err: any, user: any) => {
-    if (err) return validateTokenError(res, 403, 'Forbidden');
+    if (err) return results.error(res, 'Forbidden', 403);
     const person = await personModel.getPerson({
       email: user.email,
       id: user.id
     });
-    if (!person || (doctor && !person.doctor)) return validateTokenError(res, 401, 'Forbidden');
+    if (!person || (doctor && !person.doctor)) return results.error(res, 'Forbidden', 401);
     res.locals.jwt = person;
     next();
   });
