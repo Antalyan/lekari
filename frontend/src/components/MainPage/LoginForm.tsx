@@ -24,11 +24,11 @@ export function LoginForm() {
                     console.log(response);
                     if (checkStatusOK(response.status)) {
                         setUser({
-                            id: response.data.user.id,
-                            firstName: response.data.user.firstName,
-                            surname: response.data.user.surname,
-                            isDoctor: response.data.user.isDoctor,
-                            token: response.data.user.token
+                            id: response.data.data.id,
+                            firstName: response.data.data.firstName,
+                            surname: response.data.data.surname,
+                            isDoctor: response.data.data.isDoctor,
+                            token: response.data.data.token
                         })
                     }
                 }
