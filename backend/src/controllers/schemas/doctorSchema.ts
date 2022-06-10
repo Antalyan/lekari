@@ -29,7 +29,8 @@ const details = object({
       string()
     ),
   workEmail: string()
-    .email(),
+    .email()
+    .nullable(),
   workPhone: string()
     .nullable(),
   description: string()
