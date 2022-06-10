@@ -77,19 +77,12 @@ const logout = async (req: Request, res: Response) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) return validateTokenError(res, 401, 'Unauthorized');
+  if (!token) return results.error(res, 'Unauthorized', 401);
 
   const accessToken = jwt.sign(authAdapter.token(res.locals.jwt), config.server.token.secret,
     { expiresIn: '1s' });
 
   return results.success(res, { token: accessToken }, 200);
-};
-
-const validateTokenError = (res: Response, code: number, message: string) => {
-  return res.status(code)
-    .json({
-      message: message,
-    });
 };
 
 const validateToken = (req: Request, res: Response, next: NextFunction, doctor: boolean = false) => {
