@@ -35,7 +35,7 @@ const list = async (req: Request, res: Response) => {
 };
 
 const slots = async (req: Request, res: Response) => {
-  const doctor = await doctorModel.getDoctorFromUserId(parseInt(req.params.id));
+  const doctor = await doctorModel.getFromUserId(parseInt(req.params.id));
   if (!doctor || !doctor.doctor) return results.error(res, 'Wrong id', 404);
   const doctorId = doctor.doctor.id;
 
@@ -78,7 +78,7 @@ const slots = async (req: Request, res: Response) => {
 
 const postReview = async (req: Request, res: Response) => {
   try {
-    const doctor = await doctorModel.getDoctorFromUserId(parseInt(req.params.id));
+    const doctor = await doctorModel.getFromUserId(parseInt(req.params.id));
     if (!doctor || !doctor.doctor) return results.error(res, 'Wrong id', 404);
     const data = await doctorSchema.review.validate(req.body);
 
@@ -125,7 +125,7 @@ const infoUpdate = async (req: Request, res: Response) => {
 
 const detail = async (req: Request, res: Response) => {
 
-  const person = await doctorModel.getDoctorFromUserId(parseInt(req.params.id));
+  const person = await doctorModel.getFromUserId(parseInt(req.params.id));
   return info(req, res, person, false);
 };
 

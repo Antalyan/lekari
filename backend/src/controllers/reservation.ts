@@ -89,7 +89,7 @@ const doctor = async (req: Request, res: Response) => {
 };
 
 const create = async (req: Request, res: Response, tmp: boolean) => {
-  const doctor = await doctorModel.getDoctorFromUserId(parseInt(req.params.id));
+  const doctor = await doctorModel.getFromUserId(parseInt(req.params.id));
   if (!doctor || !doctor.doctor) return results.error(res, 'Cannot find doctor.', 400);
   const doctorId = doctor.doctor.id;
 

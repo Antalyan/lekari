@@ -1,6 +1,6 @@
 import prisma from '../client';
 
-const getDoctorFromUserId = async (userId: number) => {
+const getFromUserId = async (userId: number) => {
   return await prisma.person.findFirst({
     where: {
       deleted: false,
@@ -85,7 +85,7 @@ const update = async (doctorId: number, data: any) => {
 };
 
 export default {
-  getDoctorFromUserId,
+  getFromUserId,
   getDoctors,
   removeDoctor,
   update
