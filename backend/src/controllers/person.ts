@@ -1,22 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import prisma from '../client';
 import personSchema from './schemas/personSchema';
 import results from '../utilities/results';
 import personModel from '../models/personModel';
 import updateUtils from '../utilities/updateUtils';
-
-const list = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const persons = await prisma.person.findMany({
-      where: {
-        deleted: false,
-      }
-    });
-    res.json(persons);
-  } catch (error) {
-    next(error);
-  }
-};
 
 const detail = async (req: Request, res: Response) => {
   const person = await prisma.person.findFirst({
@@ -97,7 +84,6 @@ const remove = async (req: Request, res: Response) => {
 };
 
 export default {
-  list,
   detail,
   remove,
   update,
