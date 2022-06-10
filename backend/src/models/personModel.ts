@@ -56,7 +56,51 @@ const remove = async (personId: number) => {
   });
 };
 
+const updateDoctor = async (personId: number, data: any, hash: string) => {
+  return await prisma.person.update({
+    where: {
+      id: personId,
+    },
+    data: {
+      firstname: data.firstname,
+      surname: data.surname,
+      degree: data.degree || null,
+      birthdate: data.birthdate,
+      email: data.email,
+      phonePrefix: data.phonePrefix,
+      phone: data.phone,
+      insuranceNumber: data.insuranceNumber || null,
+      password: hash,
+      address: {
+        update: {
+          country: data.country,
+          city: data.city,
+          postalCode: data.postalCode,
+          street: data.street || null,
+          buildingNumber: data.buildingNumber,
+        }
+      },
+      doctor: {
+        update: {
+          specialization: data.specialization,
+          actuality: data.actuality || null,
+          address: {
+            update: {
+              country: data.workCountry,
+              city: data.workCity,
+              postalCode: data.workPostalCode,
+              street: data.workStreet || null,
+              buildingNumber: data.workBuildingNumber,
+            }
+          },
+        }
+      },
+    }
+  });
+};
+
 export default {
   getPerson,
-  remove
+  remove,
+  updateDoctor
 };
