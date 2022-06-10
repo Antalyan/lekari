@@ -104,10 +104,25 @@ const removeDoctor = async (doctorId: number) => {
   });
 };
 
+const update = async (doctorId: number, data: any) => {
+  return await prisma.doctor.update({
+    where: {
+      id: doctorId
+    },
+    data: {
+      email: data.workEmail || null,
+      phone: data.workPhone || null,
+      description: data.description || null,
+      link: data.link || null,
+    }
+  });
+};
+
 export default {
   getDoctorFromUserId,
   getDoctorIdFromUserId,
   getDoctorFromUserEmail,
   getDoctors,
   removeDoctor,
+  update
 };

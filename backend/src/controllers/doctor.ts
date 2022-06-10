@@ -164,18 +164,9 @@ const detailUpdate = async (req: Request, res: Response) => {
   try {
     const data = await doctorSchema.details.validate(req.body);
     const doctor = res.locals.jwt.doctor;
-    const updatedDoctor = await prisma.doctor.update({
-      where: {
-        id: doctor.id
-      },
-      data: {
-        email: data.workEmail || null,
-        phone: data.workPhone || null,
-        description: data.description || null,
-        link: data.link || null,
-      }
-    });
+    const updatedDoctor = await doctorModel.update(res.locals.jwt.doctor.id, data);
     if (!updatedDoctor) return results.error(res, 'Doctor was not found', 404);
+
     if (data.languages) {
       for (let language of data.languages) {
         if (language) {
@@ -199,8 +190,9 @@ const detailUpdate = async (req: Request, res: Response) => {
         }
       }
     }
-    let day = 0;
+
     if (data.openingHours) {
+      let day = 0;
       for (let hour of data.openingHours) {
         await prisma.openingHours.upsert({
           where: {
