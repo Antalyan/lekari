@@ -75,21 +75,14 @@ const login = async (req: Request, res: Response) => {
 
 const logout = async (req: Request, res: Response) => {
   const authHeader = req.headers['authorization'];
-  if (authHeader) {
-    jwt.sign(authHeader, '', { expiresIn: 1 }, (_logout: any, err: any) => {
-      if (!err) {
-        res.send({
-          status: 'success',
-          message: 'You have been Logged Out'
-        });
-      } else {
-        res.send({
-          status: 'error',
-          message: 'Error'
-        });
-      }
-    });
-  }
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return validateTokenError(res, 401, 'Unauthorized');
+
+  const accessToken = jwt.sign(authAdapter.token(res.locals.jwt), config.server.token.secret,
+    { expiresIn: '1s' });
+
+  return results.success(res, { token: accessToken }, 200);
 };
 
 const validateTokenError = (res: Response, code: number, message: string) => {

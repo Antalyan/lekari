@@ -47,7 +47,7 @@ api.get('/validate', auth.validateToken, (req: Request, res: Response) => {
 });       // Undocumented
 api.post('/register', auth.register);
 api.post('/login', auth.login);
-api.put('/logout', auth.logout);
+api.put('/logout', auth.validateToken, auth.logout);
 
 /**
  * Start listening on connections
