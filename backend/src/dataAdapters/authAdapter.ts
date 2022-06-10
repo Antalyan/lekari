@@ -5,4 +5,17 @@ const token = (person: any) => {
   };
 };
 
-export default { token };
+const logged = (person: any, accessToken: string) => {
+  return {
+    id: person.id,
+    firstName: person.firstname,
+    surname: person.surname,
+    token: accessToken,
+    isDoctor: (person.doctor !== null && !person.doctor.deleted)
+  };
+};
+
+export default {
+  token,
+  logged
+};

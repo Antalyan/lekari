@@ -64,18 +64,7 @@ const login = async (req: Request, res: Response) => {
 
     const accessToken = jwt.sign(authAdapter.token(person), config.server.token.secret,
       { expiresIn: config.server.token.expiration });
-
-    return res.status(200)
-      .json({
-        message: 'Auth Successful',
-        user: {
-          id: person.id,
-          firstName: person.firstname,
-          surname: person.surname,
-          token: accessToken,
-          isDoctor: (person.doctor !== null && !person.doctor.deleted)
-        }
-      });
+    return results.success(res, authAdapter.logged(person, accessToken), 200);
 
   } catch (e) {
     if (e instanceof ValidationError || e instanceof Error) return results.error(res, e.message, 400);
