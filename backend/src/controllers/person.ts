@@ -1,38 +1,12 @@
 import { Request, Response } from 'express';
-import prisma from '../client';
 import personSchema from './schemas/personSchema';
 import results from '../utilities/results';
 import personModel from '../models/personModel';
 import updateUtils from '../utilities/updateUtils';
 
 const detail = async (req: Request, res: Response) => {
-  const person = await prisma.person.findFirst({
-    where: {
-      email: res.locals.jwt.email,
-      deleted: false,
-    },
-    select: {
-      firstname: true,
-      surname: true,
-      degree: true,
-      email: true,
-      phone: true,
-      phonePrefix: true,
-      birthdate: true,
-      insuranceNumber: true,
-      address: {
-        select: {
-          country: true,
-          city: true,
-          postalCode: true,
-          street: true,
-          buildingNumber: true,
-        }
-      },
-      deleted: true,
-    }
-  });
-
+  
+  const person = res.locals.jwt;
   if (!person || person.deleted) return results.error(res, 'Person was not found.', 404);
 
   return res.send({
