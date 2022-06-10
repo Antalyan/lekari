@@ -40,7 +40,7 @@ const create = async (req: Request, res: Response, tmp: boolean) => {
   if (!doctor || !doctor.doctor) return results.error(res, 'Cannot find doctor.', 400);
   const doctorId = doctor.doctor.id;
 
-  const data = (!tmp) ? await reservationSchema.registration.validate(req.body) : await personSchema.tmp.validate(req.body);
+  const data = (!tmp) ? await reservationSchema.registration.validate(req.body) : await personSchema.tmpReservation.validate(req.body);
 
   const day = new Date(data.date).getDay();
   const reservationHours = await prisma.reservationHours.findFirst({
