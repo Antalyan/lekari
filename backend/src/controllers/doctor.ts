@@ -10,7 +10,7 @@ import doctorAdapter from '../dataAdapters/doctorAdapter';
 import reservationModel from '../models/reservationModel';
 import reviewModel from '../models/reviewModel';
 import personModel from '../models/personModel';
-import update from '../utilities/update';
+import update from '../utilities/updateUtils';
 
 const locations = async (req: Request, res: Response) => {
   const cities = await addressModel.getDoctorsCities();
