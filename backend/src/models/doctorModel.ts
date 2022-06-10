@@ -26,40 +26,6 @@ const getDoctorFromUserId = async (userId: number) => {
   });
 };
 
-const getDoctorFromUserEmail = async (email: string) => {
-  return await prisma.doctor.findFirst({
-    where: {
-      deleted: false,
-      person: {
-        email: email,
-        deleted: false
-      }
-    },
-  });
-};
-
-const getDoctorIdFromUserId = async (userId: number) => {
-  return await prisma.person.findFirst({
-    where: {
-      deleted: false,
-      id: userId,
-      NOT: {
-        doctor: null,
-      },
-      doctor: {
-        deleted: false,
-      }
-    },
-    select: {
-      doctor: {
-        select: {
-          id: true,
-        }
-      }
-    }
-  });
-};
-
 const getDoctors = async (surname: string | null | undefined, specialization: string | null | undefined, location: string | null | undefined) => {
   return await prisma.doctor.findMany({
     orderBy: [{
@@ -120,8 +86,6 @@ const update = async (doctorId: number, data: any) => {
 
 export default {
   getDoctorFromUserId,
-  getDoctorIdFromUserId,
-  getDoctorFromUserEmail,
   getDoctors,
   removeDoctor,
   update

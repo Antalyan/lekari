@@ -89,7 +89,7 @@ const doctor = async (req: Request, res: Response) => {
 };
 
 const create = async (req: Request, res: Response, tmp: boolean) => {
-  const doctor = await doctorModel.getDoctorIdFromUserId(parseInt(req.params.id));
+  const doctor = await doctorModel.getDoctorFromUserId(parseInt(req.params.id));
   if (!doctor || !doctor.doctor) return results.error(res, 'Cannot find doctor.', 400);
   const doctorId = doctor.doctor.id;
 
@@ -313,8 +313,8 @@ const hoursPost = async (req: Request, res: Response) => {
       let result = [];
 
       for (const value of preproccesed) {
-        if(helperFunctions.getTimeInMinutes(value.fromTime) > helperFunctions.getTimeInMinutes(value.toTime)){
-          return results.error(res, "Čas od je vyšší než čas do." , 400);
+        if (helperFunctions.getTimeInMinutes(value.fromTime) > helperFunctions.getTimeInMinutes(value.toTime)) {
+          return results.error(res, 'Čas od je vyšší než čas do.', 400);
         }
         try {
           let created = await prisma.reservationHours.upsert({
