@@ -73,7 +73,7 @@ function Contact() {
             <Stack spacing={editingState ? 2 : 0}>
                 <Stack direction={"row"} spacing={2}>
                     <Typography width={40} display="inline">Email:</Typography>
-                    <TextFieldElement name={"email"} size="small" type="email"
+                    <TextFieldElement name={"email"} size="small" type="email" fullWidth
                                       disabled={!editingState} variant={editingState ? "outlined" : "standard"}
                                       InputProps={{
                                           disableUnderline: !editingState,
@@ -83,7 +83,7 @@ function Contact() {
                 </Stack>
                 <Stack direction={"row"} spacing={2}>
                     <Typography width={40} display="inline">Tel:</Typography>
-                    <TextFieldElement name={"phone"} size="small" validation={validateNumbers}
+                    <TextFieldElement name={"phone"} size="small" validation={validateNumbers} fullWidth
                                       disabled={!editingState} variant={editingState ? "outlined" : "standard"}
                                       InputProps={{
                                           disableUnderline: !editingState,
@@ -92,7 +92,7 @@ function Contact() {
                 </Stack>
                 <Stack direction={"row"} spacing={2}>
                     <Typography width={40} display="inline">Web:</Typography>
-                    <TextFieldElement name={"web"} size="small" validation={validateUrl}
+                    <TextFieldElement name={"web"} size="small" validation={validateUrl} fullWidth
                                       disabled={!editingState} variant={editingState ? "outlined" : "standard"}
                                       InputProps={{
                                           disableUnderline: !editingState,
