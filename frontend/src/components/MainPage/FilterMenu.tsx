@@ -1,39 +1,31 @@
 import {Button, Grid, Stack, Typography} from "@mui/material";
 import {useForm} from "react-hook-form";
 import * as React from "react";
-import {IBasicDoctor} from "../Interfaces";
+import {IFilter} from "../../utils/Interfaces";
 import {AutoSelect} from "./AutoSelect";
-import {cities, specializations} from "../../data/MockData";
+import {IPanelSetter} from "./SearchPanel";
+import {SPECIALIZATIONS} from "../../data/Specializations";
+import useSWR from "swr";
+import {fetcher} from "../../utils/fetcher";
 
-function FilterForm() {
-
-    const defaultValues: IBasicDoctor = {
-        name: "",
-        specialization: "",
-        location: "",
-        actuality: "",
-        id: -1
+export function FilterMenu({filter, setFilter}: IPanelSetter) {
+    const {handleSubmit, control} = useForm<IFilter>();
+    const onSubmit = (data: IFilter) => {
+        console.log(data);
+        setFilter({
+            specialization: data.specialization,
+            location: data.location,
+            search: filter.search
+        });
     }
-    const {handleSubmit, control} = useForm({defaultValues});
-    const onSubmit = (data: IBasicDoctor) => {
-        console.log(data)
-    }
 
-    return <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={2} margin={2}>
-            <AutoSelect control={control} id="combo-box-spec" name="specialization" label="Specializace"
-                        options={specializations}/>
-            <AutoSelect control={control} id="combo-box-location" name="location" label="Lokace" options={cities}/>
-            <Grid container justifyContent="center">
-                <Button variant='contained' type={'submit'} color={'primary'} onSubmit={handleSubmit(onSubmit)}>
-                    Nastavit
-                </Button>
-            </Grid>
-        </Stack>
-    </form>
-}
+    const url = 'http://localhost:4000/doctors-locations'
+    const {data, error} = useSWR( url, fetcher);
+    if (error) console.log(error.message)
+    if (!data) return <div>Loading...</div>;
+    if (data) console.log(data)
+    const cities: String[] = data.data;
 
-export function FilterMenu() {
     return (
         <>
             <Typography variant="h5" gutterBottom component="div" align={"center"}
@@ -41,7 +33,19 @@ export function FilterMenu() {
                         padding={2}>
                 Nastavení filtru
             </Typography>
-            <FilterForm/>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <Stack spacing={2} margin={2}>
+                    <AutoSelect control={control} id="combo-box-spec" name="specialization" label="Specializace"
+                                options={SPECIALIZATIONS}/>
+                    <AutoSelect control={control} id="combo-box-location" name="location" label="Lokace"
+                                options={cities}/>
+                    <Grid container justifyContent="center">
+                        <Button variant='contained' type={'submit'} color={'primary'} onSubmit={handleSubmit(onSubmit)}>
+                            Nastavit
+                        </Button>
+                    </Grid>
+                </Stack>
+            </form>
         </>
     )
 }

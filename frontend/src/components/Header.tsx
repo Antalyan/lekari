@@ -5,22 +5,15 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import {Icon, Link} from "@mui/material";
-
-import Logo from "../images/logoREPLACE.png"
+import {Link} from "@mui/material";
+import Logo from "../images/main_logo.png"
 import AvatarImg from "../images/mock_profile.jpg"
 import {AccountCircle} from "@mui/icons-material";
 import {LoginForm} from "./MainPage/LoginForm";
 import {userAtom} from "../state/LoggedInAtom";
 import {useRecoilState, useRecoilValue} from "recoil";
-
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function LoginMenu(props: { anchorEl: HTMLElement | null, onClose: () => void }) {
     const [user, setUser] = useRecoilState(userAtom);
@@ -39,7 +32,6 @@ function LoginMenu(props: { anchorEl: HTMLElement | null, onClose: () => void })
         open={Boolean(props.anchorEl)}
         onClose={props.onClose}
     >
-        {/* //TODO add: onClick={handleClose} */}
         {user.id ? <>
                 <MenuItem>
                     <Link href={"/my-profile"} underline="hover">
@@ -62,6 +54,7 @@ function LoginMenu(props: { anchorEl: HTMLElement | null, onClose: () => void })
                     </Link>
                 </MenuItem>}
                 <MenuItem>
+                    {/*Logout*/}
                     <Link
                         component="button"
                         variant="body1"
@@ -108,34 +101,39 @@ export default function Header() {
 
     return (
         <AppBar position="static">
+
             <Toolbar>
-                <Link href={"/"} underline="hover">
-                    <img src={Logo} alt="Logo" width="50" height="50"/>
-                </Link>
-                <Typography
-                    sx={{m: 2, flexGrow: 1}}
-                    variant="h6"
-                    color="white"
-                >
-                    Luďkovi<br/>Lékaři
-                </Typography>
-                <Typography
-                    sx={{m: 1}}
-                    variant="h6"
-                    align="right"
-                >{user.id != null ? user.name : "Nepřihlášený"}</Typography>
-                <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleMenu}
-                    color="inherit"
-                >
-                    {user.id ? <Avatar alt={user.name} src={AvatarImg} sx={{width: 60, height: 60}}/> :
-                        <AccountCircle fontSize="large"/>}
-                </IconButton>
-                <LoginMenu anchorEl={anchorEl} onClose={handleClose}/>
+                <Box sx={{flexGrow: 1, display: "flex"}} marginRight={"auto"} marginLeft={"auto"} maxWidth={960}>
+                    <Link href={"/"} underline="hover" marginTop={2}>
+                        <img src={Logo} alt="Logo" width="50" height="57"/>
+                    </Link>
+                    <Typography
+                        sx={{flexGrow: 1}}
+                        variant="h6"
+                        color="white"
+                        margin={2}
+                    >
+                        Luďkovi<br/>Lékaři
+                    </Typography>
+                    <Typography
+                        variant="h6"
+                        align="right"
+                        display={"block"}
+                        marginTop={user.id != null ? 2 : 4}
+                    >{user.id != null ? user.firstName: "Nepřihlášený"}<br/>{user.surname}</Typography>
+                    <IconButton
+                        size="large"
+                        aria-label="account of current user"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleMenu}
+                        color="inherit"
+                    >
+                        {user.id ? <Avatar alt={"user avatar"} src={AvatarImg} sx={{width: 60, height: 60}}/> :
+                            <AccountCircle fontSize="large"/>}
+                    </IconButton>
+                    <LoginMenu anchorEl={anchorEl} onClose={handleClose}/>
+                </Box>
             </Toolbar>
         </AppBar>
     );

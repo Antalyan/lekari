@@ -1,61 +1,92 @@
-import {IEditable, IPatient, IReview} from "../Interfaces";
+import {IReview, IReviewList} from "../../utils/Interfaces";
 import {Divider, Grid, Rating, Stack, Typography} from "@mui/material";
 import * as React from "react";
-import {REVIEWS} from "../../data/MockData";
+import {useState} from "react";
 import {FormContainer, TextFieldElement} from "react-hook-form-mui";
 import {useForm} from "react-hook-form";
 import Button from "@mui/material/Button";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {useParams} from "react-router-dom";
+import {IDatReview} from "../../utils/DatabaseInterfaces";
+import axios from "axios";
+import {checkStatusOK} from "../../utils/fetcher";
 
 function ReviewCreate() {
-    const formContext = useForm<IReview>()
-    const {handleSubmit} = formContext
+    const formContext = useForm<IReview>();
+    const {id} = useParams();
 
-    const onSubmit = handleSubmit((formData: IReview) => {
-        // TODO: add date, save to db
-        console.log(formData)
-    })
+    const storeInfo = async (formData: IReview) => {
+        const review: IDatReview = {
+            author: formData.author,
+            comment: formData.text,
+            rate: rating == null ? undefined: rating
+        }
+
+        const url = `http://localhost:4000/doctors/${id}/review`
+        await axios.post(url, review)
+            .then(response => {
+                console.log(response);
+                if (checkStatusOK(response.status)) {
+                    window.location.reload();
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("Zápis recenze selhal!\n\n" + error.response.data.message)
+            });
+    }
+
+    const onSubmit = (formData: IReview) => {
+        storeInfo(formData);
+    };
+
+    const [rating, setRating] = useState<number | null>(null);
 
     return (<>
         {/*@ts-ignore*/}
         <FormContainer
             formContext={formContext}
-            handleSubmit={onSubmit}>
+            onSuccess={onSubmit}>
             <Stack spacing={3} marginLeft={1}>
-                <Typography variant="subtitle1"
+                <Typography variant="h6"
                             color={"primary.main"}
                             display={"inline"}>
                     Nové hodnocení
                 </Typography>
-                <Rating name="rating" value={0} precision={0.5}
-                        sx={{color: "primary.main"}}/>
-                <TextFieldElement name={"name"} label={"Autor"} size="medium"/>
+                <Rating precision={0.5}
+                        sx={{color: "primary.main"}}
+                        onChange={(_, value) => {
+                            setRating(value);
+                        }}
+                />
+                <TextFieldElement name={"author"} label={"Autor"} size="medium"/>
                 <TextFieldElement name={"text"} label={"Text"} size="medium" multiline/>
-                <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>
+                <Grid container justifyContent={"center"}><Button variant='contained' type={'submit'} color={'primary'}>
                     Odeslat recenzi
                 </Button>
+                </Grid>
             </Stack>
         </FormContainer>
     </>)
 }
 
-function ReviewCard({name, date, rating, text, id}: IReview) {
+function ReviewCard({author, createDate, createTime, rating, text, id}: IReview) {
     return <>
         <Divider/>
         <Grid container justifyContent={"space-between"} spacing={1}>
             <Grid item xs={12}>
-                <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+                <Stack direction={"row"} justifyContent={"space-between"}>
                     <Typography variant="h6"
                                 color={"primary.main"}
                                 display={"inline"}>
-                        {name}
+                        {author}
                     </Typography>
                     <Typography variant="subtitle2"
                                 color={"text.secondary"}
+                                textAlign={"right"}
                                 display={"inline"}>
-                        {date.toDateString()}
+                        {createDate}<br/>{createTime}
                     </Typography>
                 </Stack>
             </Grid>
@@ -74,11 +105,11 @@ function ReviewCard({name, date, rating, text, id}: IReview) {
     </>
 }
 
-export function ReviewPanel() {
+export function ReviewPanel({reviews}: IReviewList) {
     const user = useRecoilValue(userAtom)
     const {id} = useParams();
     return <Stack spacing={4}>
         {user.id != id  && <ReviewCreate/>}
-        {REVIEWS.map((review) => <ReviewCard {...review}/>)}
+        {reviews.map((review) => <ReviewCard {...review}/>)}
     </Stack>
 }

@@ -1,5 +1,5 @@
-import {atom, selector} from "recoil";
-import {IGlobalProfileInfo} from "../components/Interfaces";
+import {atom} from "recoil";
+import {IGlobalProfileInfo} from "../utils/Interfaces";
 import {recoilPersist} from "recoil-persist";
 
 const { persistAtom } = recoilPersist()

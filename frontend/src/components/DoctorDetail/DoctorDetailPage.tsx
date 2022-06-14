@@ -1,21 +1,19 @@
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import Header from "../Header";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import Profile from "../../images/mock_profile.jpg";
-import {SearchBox} from "../MainPage/SearchBox";
-import {IBasicDoctor} from "../Interfaces";
 import {DoctorCard} from "./DoctorCard";
 import {Footer} from "../Footer";
-import {DOCTORS} from "../../data/MockData";
-import {useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {Rating, Tab, Tabs} from "@mui/material";
 import {InfoPanel} from "./InfoPanel";
 import {ReservationPanel} from "./ReservationPanel";
 import {ReviewPanel} from "./ReviewPanel";
-import {useRecoilValue} from "recoil";
-import {userAtom} from "../../state/LoggedInAtom";
+import useSWR from "swr";
+import fetcher from "../../utils/fetcher";
+import {IDatDoctorDetail, IDatReview} from "../../utils/DatabaseInterfaces";
+import {IDoctorCard, IDoctorDetailInfo, IReview} from "../../utils/Interfaces";
+import {createTheme} from "@mui/material/styles";
 
 
 interface TabPanelProps {
@@ -51,45 +49,104 @@ function a11yProps(index: number) {
 }
 
 export function DoctorDetailPage() {
-    /*TODO: finish handles and values: are they needed? copies from doc*/
-    const [value, setValue] = React.useState(0);
+    const [tabValues, setTabValues] = React.useState(0);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
+        setTabValues(newValue);
     };
 
-    // TODO: change doctors to API request
     const {id} = useParams();
+    let navigate = useNavigate();
     if (id === undefined) {
-        return <>ERROR</>
+        navigate("/");
     }
-    const doctor = DOCTORS.filter((doctor) => doctor.id == parseInt(id))[0];
 
+    const url = 'http://localhost:4000/doctors/' + id;
+    // TODO: return error or redirect if the user with this id does not exist
+    const {data, error} = useSWR(url, fetcher);
+    if (error) {
+        console.log(error.message);
+    }
+
+    if (!data) return <div>Loading...</div>;
+    if (data) console.log(data)
+
+    const getAddress = (doctor: IDatDoctorDetail): string => {
+        if (doctor.workStreet != undefined) {
+            return doctor.workStreet + " " + doctor.workBuildingNumber + ", " + doctor.workCity
+        }
+        return doctor.workCity + " " + doctor.workBuildingNumber
+    }
+
+    const datDoctor: IDatDoctorDetail = data.data;
+
+    const doctor: IDoctorCard = {
+        actuality: datDoctor.actuality,
+        id: parseInt(id as string),
+        location: getAddress(datDoctor),
+        name: (datDoctor.degree ? datDoctor.degree + " " : "") + datDoctor.firstname + " " + datDoctor.surname,
+        rating: datDoctor.rateAverage,
+        specialization: datDoctor.specialization
+    }
+    const info: IDoctorDetailInfo = {
+        email: datDoctor.workEmail,
+        phone: datDoctor.workPhone ? datDoctor.workPhone.toString() : undefined,
+        web: datDoctor.link,
+        languages: datDoctor.languages,
+        description: datDoctor.description,
+        openingHours0: datDoctor.openingHours[0],
+        openingHours1: datDoctor.openingHours[1],
+        openingHours2: datDoctor.openingHours[2],
+        openingHours3: datDoctor.openingHours[3],
+        openingHours4: datDoctor.openingHours[4],
+        openingHours5: datDoctor.openingHours[5],
+        openingHours6: datDoctor.openingHours[6],
+    }
+    const reviews: IReview[] = datDoctor.reviews.map((datReview: IDatReview) => {
+        return {
+            author: datReview.author,
+            createDate: datReview.createDate,
+            createTime: datReview.createTime,
+            rating: datReview.rate,
+            text: datReview.comment,
+        }
+    });
+    const theme = createTheme();
     return <>
         <Header/>
-
-        <Box width={"100vw"}>
+        <Box
+            sx={{
+                minHeight: `calc(100vh - ${theme.spacing(19.7)})`,
+            }}
+        >
+        <Box width={"100vw"} marginLeft={{md: "auto"}}
+             marginRight={{md: "auto"}}
+             maxWidth={{md: 960}}>
             <DoctorCard detailed={true} doctor={doctor}/>
-            {doctor.rating != undefined && <Rating name="doctor-rating" value={doctor.rating} precision={0.5} readOnly
-                                                   sx={{m: 1, color: "primary.main"}}/>}
+            <Box margin={{xs: 1, md: 3}}>
+                {doctor.rating != undefined &&
+                    <Rating name="doctor-rating" value={doctor.rating} precision={0.5} readOnly
+                            sx={{color: "primary.main"}}/>}
+            </Box>
 
-            <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
-                <Tabs value={value} onChange={handleChange} aria-label="doctor-detail-tabs" centered variant="fullWidth">
+            <Box>
+                <Tabs value={tabValues} onChange={handleChange} aria-label="doctor-detail-tabs" centered
+                      variant="fullWidth">
                     <Tab label="INFO" {...a11yProps(0)} />
                     <Tab label="OBJEDNÁNÍ" {...a11yProps(1)} />
                     <Tab label="RECENZE" {...a11yProps(2)} />
                 </Tabs>
-                <TabPanel value={value} index={0}>
-                    <InfoPanel/>
+                <TabPanel value={tabValues} index={0}>
+                    <InfoPanel {...info}/>
                 </TabPanel>
-                <TabPanel value={value} index={1}>
+                <TabPanel value={tabValues} index={1}>
                     <ReservationPanel/>
                 </TabPanel>
-                <TabPanel value={value} index={2}>
-                    <ReviewPanel/>
+                <TabPanel value={tabValues} index={2}>
+                    <ReviewPanel reviews={reviews}/>
                 </TabPanel>
             </Box>
         </Box>
-
+        </Box>
         <Footer/>
     </>
 }

@@ -16,8 +16,13 @@ OR use webstorm Run (follow these steps to set up if not available by default):
 
     4.3 Choose npm
 
-    4.4 Fill in the fields: Name = <any name of the configuration you want>, package.json = <choose path to fronted/backend package.json file>, Command = run, Scripts = start
+    4.4 Fill in the fields: Name = *any name of the configuration you want*, package.json = *choose path to fronted/backend package.json file*, Command = run, Scripts = start (backend), startPc (backend)
     
     4.5 From now on, you can always run the app in a standard way
+
+5. Configure database using command: *npx prisma migrate dev --name db_init*
+
+![img.png](webstormConfig1.png)
+![img_1.png](webstormConfig2.png)
 
 

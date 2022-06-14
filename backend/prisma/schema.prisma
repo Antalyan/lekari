@@ -8,96 +8,121 @@ datasource db {
 }
 
 model Person {
-  id             String           @id @default(uuid())
-  name           String
-  degree         String
-  birthYear      Int
-  email          String
-  phone          Int
-  insuraceNumber Int
-  insuranceId    String
-  insurance      InsuranceCompany @relation(fields: [insuranceId], references: [id])
-  addressId      String           @unique
-  address        Address          @relation(fields: [addressId], references: [id])
-  password       String
-  reservations   Reservation[]
-  doctor         Doctor?
+  id              Int           @id @default(autoincrement())
+  degree          String?
+  firstname       String
+  surname         String
+  birthdate       DateTime
+  email           String        @unique
+  phonePrefix     String
+  phone           Int
+  deleted         Boolean       @default(false)
+  insuranceNumber Int?
+  addressId       Int           @unique
+  address         Address       @relation(fields: [addressId], references: [id])
+  password        String
+  reservations    Reservation[]
+  doctor          Doctor?
 }
 
-model InsuranceCompany {
-  id      String   @id @default(uuid())
-  number  Int
-  name    String
-  persons Person[]
+model PersonTmp {
+  id              Int           @id @default(autoincrement())
+  degree          String?
+  firstname       String
+  surname         String
+  birthdate       DateTime
+  email           String?
+  phonePrefix     String
+  phone           Int
+  insuranceNumber Int?
+  addressId       Int?          @unique
+  address         Address?      @relation(fields: [addressId], references: [id])
+  reservations    Reservation[]
 }
 
 model Address {
-  id         String  @id @default(uuid())
-  country    String
-  city       String
-  postalCode Int
-  street     String
-  person     Person?
-  doctor     Doctor?
+  id             Int        @id @default(autoincrement())
+  country        String
+  city           String
+  postalCode     Int
+  street         String?
+  buildingNumber String
+  person         Person?
+  doctor         Doctor?
+  personTemporal PersonTmp?
 }
 
 model Reservation {
-  id            String   @id @default(uuid())
-  personId      String
-  person        Person   @relation(fields: [personId], references: [id])
-  doctorId      String
-  doctor        Doctor   @relation(fields: [doctorId], references: [id])
-  from          DateTime
-  personComment String
-  doctorComment String
-  created       DateTime @default(now())
+  id            String     @id @default(uuid())
+  personId      Int?
+  person        Person?    @relation(fields: [personId], references: [id])
+  personTmpId   Int?
+  personTmp     PersonTmp? @relation(fields: [personTmpId], references: [id])
+  doctorId      Int
+  doctor        Doctor     @relation(fields: [doctorId], references: [id])
+  fromTime      DateTime
+  toTime        DateTime
+  personComment String?
+  created       DateTime   @default(now())
 }
 
 model Doctor {
-  id             String           @id @default(uuid())
-  specialization String // TODO: enum
-  actuality      String
-  email          String
-  phone          String
-  description    String
-  link           String
-  profilePicture String
-  addressId      String           @unique
-  address        Address          @relation(fields: [addressId], references: [id])
-  personId       String           @unique
-  person         Person           @relation(fields: [personId], references: [id])
-  reservations   Reservation[]
-  references     Reference[]
-  languages      DoctorLanguage[]
-  openingHours   OpeningHours[]
+  id               Int                @id @default(autoincrement())
+  specialization   String // TODO: enum
+  actuality        String?
+  addressId        Int                @unique
+  address          Address            @relation(fields: [addressId], references: [id])
+  personId         Int                @unique
+  person           Person             @relation(fields: [personId], references: [id])
+  profilePicture   String?
+  deleted          Boolean            @default(false)
+  //
+  email            String?
+  phone            String?
+  description      String?
+  link             String?
+  reservations     Reservation[]
+  references       Review[]
+  languages        DoctorLanguage[]
+  reservationHours ReservationHours[]
+  openingHours     OpeningHours[]
 }
 
-model Reference {
-  id             String   @id @default(uuid())
-  doctorId       String
-  doctor         Doctor   @relation(fields: [doctorId], references: [id])
-  comment        String
-  rate           Int        // TODO: enum? What about stars number
-  author         String     // TODO: connection to user?
-  doctor_comment String     // TODO: What about response?
-  created        DateTime @default(now())
+model Review {
+  id       String   @id @default(uuid())
+  doctorId Int
+  doctor   Doctor   @relation(fields: [doctorId], references: [id])
+  comment  String?
+  rate     Int
+  author   String?
+  created  DateTime @default(now())
 }
 
 model DoctorLanguage {
-  doctorId String
+  doctorId Int
   doctor   Doctor @relation(fields: [doctorId], references: [id])
-  language String           // TODO: enum
+  language String // TODO: enum
 
   @@unique([doctorId, language])
 }
 
+model ReservationHours {
+  doctorId Int
+  doctor   Doctor   @relation(fields: [doctorId], references: [id])
+  day      Int
+  fromTime DateTime?
+  toTime   DateTime?
+  fromDate DateTime @default(now())
+  interval Int      @default(20)
+
+  @@unique([doctorId, day, fromDate])
+}
+
 model OpeningHours {
-  doctorId String
-  dostor   Doctor   @relation(fields: [doctorId], references: [id])
-  day      String           // TODO: enum
-  fromTime DateTime
-  toTime   DateTime
-  fromDate DateTime @default(now()) // TODO: in diagram it is time
+  doctorId Int
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+  day      Int
+  opening  String?
 
   @@unique([doctorId, day])
 }

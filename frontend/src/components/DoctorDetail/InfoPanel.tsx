@@ -4,18 +4,19 @@ import Grid from "@mui/material/Grid";
 import {IconButton, Stack} from "@mui/material";
 import Button from "@mui/material/Button";
 import EditIcon from '@mui/icons-material/Edit';
-import {IEditable} from "../Interfaces";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {FormContainer, MultiSelectElement, TextFieldElement} from "react-hook-form-mui";
-import {useForm} from "react-hook-form";
-import {DAYS, LANGUAGES} from "../../data/Constants";
+import {DAYS, LANGUAGES, validateNumbers, validateUrl} from "../../data/Constants";
 import {useRecoilValue} from "recoil";
 import {userAtom} from "../../state/LoggedInAtom";
 import {useParams} from "react-router-dom";
+import {IDoctorDetailInfo} from "../../utils/Interfaces";
+import {IDatDoctorInfo} from "../../utils/DatabaseInterfaces";
+import axios from "axios";
+import {checkStatusOK} from "../../utils/fetcher";
 
 function Opening() {
-    // TODO: editability should be checked at backend on submit as well
     const [editingState, setEditingState] = useState(false);
     const user = useRecoilValue(userAtom)
     const {id} = useParams();
@@ -24,9 +25,10 @@ function Opening() {
         <>
             <Box>
                 <Typography
-                    variant="subtitle1"
+                    variant="h6"
                     color={"primary.main"}
                     display="inline"
+                    fontWeight={"bold"}
                 > Otevírací doba
                 </Typography>
                 {user.id == id && <IconButton onClick={() => setEditingState(!editingState)}>
@@ -38,7 +40,7 @@ function Opening() {
                 {DAYS.map((day, index) => {
                     return <Stack direction={"row"} spacing={2} key={index}>
                         <Typography width={60} display="inline">{day + ":"}</Typography>
-                        <TextFieldElement name={"opening" + index} size="small"
+                        <TextFieldElement name={"openingHours" + (index)} size="small"
                                           disabled={!editingState} variant={editingState ? "outlined" : "standard"}
                                           InputProps={{
                                               disableUnderline: !editingState,
@@ -59,7 +61,7 @@ function Contact() {
         <>
             <Box>
                 <Typography
-                    variant="subtitle1"
+                    variant="h6"
                     color={"primary.main"}
                     display="inline"
                 > Kontakt
@@ -69,10 +71,9 @@ function Contact() {
                 </IconButton>}
             </Box>
             <Stack spacing={editingState ? 2 : 0}>
-                {/*TODO: add validation and potentially refactor to one*/}
                 <Stack direction={"row"} spacing={2}>
                     <Typography width={40} display="inline">Email:</Typography>
-                    <TextFieldElement name={"email"} size="small" type="email"
+                    <TextFieldElement name={"email"} size="small" type="email" fullWidth
                                       disabled={!editingState} variant={editingState ? "outlined" : "standard"}
                                       InputProps={{
                                           disableUnderline: !editingState,
@@ -82,7 +83,7 @@ function Contact() {
                 </Stack>
                 <Stack direction={"row"} spacing={2}>
                     <Typography width={40} display="inline">Tel:</Typography>
-                    <TextFieldElement name={"phone"} size="small"
+                    <TextFieldElement name={"phone"} size="small" validation={validateNumbers} fullWidth
                                       disabled={!editingState} variant={editingState ? "outlined" : "standard"}
                                       InputProps={{
                                           disableUnderline: !editingState,
@@ -91,7 +92,7 @@ function Contact() {
                 </Stack>
                 <Stack direction={"row"} spacing={2}>
                     <Typography width={40} display="inline">Web:</Typography>
-                    <TextFieldElement name={"web"} size="small"
+                    <TextFieldElement name={"web"} size="small" validation={validateUrl} fullWidth
                                       disabled={!editingState} variant={editingState ? "outlined" : "standard"}
                                       InputProps={{
                                           disableUnderline: !editingState,
@@ -103,7 +104,6 @@ function Contact() {
 }
 
 function Languages() {
-// TODO: change to languages type
     const [editingState, setEditingState] = useState(false);
     const user = useRecoilValue(userAtom)
     const {id} = useParams();
@@ -111,7 +111,7 @@ function Languages() {
         <>
             <Box>
                 <Typography
-                    variant="subtitle1"
+                    variant="h6"
                     color={"primary.main"}
                     display="inline"
                 > Jazyky
@@ -136,7 +136,7 @@ function Description() {
         <>
             <Box>
                 <Typography
-                    variant="subtitle1"
+                    variant="h6"
                     color={"primary.main"}
                     display="inline"
                 > Popis
@@ -154,35 +154,65 @@ function Description() {
         </>)
 }
 
-export function InfoPanel() {
-    const formContext = useForm<string[]>();
-    const {handleSubmit} = formContext;
-    const onSubmit = handleSubmit((formData: string[]) => {
-        // TODO: send data to database on this click
-        console.log(formData);
-    });
+export function InfoPanel(info: IDoctorDetailInfo) {
+
+    const storeInfo = async (formData: IDoctorDetailInfo) => {
+        const detail: IDatDoctorInfo = {
+            description: formData.description,
+            languages: formData.languages,
+            link: formData.web,
+            openingHours: [formData.openingHours0, formData.openingHours1, formData.openingHours2, formData.openingHours3,
+                formData.openingHours4, formData.openingHours5, formData.openingHours6],
+            workEmail: formData.email,
+            workPhone: formData.phone ? parseInt(formData.phone) : undefined,
+        }
+
+        // TODO: check and update request, update url
+        const url = 'http://localhost:4000/doctor-details';
+        await axios.put(url, detail, {
+            headers: {
+                'Authorization': `Bearer ${user.token}`
+            }})
+            .then(response => {
+                console.log(response);
+                if (checkStatusOK(response.status)) {
+                    alert("Údaje změněny!");
+                    window.location.reload();
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("Aktualizace selhala!\n\n" + error.response.data.message)
+            });
+    }
+
+    const onSubmit = (formData: IDoctorDetailInfo) => {
+        storeInfo(formData);
+    };
+
     const user = useRecoilValue(userAtom)
     const {id} = useParams();
+
     // @ts-ignore
     return (<FormContainer
-        formContext={formContext}
-        handleSubmit={onSubmit}>
+        defaultValues={info}
+        onSuccess={onSubmit}>
         <Stack spacing={2}>
             <Opening/>
             <Contact/>
             <Languages/>
             <Description/>
             {user.id == id && <Grid container>
-                <Grid item xs={6}>
-                    <Button variant='contained' type={'submit'} color={'primary'} onSubmit={onSubmit}>Uložit
+                <Grid container item xs={6} justifyContent={"center"}>
+                    <Button variant='contained' size={"large"} type={'submit'} color={'primary'}>Uložit
                         změny</Button>
                 </Grid>
-                <Grid item xs={6}>
-                    {/*TODO: change onSubmit to function resetting form (refresh page basically)*/}
-                    <Button variant='contained' type={'submit'} color={'primary'} onClick={onSubmit}>Zrušit
+                <Grid container item xs={6} justifyContent={"center"}>
+                    <Button variant='contained' size={"large"} color={'primary'} onClick={() => window.location.reload()} >Zrušit
                         změny</Button>
                 </Grid>
             </Grid>}
         </Stack>
     </FormContainer>)
 }
+

@@ -2,3 +2,5 @@
 /prisma/database.db-journal
 /node_modules/
 /prisma/migrations/
+/.env
+../.idea

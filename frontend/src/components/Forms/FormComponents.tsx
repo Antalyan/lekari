@@ -1,10 +1,19 @@
-// TODO: evaluate isEdit (T: edit, F: initial fill in) based on which page we are (register + reservation vs profile)
 import * as React from "react";
 import {useState} from "react";
 import {IconButton, Stack} from "@mui/material";
 import {DatePickerElement, SelectElement, TextFieldElement} from "react-hook-form-mui";
 import EditIcon from "@mui/icons-material/Edit";
-import {IFormFieldProps} from "./RegisterFormPage";
+
+interface IFormFieldProps {
+    isEdit: boolean,
+    name: string,
+    label?: string,
+    type?: string,
+    required?: boolean,
+    fullWidth?: boolean,
+    validation?: any
+    options?: any[] | undefined
+}
 
 export function FormTextField({
                                   isEdit,
@@ -20,7 +29,7 @@ export function FormTextField({
         return <TextFieldElement name={name} label={label} required={required} fullWidth={fullWidth}
                                  validation={validation}
                                  type={type}
-                                 disabled={!editingState} variant={editingState ? "outlined" : "standard"}
+                                 disabled={!editingState} variant={"outlined"}
                                  InputProps={{
                                      endAdornment:
                                          <IconButton onClick={() => setEditingState(!editingState)}>
@@ -45,7 +54,7 @@ export function FormSelect({
     if (isEdit) {
         return <SelectElement name={name} label={label} required={required} fullWidth={fullWidth}
                               options={options}
-                              disabled={!editingState} variant={editingState ? "outlined" : "standard"}
+                              disabled={!editingState} variant={"outlined"}
                               InputProps={{
                                   endAdornment:
                                       <IconButton onClick={() => setEditingState(!editingState)}>
