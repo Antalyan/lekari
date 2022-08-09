@@ -25,4 +25,8 @@ OR use webstorm Run (follow these steps to set up if not available by default):
 ![img.png](webstormConfig1.png)
 ![img_1.png](webstormConfig2.png)
 
+If prisma was not installed before:
+$ npm i prisma
+$ npx prisma generate
+
 
