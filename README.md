@@ -2,7 +2,9 @@
 
 ## About project
 
-This project was implemented as a final project of PB138: Markup Languages course of Masaryk University, Faculty of Informatics. The project team consists of four people, most of whom chosen the course purely optionally because of their interested in web technologies.
+This project was implemented as a final project of PB138: Markup Languages course of Masaryk University, Faculty of Informatics. 
+
+The project team consists of four people, most of whom chosen the course purely optionally because of their interested in web technologies.
 
 ## Project description
 
@@ -25,9 +27,9 @@ Project team members and their main responsibilities:
 
 There are two separate projects in the repository (frontend and backend).
 
-Frontend: React (with Typescript), MUI, Recoil 
+**Frontend**: React (with Typescript), MUI, Recoil 
 
-Backend: Typescript, Prisma, Sqlite
+**Backend**: Typescript, Prisma, Sqlite
 
 ## Getting started in Webstorm
 
