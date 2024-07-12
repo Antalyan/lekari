@@ -1,6 +1,33 @@
 # PB138-Lekari
 
+## About project
 
+This project was implemented as a final project of PB138: Markup Languages course of Masaryk University, Faculty of Informatics. The project team consists of four people, most of whom chosen the course purely optionally because of their interested in web technologies.
+
+## Project description
+
+The application provides a reservation hub for patients who would like to attend doctors, including authentication.
+
+Official topic description:
+
+_The system should be able to display a list of doctors, filter by city of operation and by doctor's specialty. When detailing the doctor, it displays contact information, office hours and a booking calendar. The user can add his reservation to the reservation calendar. In order to make a reservation, a person must fill in the name, surname and contact information, or must be logged in._
+
+## Team
+
+Project team members and their main responsibilities: 
+
+- **Michael Koudela** (frontend development)
+- **Ondřej Lošťák** (backend development)
+- **Richard Pánek** (backend development)
+- **Vendula Teuchnerová** (graphical design)
+
+## Technology
+
+There are two separate projects in the repository (frontend and backend).
+
+Frontend: React (with Typescript), MUI, Recoil 
+
+Backend: Typescript, Prisma, Sqlite
 
 ## Getting started in Webstorm
 
